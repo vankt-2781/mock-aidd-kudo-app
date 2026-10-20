@@ -33,7 +33,7 @@ export function getAuthCookieName(): string {
 }
 
 /** Creates an email-confirmed user and signs it in from Node (no Google involved). */
-export async function createTestUser(): Promise<TestUser> {
+export async function createTestUser(options: { appMetadata?: Record<string, unknown> } = {}): Promise<TestUser> {
   const env = getSupabaseLocalEnv();
   const suffix = randomUUID().slice(0, 8);
   const email = `e2e-${suffix}@example.test`;
@@ -45,6 +45,7 @@ export async function createTestUser(): Promise<TestUser> {
     password,
     email_confirm: true,
     user_metadata: { full_name: name },
+    ...(options.appMetadata ? { app_metadata: options.appMetadata } : {}),
   });
   if (createError || !created.user) {
     throw new Error(`createUser failed: ${createError?.message ?? "no user returned"}`);

@@ -46,3 +46,28 @@ account, TC038 via a real consent cancel.
   asserts that actual behavior; headless Chromium did not follow the meta refresh within 4 s.
 - Playwright output goes to `node_modules/.playwright-results`: Tailwind scans the repo, and an
   in-repo `test-results/` holding HTML-escaped class names broke the dev CSS build.
+
+# F003 Homepage SAA: E2E coverage
+
+Specs: `homepage-public-render`, `homepage-navigation`, `homepage-i18n`, `homepage-countdown`,
+`homepage-auth-header`, `homepage-menus-and-guards` (test titles cite the MoMorph `ID-xx` rows).
+Admin tests use the `adminUser` / `adminContext` fixtures (`app_metadata.role = "admin"` via the admin API).
+The countdown specs drive time with `page.clock` and read the event start from the rendered
+`data-target-date` attribute, so they follow `NEXT_PUBLIC_EVENT_START_AT` instead of hardcoding it.
+
+| TC IDs | Coverage |
+|--------|----------|
+| ID-0, 1, 7-17, 59 | e2e `homepage-public-render` (grid columns checked at 1440 / 768 / 375) |
+| ID-2-4, 18-23, 44-53, 55, 62 | e2e `homepage-navigation` (card hash: URL + section in viewport; hover via computed style) |
+| ID-24-26, 58 | e2e `homepage-i18n` (VN/EN only, reload persistence, `<html lang>`, tampered cookie) |
+| ID-39-43, 56, 57 | e2e `homepage-countdown`; ID-60 (invalid env date) unit only (compute-countdown / live-hero-countdown tests) |
+| ID-5, 6, 27-29, 36-38 | e2e `homepage-auth-header` (guest login link, bell empty panel, regular vs admin menu, sign out) |
+| ID-30-35, 54, `/admin` + `/profile` guards | e2e `homepage-menus-and-guards` |
+
+## MANUAL / not automatable
+
+- Unread notification badge (ID-11, ID-27, ID-29 badge-present variant): no notification backend exists; e2e asserts the
+  badge is never shown and the empty panel opens. Re-test when notifications ship.
+- Exact pixel sizes of logo (spec 64x60; built 52x48 per Figma frame) and visual polish (glow, blur): visual review.
+- ID-60 invalid-env fallback at the browser level (env fixed for the dev server): unit-covered only.
+- Any TC row in the CSV beyond the 62 digested IDs is not represented in the digest; verify in Phase 08.
