@@ -1,0 +1,5 @@
+{
+  "command": "npx vitest run --coverage",
+  "exitCode": 1,
+  "summary": "BLOCKED: @vitest/coverage-v8 not installed; no coverage numbers produced"
+}

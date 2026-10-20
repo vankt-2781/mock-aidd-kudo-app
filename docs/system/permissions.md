@@ -1,39 +1,47 @@
+---
+status: implemented
+authored_by: takumi
+created: 2026-10-20
+lang: en
+---
+
 # Permissions
 
 **Project**: kudo-scaffold (Next.js 16 App Router + Supabase auth)
-**Generated**: 2026-10-19
-**Analysis Scope**: 3 screens, sign-in via Google, session handling
+**Generated**: 2026-10-20
+**Analysis Scope**: forward draft for the Homepage SAA feature; extends the existing signed-in versus not-signed-in model with an admin role
 
-> **Curated, plain-language view.** Derived from [permissions-matrix.md](permissions-matrix.md).
+> **Curated, plain-language view.** Derived from the permissions matrix once code exists; no codes are assigned yet.
 
 ## Authorization System Type
 
-**System Type**: other (signed-in vs not signed-in only; no roles, no ownership rules)
+**System Type**: rbac (two ordinary groups plus one admin role; no ownership rules)
 
 **Identified Roles**:
 - Visitor (not signed in)
 - Signed-in user (verified Google account via Supabase)
+- Admin (signed-in user whose Supabase account metadata marks the role as admin)
 
 ## Curated View
 
-- **Visitor** can open the home page and the login page, switch the login language (Vietnamese or English), and start "Login with Google". Visitor cannot open the Todo page; any attempt sends them to login.
-- **Signed-in user** can open the home page and the Todo page, see their own name, email and avatar, and log out. A signed-in user who opens the login page is sent to Todo.
-- Both groups can switch the language. It changes wording only.
+- **Visitor** can open the homepage, the Awards and Kudos placeholder pages and the login page, and switch the language. Visitor sees no notification bell and no account menu. Visitor cannot open the Todo page.
+- **Signed-in user** can do everything a visitor can, plus see the notification bell (empty, no badge for now), open the account menu (Profile, Sign out) and open the Todo page. A signed-in user who opens the login page is sent to Todo.
+- **Admin** can do everything a signed-in user can, and also sees Admin Dashboard in the account menu.
+- All groups can switch the language. It changes wording only.
 
 ## Access Boundaries
 
-The only boundary is signed in or not. Everything under `/todo` needs a signed-in user; `/login` is for visitors only. The home page is open to all; it is unmodified starter content, and whether it should redirect is undecided.
+The homepage is public: no sign-in is needed, and being signed in does not redirect away from it. The line between visitor and signed-in user decides whether the bell and account menu appear. The line between signed-in user and admin decides whether Admin Dashboard appears.
 
-Todo is checked twice: first on every request, then again when the page loads, by asking the sign-in service directly. If the sign-in service cannot be reached, the user is treated as signed out, so access is denied rather than granted.
+The admin marker lives in the Supabase account metadata that users cannot edit themselves; it is set by the team (Supabase Studio or admin API). Hiding the menu item only guides the interface; the Admin Dashboard page itself must also refuse non-admins on the server (route details TBD). Profile and Admin Dashboard are placeholder pages for now.
 
-A signed-in user only ever sees their own profile. There is no way to view anyone else's.
-
-Logout is offered only on the Todo page. The logout action does not itself check who is calling, but logging out with no session does nothing harmful.
+Everything under Todo still needs a signed-in user. Login is for visitors only. If the sign-in service cannot be reached, the user is treated as a visitor, so access is denied rather than granted. Sign out is now available from the homepage account menu as well as the Todo page, using the same existing action.
 
 ## Special Conditions
 
-- The sign-in return step (after Google) is open to everyone because the visitor has no session yet. It only accepts a valid one-time code and always sends the user to one of two fixed pages (Todo on success, login with an error message otherwise). It cannot be pointed at an outside site.
-- The app needs its two Supabase connection settings configured at deploy time. If they are missing, nobody can sign in.
+- The sign-in return step (after Google) is open to everyone and always sends the user to one of two fixed pages; successful sign-in still goes to Todo, not the homepage.
+- The countdown target is a deploy-time setting; an invalid value shows zeros and has no access impact.
 - Language choice is a cookie preference and does not affect access.
+- A user whose admin marker is missing or has any other value is treated as a regular signed-in user.
 
-No feature flags or experiments identified. Raw per-gate detail: [permissions-matrix.md](permissions-matrix.md).
+No feature flags or experiments identified.

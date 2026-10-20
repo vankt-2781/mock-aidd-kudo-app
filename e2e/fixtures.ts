@@ -11,6 +11,21 @@ interface AuthFixtures {
   testUser: TestUser;
   /** Browser context already carrying the user's session cookies. */
   signedInContext: BrowserContext;
+  /** A fresh confirmed user with app_metadata.role === "admin", deleted after the test. */
+  adminUser: TestUser;
+  /** Browser context carrying the admin user's session cookies. */
+  adminContext: BrowserContext;
+}
+
+async function provideUser(provide: (user: TestUser) => Promise<void>, appMetadata?: Record<string, unknown>) {
+  const user = await createTestUser({ appMetadata });
+  try {
+    await provide(user);
+  } finally {
+    await deleteTestUser(user.id).catch((err: unknown) => {
+      if (!String(err).includes("not found")) throw err;
+    });
+  }
 }
 
 export const test = base.extend<AuthFixtures>({
@@ -23,6 +38,16 @@ export const test = base.extend<AuthFixtures>({
       await deleteTestUser(user.id).catch((err: unknown) => {
         if (!String(err).includes("not found")) throw err;
       });
+    }
+  },
+  adminUser: async ({}, provide) => provideUser(provide, { role: "admin" }),
+  adminContext: async ({ browser, adminUser }, provide) => {
+    const context = await browser.newContext();
+    await context.addCookies(buildSessionCookies(adminUser.session));
+    try {
+      await provide(context);
+    } finally {
+      await context.close();
     }
   },
   signedInContext: async ({ browser, testUser }, provide) => {

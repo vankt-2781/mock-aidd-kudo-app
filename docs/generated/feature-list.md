@@ -31,6 +31,7 @@
 |------|------|------|----------|-----------|----------|
 | F001_LoginWithGoogle | Login with Google | mixed | TypeScript | . (repo root) | P1 |
 | F002_StarterHomePage | Starter Home Page | ui | TypeScript | . (repo root) | P3 |
+| F003_HomepageSaa | Homepage SAA | ui | TypeScript | . (repo root) | P1 |
 
 ## Feature Details
 
@@ -91,6 +92,8 @@
 
 ### F002_StarterHomePage: Starter Home Page
 
+> Superseded by F003_HomepageSaa (boilerplate homepage replaced, 2026-10-20).
+
 **Type**: ui
 **Description**: Unmodified create-next-app scaffold boilerplate at `/` (Next.js logo, getting-started hint, external Templates/Learning/Deploy/Documentation links). Static, unguarded, no service calls, not part of the product's login flow; kept as its own small feature solely so SCR001_Home has an owner. Whether it should redirect to `/login` or be replaced is unresolved.
 
@@ -148,3 +151,11 @@
 - [x] Every data model maps to a feature (MODEL001-006 → F001)
 - [x] Every background logic maps to a feature (BL001-005 → F001)
 - [x] Every permission maps to a feature (PERM001-007, 009-011 → F001; PERM008 → F002)
+
+### F003 — Homepage SAA
+
+**Priority:** P1 | **Type:** ui | **Status:** implemented | **Slug:** F003_HomepageSaa
+
+Public SAA 2025 homepage at /: hero + countdown (env-configured), awards grid linking /awards#<slug>, Kudos promo, auth-aware header (login link | bell + account menu with admin option), placeholder routes /awards /kudos /profile /admin. Supersedes F002_StarterHomePage (SCR001_Home).
+
+**Related:** screens: SCR004 | routes: /, /awards, /kudos, /profile, /admin | models: —

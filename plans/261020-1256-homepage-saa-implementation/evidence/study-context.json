@@ -1,0 +1,38 @@
+{
+  "task": "Implement the SAA 2025 public homepage (MoMorph screen i87tDx10uM) at / with countdown, awards grid, auth-aware header, placeholder routes and full unit + e2e verification (feature F003).",
+  "mode": "interactive",
+  "acceptanceCriteria": [
+    "homepage at / renders the MoMorph design with VN default and EN switch",
+    "countdown computes from NEXT_PUBLIC_EVENT_START_AT with zero fallback on invalid",
+    "header adapts to visitor, signed-in user and admin roles",
+    "award cards deep-link to /awards hash anchors and placeholder routes exist with admin guard",
+    "all unit and e2e suites green with every MoMorph TC row mapped or justified",
+    "tsc eslint lint and build all exit 0"
+  ],
+  "touchpoints": [
+    "src/app/(site)/**",
+    "src/components/home/**",
+    "src/lib/countdown/**",
+    "src/lib/site/**",
+    "src/lib/i18n/home-dictionary*",
+    "src/lib/auth/{is-admin-user,get-current-viewer,build-account-menu,decide-admin-access}*",
+    "e2e/homepage-*.spec.ts",
+    "e2e/fixtures.ts",
+    "public/images/home/**",
+    ".env.example",
+    ".env.local"
+  ],
+  "blastRadius": [
+    "src/app/page.tsx deleted — / now served by src/app/(site)/page.tsx route group",
+    "login and todo routes untouched; proxy matcher unchanged and / stays public",
+    "home components now take required copy/href props (hardcoded defaults removed)",
+    "existing F001 suites still green inside the 164 unit / 79 e2e totals"
+  ],
+  "contracts": [
+    "LiveHeroCountdown {targetDate, initialNow, comingSoonLabel} with data-target-date exposed for tests",
+    "getHomeMessages(locale) key parity vi/en with exact design copy incl corrected footer",
+    "getCurrentViewer -> visitor | signedIn+isAdmin; buildAccountMenu(isAdmin); /admin guard decideAdminAccess",
+    "awardHref(slug) -> /awards#slug, missing slug -> /awards",
+    "e2e reads supabase keys at runtime only; admin via app_metadata.role fixture"
+  ]
+}

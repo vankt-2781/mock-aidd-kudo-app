@@ -11,6 +11,7 @@
 | F001 — Login with Google | Supabase Google OAuth, VN/EN locale, route guard, protected `/todo` placeholder | Complete (2026-10-19) |
 | Docs layer | rebuild-spec Core+Flow bootstrap — 13 artifacts in `docs/system/` + `docs/generated/`, feature spec `docs/features/F001_LoginWithGoogle/` | Complete (2026-10-19) |
 | F001 automated test coverage (unit+E2E) | Component unit tests (vitest+jsdom) + Playwright E2E for TC001–TC041 | Complete (2026-10-20) |
+| F003 — Homepage SAA | Public homepage at `/`, countdown, auth-aware header, admin guard, placeholder routes, vi/en i18n | Complete (2026-10-20) |
 | Todo app (main feature) | Real `/todo` functionality replacing the placeholder | Not started |
 
 ## F001 — Login with Google (shipped)
@@ -44,6 +45,16 @@ Plan: `plans/261020-1131-f001-full-unit-e2e-tests/plan.md` — all 3 phases comp
 `tsc`/`eslint`/`lint`/`build` all exit 0. Inspection SEALED (score 8), evidence gate SEALED.
 Coverage vs TC001–TC041: 30 fully automated, 8 partial+manual, 3 weak/manual —
 map at `plans/261020-1131-f001-full-unit-e2e-tests/reports/test-coverage-map.md`.
+
+## F003 — Homepage SAA (complete 2026-10-20)
+
+Plan: `plans/261020-1256-homepage-saa-implementation/plan.md` — all 8 phases completed.
+Supersedes the F002 boilerplate homepage.
+
+**Quality gates:** 164/164 vitest unit (×2 runs), 79/79 Playwright E2E (×3 runs),
+`tsc`/`eslint`/`lint`/`build` all exit 0. Inspection SEALED (score 8/10), evidence gate SEALED
+(temper runs 01–10: 9 pass, 1 skipped-tool). TC coverage 62/62 mapped —
+map at `plans/261020-1256-homepage-saa-implementation/reports/homepage-tc-coverage-map.md`.
 
 ## Next Milestones
 

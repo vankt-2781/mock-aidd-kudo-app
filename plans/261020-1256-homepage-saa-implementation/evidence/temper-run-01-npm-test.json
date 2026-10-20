@@ -1,0 +1,5 @@
+{
+  "command": "npm test",
+  "exitCode": 0,
+  "summary": "vitest: 164/164 passed, 24 files, 0 failed (1.65s)"
+}

@@ -1,0 +1,5 @@
+{
+  "command": "npm run test:e2e",
+  "exitCode": 0,
+  "summary": "playwright: 79 passed, 0 failed, 0 flaky, 0 skipped (19.9s)"
+}
