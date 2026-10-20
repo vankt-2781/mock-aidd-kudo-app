@@ -2,6 +2,24 @@
 
 > Living document. Every significant change, feature, and fix is recorded here.
 
+## 2026-10-20 — F003: Homepage SAA (feature, shipped)
+
+**Summary:** Public homepage at `/` replacing the boilerplate, with live countdown, auth-aware header, admin-gated navigation, placeholder routes, and vi/en localization.
+
+**Shipped:**
+
+- Homepage at `/` (route group `src/app/(site)/`): hero with env-driven countdown (`NEXT_PUBLIC_EVENT_START_AT`), awards grid with hash deep-links, footer, widget menu.
+- Auth-aware header: visitor vs signed-in states, account menu with admin entry (`app_metadata.role`), plus server-side `/admin` guard (non-admin → `/`).
+- Placeholder routes: `/awards`, `/kudos`, `/profile`, `/admin`.
+- i18n: vi/en home dictionary extension on the F001 locale foundation.
+- Tests: 56 new Playwright E2E + 27 unit tests (countdown, role/viewer logic, dictionary).
+
+**Verification:** 164/164 unit (×2 runs), 79/79 E2E (×3 runs); `tsc`/`eslint`/`lint`/`build` exit 0; inspection SEALED (score 8/10), evidence gate SEALED (temper 9 pass / 1 skipped-tool).
+
+**Designer flags (open):** logo size 52x48 vs spec 64x60; "Tiêu chuẩn chung" footer link has no target; EN copy pending review; widget menu items TBD — details in `plans/261020-1256-homepage-saa-implementation/reports/homepage-tc-coverage-map.md`.
+
+---
+
 ## 2026-10-20 — F001: automated test suite + UX/dev fixes (test, fix)
 
 **Summary:** Full automated verification for F001 per `docs/features/F001_LoginWithGoogle/test-cases.md` (TC001–TC041), plus two small fixes found along the way.

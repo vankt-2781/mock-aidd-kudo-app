@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-19T15:52:09Z",
+  "generated_at": "2026-10-20T06:28:31Z",
   "plan": "261019-2101-login-page-supabase-google-oauth",
   "features": [
     {
@@ -73,6 +73,23 @@
         "perms": [
           "PERM008"
         ]
+      }
+    },
+    {
+      "fcode": "F003",
+      "name": "Homepage SAA",
+      "slug": "F003_HomepageSaa",
+      "priority": "P1",
+      "type": "ui",
+      "related": {
+        "screens": [
+          "SCR004_HomepageSaa"
+        ],
+        "user_stories": [],
+        "routes": [],
+        "models": [],
+        "bl": [],
+        "perms": []
       }
     }
   ]

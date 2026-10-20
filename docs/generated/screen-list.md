@@ -157,3 +157,10 @@ Authenticated landing page showing the signed-in user's avatar (or initial), nam
 - [x] All route URLs are properly formatted
 - [x] All SCR### codes are referenced in FeatureList.md  <!-- pending: feature-list.md not yet final (W5); SCR001_Home has owner: F002_StarterHomePage -->
 - [x] No orphaned screen references
+
+## SCR004_HomepageSaa
+
+**Feature:** F003 — Homepage SAA
+**Route:** /
+**Description:** SAA 2025 public homepage — hero ROOT FURTHER with event countdown, awards grid (6 categories), Sun* Kudos promo, auth-aware header, floating widget, footer.
+**States:** default, pre-event (countdown + Coming soon), post-event (00s, label hidden), signed-out, signed-in, admin
