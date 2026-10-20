@@ -36,7 +36,6 @@ export type HomeMessages = {
   footer: { standardsLabel: string; copyright: string };
   widget: { label: string; sendKudos: string; backToTop: string };
   placeholder: {
-    awardsTitle: string;
     kudosTitle: string;
     profileTitle: string;
     adminTitle: string;
