@@ -1,0 +1,48 @@
+{
+  "task": "Implement the Countdown Prelaunch feature (MoMorph screen 8PJQswPZmU) as F005: /countdown live LED countdown page, site-wide proxy launch gate with admin bypass, GET /api/event-config, EVENT_START_AT env unification, prelaunch i18n dictionary (branch feature/countdown-prelaunch).",
+  "mode": "interactive",
+  "acceptanceCriteria": [
+    "/countdown renders the frame design with three LED units ticking every second, zero-padded, days capped at 99, invalid values clamped to 00",
+    "at or past zero all units show 00 and the page auto-redirects to / after 1.5s with a bounded retry loop guard",
+    "pre-launch non-admin traffic on any route except /countdown /login /auth/* /api/* and assets is redirected to /countdown; admin (app_metadata.role admin) bypasses",
+    "post-launch /countdown redirects to /; missing or invalid EVENT_START_AT fails open as launched",
+    "GET /api/event-config returns {startAt} from EVENT_START_AT, dynamic with no-store caching",
+    "NEXT_PUBLIC_EVENT_START_AT fully replaced by server-only EVENT_START_AT with homepage hero unchanged in behavior",
+    "title and tab title localized vi/en; unit labels stay EN uppercase per design",
+    "all suites green: 312 unit, 105 e2e, tsc, lint, build"
+  ],
+  "touchpoints": [
+    "src/app/countdown/**",
+    "src/components/prelaunch/**",
+    "src/app/api/event-config/**",
+    "src/lib/countdown/compute-countdown.*",
+    "src/lib/event-config/**",
+    "src/lib/launch-gate/**",
+    "src/lib/i18n/prelaunch-dictionary*",
+    "src/proxy.ts",
+    "src/proxy.test.ts",
+    "src/lib/supabase/update-session-in-proxy.ts",
+    "src/app/(site)/page.tsx",
+    ".env.example",
+    "playwright.config.ts",
+    "e2e/countdown-prelaunch.spec.ts",
+    "e2e/README.md",
+    "public/images/prelaunch/**"
+  ],
+  "blastRadius": [
+    "proxy now gates every request pre-launch: fail-open on missing env keeps dev/CI and all existing e2e ungated (pinned past date in playwright webServer env)",
+    "updateSessionInProxy contract extended with isAdmin (false on any auth error; degrade-to-unauthenticated unchanged)",
+    "computeCountdown gains optional maxDays; homepage caller unchanged and its tests untouched",
+    "env rename is breaking for deployments: EVENT_START_AT must be set server-side, NEXT_PUBLIC_EVENT_START_AT removed; .env.local needs manual removal of the old line + dev server restart",
+    "flake fixes touched F003/F004 surfaces: awards deep-link ResizeObserver re-scroll, test-side visible-wait and clock margin adjustments",
+    "existing suites included in totals: 284 unit, 105 e2e"
+  ],
+  "contracts": [
+    "decideLaunchGateRedirect pure function {pathname, now, start, isAdmin} -> redirect | null, evaluated before decideRouteRedirect",
+    "readEventStart() is the single reader of EVENT_START_AT returning {iso, start} | null",
+    "GET /api/event-config -> {startAt: string|null}, Cache-Control: no-store, await connection()",
+    "PrelaunchScreen presentational props unchanged; LivePrelaunchCountdown owns tick + useLaunchRedirect owns the 1.5s/5s redirect cadence",
+    "getPrelaunchMessages(locale) parity vi/en; labels EN uppercase both locales (PM note recorded)",
+    "recorded open item: EN copy + metadata titles are dev drafts pending PM review"
+  ]
+}

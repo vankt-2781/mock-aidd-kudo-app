@@ -1,0 +1,1 @@
+{"command":"npm test","exitCode":0,"summary":"vitest run: 34 files, 284/284 tests passed (baseline 186 + 98 new: countdown lib cap/format, event-config reader, prelaunch dictionary, launch-gate decision matrix, proxy wiring, api route, live ticker, redirect hook)"}
