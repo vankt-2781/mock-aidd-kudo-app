@@ -1,0 +1,67 @@
+{
+  "commands": [
+    {
+      "command": "npm test",
+      "exitCode": 0,
+      "status": "pass",
+      "summary": "vitest: 10 files, 75 passed, 0 failed [exit 0]",
+      "ts": "1970-01-01T00:00:00.000Z"
+    },
+    {
+      "command": "npx tsc --noEmit",
+      "exitCode": 0,
+      "status": "pass",
+      "summary": "tsc --noEmit: 0 type errors [exit 0]",
+      "ts": "1970-01-01T00:00:00.000Z"
+    },
+    {
+      "command": "npx eslint src e2e playwright.config.ts",
+      "exitCode": 0,
+      "status": "pass",
+      "summary": "eslint src e2e playwright.config.ts: 0 errors, 0 warnings [exit 0]",
+      "ts": "1970-01-01T00:00:00.000Z"
+    },
+    {
+      "command": "npm run lint",
+      "exitCode": 0,
+      "status": "pass",
+      "summary": "npm run lint (eslint): 0 errors, 0 warnings [exit 0]",
+      "ts": "1970-01-01T00:00:00.000Z"
+    },
+    {
+      "command": "npm run build",
+      "exitCode": 0,
+      "status": "pass",
+      "summary": "next build 16.4.2: compiled, TypeScript pass, 7 static pages, routes /, /login, /todo, /auth/callback, Proxy [exit 0]",
+      "ts": "1970-01-01T00:00:00.000Z"
+    },
+    {
+      "command": "npm run test:e2e",
+      "exitCode": 0,
+      "status": "pass",
+      "summary": "playwright: 23 passed, 0 skipped, 0 failed, 0 fixme [exit 0]",
+      "ts": "1970-01-01T00:00:00.000Z"
+    },
+    {
+      "command": "npm test",
+      "exitCode": 0,
+      "status": "pass",
+      "summary": "vitest repeat: 10 files, 75 passed, 0 failed [exit 0]",
+      "ts": "1970-01-01T00:00:00.000Z"
+    },
+    {
+      "command": "npm run test:e2e",
+      "exitCode": 0,
+      "status": "pass",
+      "summary": "playwright repeat: 23 passed, 0 skipped, 0 failed [exit 0]",
+      "ts": "1970-01-01T00:00:00.000Z"
+    },
+    {
+      "command": "npm run build (route-table capture, after await connection() fix)",
+      "exitCode": 0,
+      "status": "pass",
+      "summary": "Route table verbatim: Route (app) | ┌ ○ / | ├ ○ /_not-found | ├ ƒ /auth/callback | ├ ◐ /login | └ ◐ /todo |  |  | ƒ Proxy (Middleware) |  | ○  (Static)             prerendered as static content | ◐  (Partial Prerender)  prerendered as static HTML with dynamic server-streamed content | ƒ  (Dynamic)            server-rendered on demand",
+      "ts": "1970-01-01T00:00:00.000Z"
+    }
+  ]
+}

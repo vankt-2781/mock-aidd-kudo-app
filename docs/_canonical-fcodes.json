@@ -1,0 +1,79 @@
+{
+  "generated_at": "2026-10-19T15:52:09Z",
+  "plan": "261019-2101-login-page-supabase-google-oauth",
+  "features": [
+    {
+      "fcode": "F001",
+      "name": "Login with Google",
+      "slug": "F001_LoginWithGoogle",
+      "priority": "P1",
+      "type": "mixed",
+      "related": {
+        "screens": [
+          "SCR002_Login",
+          "SCR003_Todo"
+        ],
+        "user_stories": [
+          "US001",
+          "US002",
+          "US003",
+          "US004"
+        ],
+        "routes": [
+          "ROUTE001"
+        ],
+        "models": [
+          "MODEL001",
+          "MODEL002",
+          "MODEL003",
+          "MODEL004",
+          "MODEL005",
+          "MODEL006"
+        ],
+        "bl": [
+          "BL001",
+          "BL002",
+          "BL003",
+          "BL004",
+          "BL005"
+        ],
+        "perms": [
+          "PERM001",
+          "PERM002",
+          "PERM003",
+          "PERM004",
+          "PERM005",
+          "PERM006",
+          "PERM007",
+          "PERM009",
+          "PERM010",
+          "PERM011"
+        ]
+      }
+    },
+    {
+      "fcode": "F002",
+      "name": "Starter Home Page",
+      "slug": "F002_StarterHomePage",
+      "priority": "P3",
+      "type": "ui",
+      "related": {
+        "screens": [
+          "SCR001_Home"
+        ],
+        "user_stories": [
+          "US005",
+          "US006",
+          "US007",
+          "US008"
+        ],
+        "routes": [],
+        "models": [],
+        "bl": [],
+        "perms": [
+          "PERM008"
+        ]
+      }
+    }
+  ]
+}

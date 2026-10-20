@@ -1,0 +1,1 @@
+{"command":"bash smoke-assert.sh against npx next dev -p 3100 with placeholder .env.local","exitCode":0,"summary":"7 of 7 route checks pass: login 200 with ROOT FURTHER and VN; todo 307 to /login; auth callback 307 to /login?error=oauth; placeholder env removed after"}

@@ -1,0 +1,1 @@
+{"command":"npx eslint src","exitCode":0,"summary":"eslint clean on src, no errors or warnings"}

@@ -1,0 +1,6 @@
+{
+  "command": "npm test (after avatar-host hardening in get-display-user)",
+  "exitCode": 0,
+  "summary": "vitest run: 40/40 tests passed across 6 files (added googleusercontent-only avatar rejection tests)",
+  "ts": "2026-10-19T15:15:32.049Z"
+}

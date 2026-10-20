@@ -1,0 +1,1 @@
+{"command":"npm run lint","exitCode":0,"summary":"lint green after .claude/** ignore; previously exit 1 with 717 errors all under .claude/"}

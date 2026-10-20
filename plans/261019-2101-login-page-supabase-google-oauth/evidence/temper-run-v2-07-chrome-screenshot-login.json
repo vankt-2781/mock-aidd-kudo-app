@@ -1,0 +1,1 @@
+{"command":"chrome --headless --screenshot login 1440x900","exitCode":0,"summary":"footer rendered at bottom of viewport with own background; no overlap with hero"}

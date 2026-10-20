@@ -1,0 +1,5 @@
+{
+  "command": "npm run lint",
+  "exitCode": 0,
+  "summary": "npm run lint (eslint): 0 errors, 0 warnings [exit 0]"
+}

@@ -1,0 +1,1 @@
+{"mode": "single", "intents": ["(developer, quality-verification, full automated unit + e2e coverage for F001 login)"], "justification": "--fast forced SINGLE; test-coverage work on existing F001"}

@@ -1,0 +1,5 @@
+{
+  "mode": "single",
+  "intents": ["(visitor, authentication, signs in with Google via Supabase and lands on /todo)"],
+  "justification": ""
+}

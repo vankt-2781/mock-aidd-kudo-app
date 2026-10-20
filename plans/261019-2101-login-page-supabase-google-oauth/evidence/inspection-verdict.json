@@ -1,0 +1,62 @@
+{
+  "score": 9,
+  "criticalCount": 0,
+  "decision": "SEALED",
+  "acceptanceCovered": [
+    "/login renders the SAA 2025 design with VN default locale -- proof: resolveLocale defaults vi (locale.ts), login page reads cookie via getRequestLocale; route smoke 10/10 shows VN copy + footer; screenshots in evidence/",
+    "Google OAuth starts same-tab via Supabase signInWithOAuth and /auth/callback exchanges the code -- proof: login-page-client.tsx handleLogin calls signInWithOAuth with redirectTo origin/auth/callback; callback/route.ts calls exchangeCodeForSession in try/catch (live OAuth blocked, accepted)",
+    "Unauthenticated /todo redirects to /login and authenticated /login redirects to /todo -- proof: decide-route-redirect.ts + 7 unit tests incl. nested and lookalike /todos; proxy.ts applies it with redirectWithCookies; smoke: /todo 307 to /login with and without stale cookie",
+    "OAuth failure shows the localized error directly under the login button via error=oauth param -- proof: resolveCallbackRedirect fixed target /login?error=oauth for provider error, missing code, failed exchange; has-login-error.ts matches exact value only; message comes from dictionary (no param echo, no XSS)",
+    "Language selector switches vi/en instantly and persists the NEXT_LOCALE cookie -- proof: handleLocaleChange sets state immediately then setLocaleAction (whitelisted via resolveLocale, httpOnly, lax, 1y)",
+    "/todo shows name email avatar and logout returns to /login -- proof: todo/page.tsx uses getUser() (server-verified) + getDisplayUser fallbacks; signOutAction logs error and always redirects to /login",
+    "npm test tsc eslint and build all exit 0 -- proof: temper-results.json and temper-run-v2-* record exit 0 for npm test (vitest), tsc --noEmit, eslint, npm run lint, npm run build"
+  ],
+  "regressionChecked": [
+    "src/proxy.ts matcher: excludes only _next assets, favicon, images/, auth/callback, static image extensions; no auth route lost; /todo.png-style bypass has no backing route",
+    "eslint.config.mjs globalIgnores excludes .claude/** only; src still linted (npm run lint exit 0)",
+    "next.config.ts images.remotePatterns: https googleusercontent hosts only; no wildcard host",
+    "root scaffold home page / untouched: decideRouteRedirect passes / through for both auth states; build shows it static",
+    "callback error paths: no code, provider error, exchange error, thrown exception all map to fixed /login?error=oauth (no open redirect)",
+    "proxy cookie propagation: redirectWithCookies copies refreshed Set-Cookie from pass-through response; getClaims (JWT verified) not getSession; network throw degrades to unauthenticated",
+    "secrets hygiene: .env* ignored with only .env.example templates allowed; config.toml uses env(GOOGLE_CLIENT_ID/SECRET); no secret literals in src"
+  ],
+  "contractStatus": "PASS",
+  "refuted": [],
+  "unproven": [],
+  "reachableRegressions": [],
+  "findings": [
+    {
+      "severity": "warning",
+      "category": "Security",
+      "location": "src/lib/auth/get-display-user.ts:15-27",
+      "summary": "Avatar URL from user-editable user_metadata was accepted for any http(s) host, crashing next/image on /todo (self-inflicted). RESOLVED: readAvatarUrl now requires https + *.googleusercontent.com, 3 rejection tests added, suite 40/40.",
+      "disposition": "Accept"
+    },
+    {
+      "severity": "suggestion",
+      "category": "Error handling",
+      "location": "src/lib/supabase/update-session-in-proxy.ts:13",
+      "summary": "getSupabaseEnv() throws outside try/catch; missing env gives opaque 500 on every proxied route (fail-closed). Move inside try or document.",
+      "disposition": "Defer"
+    },
+    {
+      "severity": "suggestion",
+      "category": "Observability",
+      "location": "src/app/auth/callback/route.ts:16",
+      "summary": "Provider error code is not logged, only a generic failure; console.warn the providerError (not echoed to user).",
+      "disposition": "Defer"
+    },
+    {
+      "severity": "suggestion",
+      "category": "Maintainability",
+      "location": "src/app/todo/page.tsx:51",
+      "summary": "Logout/Loading text hardcoded English while /login is localized; acceptable for placeholder, localize when /todo becomes real.",
+      "disposition": "Defer"
+    }
+  ],
+  "riskGate": {
+    "touchesSensitiveArea": true,
+    "signoffRequired": true,
+    "humanSignedOff": true
+  }
+}

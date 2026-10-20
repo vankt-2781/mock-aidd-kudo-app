@@ -1,0 +1,1 @@
+{"command":"chrome --headless --screenshot login 1440x900","exitCode":0,"summary":"desktop screenshot captured; logo top-left, VN with flag and chevron top-right, hero text and key visual, footer at bottom; button left-aligned vs TC expectation of centered"}

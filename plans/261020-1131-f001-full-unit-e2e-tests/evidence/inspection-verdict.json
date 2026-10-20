@@ -1,0 +1,52 @@
+{
+  "score": 8,
+  "criticalCount": 0,
+  "decision": "SEALED",
+  "acceptanceCovered": [
+    "vitest suite green including new component tests: 75/75 twice (temper run 01/07); new tests assert behavior (click->signInWithOAuth args, loading disable, pageshow persisted, locale persist, error alert) and mock only boundaries (supabase browser client, setLocaleAction), not the components under test",
+    "playwright e2e suite green against the local stack: 23/23 twice (temper run 06/08); oauth-start spec performs the real Supabase /authorize hop and asserts provider, redirect_to, google client_id presence, redirect_uri == supabase /auth/v1/callback; session injection goes through the real proxy and page getUser (garbage cookie and revoked-user cases prove rejection paths)",
+    "every TC row automated or explicitly justified as manual: coverage map lists 41 TCs, each with an automated test or a manual justification; spot-checked spec/test titles cite the mapped TC codes; TC020/028/029/030 partial-manual is accepted",
+    "tsc eslint lint and build all exit 0: temper-results 9/9 non-fail; temper-run-09 route table shows /todo still partial-prerender (\u25d0) after await connection(), /login \u25d0, / \u25cb, /auth/callback \u0192"
+  ],
+  "regressionChecked": [
+    "no hardcoded keys: grep of e2e/** and playwright.config.ts for JWT prefix, sb_secret, sk_ found only env-var names; keys come from E2E_* env or `npx supabase status` at runtime and are cached in memory only",
+    "e2e/helpers use service-role only in Node test process; never sent to browser; user created per test and deleted in fixture finally",
+    "cursor-pointer additions are visual-only class changes in google-login-button.tsx and language-selector.tsx",
+    "vitest include widened to test.{ts,tsx}; default env remains node so existing .test.ts unaffected",
+    "await connection() in TodoContent sits inside the Suspense boundary and before getUser; semantics are request-time rendering which cookies() already forced, so runtime behavior is unchanged by reasoning",
+    "playwright outputDir under node_modules, reuseExistingServer true, no secrets in config",
+    "route table after await connection(): /todo still \u25d0 (temper-run-09), shape unchanged"
+  ],
+  "contractStatus": "OK",
+  "refuted": [],
+  "unproven": [],
+  "reachableRegressions": [],
+  "findings": [
+    {
+      "severity": "Low",
+      "category": "Test quality",
+      "location": "e2e/authenticated.spec.ts:77-90",
+      "summary": "Revoked-session test asserts a meta-refresh redirect on a 200 response (Next streaming behavior), documented in e2e/README.md; brittle to Next upgrades but honest about current behavior.",
+      "disposition": "Defer"
+    },
+    {
+      "severity": "Low",
+      "category": "Maintainability",
+      "location": "e2e/helpers/test-user.ts:16",
+      "summary": "APP_ORIGIN hardcodes http://localhost:3000, duplicating playwright.config.ts BASE_URL; drifts if PORT changes.",
+      "disposition": "Defer"
+    },
+    {
+      "severity": "Low",
+      "category": "Test quality",
+      "location": "e2e/login-oauth-start.spec.ts:60",
+      "summary": "client_id only asserted truthy, not equal to the configured Google client id; weak but acceptable given the key is not exposed to tests.",
+      "disposition": "Defer"
+    }
+  ],
+  "riskGate": {
+    "touchesSensitiveArea": false,
+    "signoffRequired": false,
+    "humanSignedOff": false
+  }
+}

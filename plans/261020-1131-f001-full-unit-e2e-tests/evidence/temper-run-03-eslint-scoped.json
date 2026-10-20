@@ -1,0 +1,5 @@
+{
+  "command": "npx eslint src e2e playwright.config.ts",
+  "exitCode": 0,
+  "summary": "eslint src e2e playwright.config.ts: 0 errors, 0 warnings [exit 0]"
+}

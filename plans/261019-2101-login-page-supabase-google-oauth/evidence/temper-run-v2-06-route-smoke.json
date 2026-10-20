@@ -1,0 +1,1 @@
+{"command":"bash smoke-v2.sh against npx next dev -p 3100 with placeholder .env.local","exitCode":0,"summary":"10 of 10 pass: login 200, ROOT FURTHER, VN, footer fixed bottom-0 in HTML; todo 307 to /login with no cookie and with stale sb cookie; auth callback 307 to /login?error=oauth"}

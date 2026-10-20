@@ -1,0 +1,5 @@
+{
+  "command": "npx tsc --noEmit",
+  "exitCode": 0,
+  "summary": "tsc --noEmit: 0 type errors [exit 0]"
+}
