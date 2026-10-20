@@ -15,7 +15,7 @@
   "fcode_index_sha": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
   "last_api_contracts_run_sha": "",
   "last_design_intent_run_sha": "",
-  "last_feature_spec_run_sha": "644d37b0924f82df259f0a579a04af416d633a89",
+  "last_feature_spec_run_sha": "a5d9f0fd04f2fb0dcb3abe8f0e509daeb10f9a4f",
   "last_flows_run_sha": "3191dcb6fbfb13aa95d5023f2bc1fbdc82905131",
   "last_glossary_run_sha": "",
   "last_jobs_run_sha": "",
@@ -27,7 +27,8 @@
   "schema_version": "21.0.0",
   "screen_spec_shas": {
     "SCR002": "a654d10d759bf79e13cc9382866de20a3ca1627c94c80301d69a32838920b84d",
-    "SCR004": "24f6cf5b92d148396cdad6ef579033f5a319d74a4124bac8630333fbb3a35259"
+    "SCR004": "036b2d0124c9f3c1dfc88c34a29abc18dd988633e667ff4f534bb18088214260",
+    "SCR005": "512a60e4792ccbb78027593a788f67ecaec328dc4fdeaeaad721dccc035281f4"
   },
   "translations": {}
 }

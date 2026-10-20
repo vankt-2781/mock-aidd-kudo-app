@@ -2,6 +2,23 @@
 
 > Living document. Every significant change, feature, and fix is recorded here.
 
+## 2026-10-20 — F004: Awards Information (feature, shipped)
+
+**Summary:** Full `/awards` page replacing the F003-era placeholder: hero, category navigation with click + scroll-spy + focus accessibility, six award detail cards with exact prize copy, Kudos promo section, and vi/en localization including a localized tab title.
+
+**Shipped:**
+
+- `/awards` page (public): hero, `CategoryNav` (client — click/hash activation, upper-third scroll-spy via IntersectionObserver, heading focus with `preventScroll`), 6 award cards with exact prizes, Kudos promo.
+- i18n: vi/en awards dictionary + localized tab title via `generateMetadata`.
+- Tests: 22 new unit tests + 19 Playwright E2E tests.
+- Post-inspection fix: `CategoryNav` `ariaLabel` prop made required, tests updated.
+
+**Verification:** 186/186 unit (×2 runs), 98/98 E2E (×2 runs); `tsc`/`eslint`/`lint`/`build` exit 0; inspection SEALED (score 9/10), evidence gate SEALED. TC coverage 15/15 (14 automated + 1 manual) — map at `plans/261020-1440-awards-information-implementation/reports/awards-tc-coverage-map.md`.
+
+**Deviations (open, pending PM):** page is public + served at `/awards` (TC expects auth gate + `/he-thong-giai`) — per clarification decisions; EN copy is a dev draft pending PM review.
+
+---
+
 ## 2026-10-20 — F003: Homepage SAA (feature, shipped)
 
 **Summary:** Public homepage at `/` replacing the boilerplate, with live countdown, auth-aware header, admin-gated navigation, placeholder routes, and vi/en localization.

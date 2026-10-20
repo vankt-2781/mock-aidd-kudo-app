@@ -164,3 +164,10 @@ Authenticated landing page showing the signed-in user's avatar (or initial), nam
 **Route:** /
 **Description:** SAA 2025 public homepage — hero ROOT FURTHER with event countdown, awards grid (6 categories), Sun* Kudos promo, auth-aware header, floating widget, footer.
 **States:** default, pre-event (countdown + Coming soon), post-event (00s, label hidden), signed-out, signed-in, admin
+
+## SCR005_AwardsInformation
+
+**Feature:** F004 — Awards Information
+**Route:** /awards
+**Description:** Public award-system page — hero, left category nav (6 items, click + scroll-spy active), 6 award detail cards with quantity and prize values, Sun* Kudos promo.
+**States:** default, section-active (per category), vi, en
