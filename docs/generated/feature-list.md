@@ -32,6 +32,7 @@
 | F001_LoginWithGoogle | Login with Google | mixed | TypeScript | . (repo root) | P1 |
 | F002_StarterHomePage | Starter Home Page | ui | TypeScript | . (repo root) | P3 |
 | F003_HomepageSaa | Homepage SAA | ui | TypeScript | . (repo root) | P1 |
+| F004_AwardsInformation | Awards Information | ui | TypeScript | . (repo root) | P1 |
 
 ## Feature Details
 
@@ -159,3 +160,11 @@
 Public SAA 2025 homepage at /: hero + countdown (env-configured), awards grid linking /awards#<slug>, Kudos promo, auth-aware header (login link | bell + account menu with admin option), placeholder routes /awards /kudos /profile /admin. Supersedes F002_StarterHomePage (SCR001_Home).
 
 **Related:** screens: SCR004 | routes: /, /awards, /kudos, /profile, /admin | models: —
+
+### F004 — Awards Information
+
+**Priority:** P1 | **Type:** ui | **Status:** implemented | **Slug:** F004_AwardsInformation
+
+Public /awards page detailing the 6 SAA 2025 award categories (nav + detail cards with prizes) and Kudos promo; replaces the F003-era placeholder page; deep-linked from homepage cards via hash slugs.
+
+**Related:** screens: SCR005 | routes: /awards | models: —

@@ -1,6 +1,6 @@
 # Kudo App — SAA 2025 Login
 
-Next.js app for Sun* Annual Awards 2025. Current scope: Login with Google (F001) via Supabase Auth with a VN/EN language selector, a protected `/todo` placeholder with sign-out, and the public SAA homepage (F003) with live countdown, awards grid, account menu and placeholder pages.
+Next.js app for Sun* Annual Awards 2025. Current scope: Login with Google (F001) via Supabase Auth with a VN/EN language selector, a protected `/todo` placeholder with sign-out, and the public SAA homepage (F003) with live countdown, awards grid, account menu and placeholder pages, plus the public Awards Information page (F004).
 
 ## Stack
 Next.js 16 (App Router, `src/proxy.ts` route guard), React 19, TypeScript, Tailwind CSS 4, Supabase (`@supabase/ssr`, local stack via Supabase CLI), Vitest.
@@ -22,7 +22,8 @@ npm run dev                              # http://localhost:3000
 | Path | Access |
 |---|---|
 | `/` | Public homepage (F003) |
-| `/awards`, `/kudos` | Public placeholder pages |
+| `/awards` | Public Awards Information page (F004): hero, category menu with scroll-spy, six award cards, Kudos promo, VN/EN copy |
+| `/kudos` | Public placeholder page |
 | `/profile` | Signed-in only (visitors redirect to `/login`) |
 | `/admin` | Admin only (`app_metadata.role === "admin"`); others redirect to `/` |
 | `/login` | Visitors (signed-in users redirect to `/todo`) |
@@ -34,8 +35,8 @@ Homepage countdown target: set `NEXT_PUBLIC_EVENT_START_AT` (ISO-8601 with offse
 | Command | Purpose |
 |---|---|
 | `npm run dev` / `build` / `start` | Next.js dev / production build / serve |
-| `npm test` | Vitest: 164 unit/component tests (no Docker needed) |
-| `npm run test:e2e` | Playwright: 79 E2E tests; needs local Supabase running (`npx supabase start`) |
+| `npm test` | Vitest: 186 unit/component tests (no Docker needed) |
+| `npm run test:e2e` | Playwright: 98 E2E tests; needs local Supabase running (`npx supabase start`) |
 | `npm run test:all` | `vitest run && playwright test` |
 | `npm run lint` | ESLint |
 

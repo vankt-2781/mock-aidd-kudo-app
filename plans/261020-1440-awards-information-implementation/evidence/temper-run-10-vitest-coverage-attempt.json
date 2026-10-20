@@ -1,0 +1,1 @@
+{"command":"npx vitest run --coverage --coverage.reporter=text --coverage.include='src/components/awards/**' (scoped)","exitCode":1,"summary":"FAILED: MISSING DEPENDENCY '@vitest/coverage-v8' not installed; no coverage numbers produced. Adding it would edit package.json, which phase 05 forbids. Needs user decision (see reports/awards-tc-coverage-map.md G1)."}

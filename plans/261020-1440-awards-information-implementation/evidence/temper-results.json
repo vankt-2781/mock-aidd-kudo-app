@@ -1,0 +1,81 @@
+{
+  "commands": [
+    {
+      "command": "npm test",
+      "exitCode": 0,
+      "status": "pass",
+      "summary": "vitest run: 27 files, 186/186 tests passed, 0 failed, 1.81s",
+      "ts": "1970-01-01T00:00:00.000Z"
+    },
+    {
+      "command": "npx tsc --noEmit",
+      "exitCode": 0,
+      "status": "pass",
+      "summary": "typecheck clean, no diagnostics",
+      "ts": "1970-01-01T00:00:00.000Z"
+    },
+    {
+      "command": "npx eslint src e2e playwright.config.ts",
+      "exitCode": 0,
+      "status": "pass",
+      "summary": "eslint clean on src, e2e and playwright.config.ts, no errors or warnings",
+      "ts": "1970-01-01T00:00:00.000Z"
+    },
+    {
+      "command": "npm run lint",
+      "exitCode": 0,
+      "status": "pass",
+      "summary": "project lint script (eslint) clean",
+      "ts": "1970-01-01T00:00:00.000Z"
+    },
+    {
+      "command": "npm run build",
+      "exitCode": 0,
+      "status": "pass",
+      "summary": "next 16.4.2 build: compiled, TypeScript pass, 11 routes generated incl. /awards (partial prerender); no build warnings",
+      "ts": "1970-01-01T00:00:00.000Z"
+    },
+    {
+      "command": "npm run test:e2e",
+      "exitCode": 0,
+      "status": "pass",
+      "summary": "playwright: 98/98 passed (27.7s), 19 awards-information tests included; run against reused next dev on :3000",
+      "ts": "1970-01-01T00:00:00.000Z"
+    },
+    {
+      "command": "npm test (repeat, flake check)",
+      "exitCode": 0,
+      "status": "pass",
+      "summary": "vitest run repeat: 186/186 passed, identical to run 01",
+      "ts": "1970-01-01T00:00:00.000Z"
+    },
+    {
+      "command": "npm run test:e2e (repeat, flake check)",
+      "exitCode": 0,
+      "status": "pass",
+      "summary": "playwright repeat: 98/98 passed (28.8s), no flaky retries",
+      "ts": "1970-01-01T00:00:00.000Z"
+    },
+    {
+      "command": "npx vitest run src/components/awards src/lib/i18n/awards-dictionary.test.ts src/lib/site/award-categories.test.ts",
+      "exitCode": 0,
+      "status": "pass",
+      "summary": "awards-scoped unit: 4 files, 27/27 tests passed",
+      "ts": "1970-01-01T00:00:00.000Z"
+    },
+    {
+      "command": "npx vitest run --coverage --coverage.reporter=text --coverage.include='src/components/awards/**' (scoped)",
+      "exitCode": 0,
+      "status": "skipped",
+      "summary": "FAILED: MISSING DEPENDENCY '@vitest/coverage-v8' not installed; no coverage numbers produced. Adding it would edit package.json, which phase 05 forbids. Needs user decision (see reports/awards-tc-coverage-map.md G1). — provider not installed; percentage metrics out of scope this run",
+      "ts": "1970-01-01T00:00:00.000Z"
+    },
+    {
+      "command": "npx tsc --noEmit && npm test (after required-ariaLabel fix per inspection Accept finding)",
+      "exitCode": 0,
+      "status": "pass",
+      "summary": "typecheck clean; all unit tests pass after making CategoryNav ariaLabel required and updating its tests",
+      "ts": "1970-01-01T00:00:00.000Z"
+    }
+  ]
+}

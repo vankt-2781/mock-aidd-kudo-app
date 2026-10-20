@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-20T06:28:31Z",
+  "generated_at": "2026-10-20T07:57:11Z",
   "plan": "261019-2101-login-page-supabase-google-oauth",
   "features": [
     {
@@ -84,6 +84,23 @@
       "related": {
         "screens": [
           "SCR004_HomepageSaa"
+        ],
+        "user_stories": [],
+        "routes": [],
+        "models": [],
+        "bl": [],
+        "perms": []
+      }
+    },
+    {
+      "fcode": "F004",
+      "name": "Awards Information",
+      "slug": "F004_AwardsInformation",
+      "priority": "P1",
+      "type": "ui",
+      "related": {
+        "screens": [
+          "SCR005_AwardsInformation"
         ],
         "user_stories": [],
         "routes": [],

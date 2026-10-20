@@ -12,6 +12,7 @@
 | Docs layer | rebuild-spec Core+Flow bootstrap — 13 artifacts in `docs/system/` + `docs/generated/`, feature spec `docs/features/F001_LoginWithGoogle/` | Complete (2026-10-19) |
 | F001 automated test coverage (unit+E2E) | Component unit tests (vitest+jsdom) + Playwright E2E for TC001–TC041 | Complete (2026-10-20) |
 | F003 — Homepage SAA | Public homepage at `/`, countdown, auth-aware header, admin guard, placeholder routes, vi/en i18n | Complete (2026-10-20) |
+| F004 — Awards Information | Full `/awards` page: hero, category nav (scroll-spy + focus a11y), 6 award cards, Kudos promo, vi/en i18n | Complete (2026-10-20) |
 | Todo app (main feature) | Real `/todo` functionality replacing the placeholder | Not started |
 
 ## F001 — Login with Google (shipped)
@@ -55,6 +56,18 @@ Supersedes the F002 boilerplate homepage.
 `tsc`/`eslint`/`lint`/`build` all exit 0. Inspection SEALED (score 8/10), evidence gate SEALED
 (temper runs 01–10: 9 pass, 1 skipped-tool). TC coverage 62/62 mapped —
 map at `plans/261020-1256-homepage-saa-implementation/reports/homepage-tc-coverage-map.md`.
+
+## F004 — Awards Information (complete 2026-10-20)
+
+Plan: `plans/261020-1440-awards-information-implementation/plan.md` — all 5 phases completed.
+Supersedes the F003-era `/awards` placeholder route.
+
+**Quality gates:** 186/186 vitest unit (×2 runs), 98/98 Playwright E2E (×2 runs),
+`tsc`/`eslint`/`lint`/`build` all exit 0. Inspection SEALED (score 9/10), evidence gate SEALED.
+TC coverage 15/15 mapped (14 automated + 1 manual), 2 recorded deviations (public access +
+`/awards` route vs TC — pending PM) —
+map at `plans/261020-1440-awards-information-implementation/reports/awards-tc-coverage-map.md`.
+Post-inspection fix: `CategoryNav` `ariaLabel` made required + tests updated.
 
 ## Next Milestones
 

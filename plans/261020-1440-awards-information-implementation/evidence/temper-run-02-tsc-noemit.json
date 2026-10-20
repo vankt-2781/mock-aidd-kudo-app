@@ -1,0 +1,1 @@
+{"command":"npx tsc --noEmit","exitCode":0,"summary":"typecheck clean, no diagnostics"}

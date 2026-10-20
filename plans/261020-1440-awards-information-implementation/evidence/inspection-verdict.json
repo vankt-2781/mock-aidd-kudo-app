@@ -1,0 +1,61 @@
+{
+  "score": 9,
+  "criticalCount": 0,
+  "decision": "SEALED",
+  "acceptanceCovered": [
+    "/awards renders the design with exact award quantities and prize values (e2e ID-6 asserts exact quantity/unit/amount per slug incl. Signature two values + Hoặc; awards-dictionary.test parity; 98/98 e2e)",
+    "category nav click scrolls to the section with active gold underline state and focus on the heading (e2e ID-9/ID-11 loops all 6 slugs: aria-current, URL hash, toBeInViewport, h2 toBeFocused; gold CSS asserted; reduced-motion path covered)",
+    "scroll-spy follows the upper third of the viewport without touching the url hash (select-active-section.test 6 cases; IO rootMargin -66% bottom == 1-SPY_LINE_RATIO; e2e scroll-spy asserts hash stays empty; code review: only activate() calls replaceState)",
+    "page content and tab title follow the VN EN switcher (e2e language test: h1, title, card label, html lang, reload persistence, VN restore; generateMetadata localized)",
+    "homepage deep links to the six section ids keep working (ids = category.slug unchanged; F003 deep-link e2e inside 98/98; /awards#mvp load test)",
+    "all unit and e2e suites green with every MoMorph TC row mapped or justified (186/186 unit x2, 98/98 e2e x2, tsc/eslint/build clean; reports/awards-tc-coverage-map.md; deviations ID-0/1 and manual ID-14 recorded)"
+  ],
+  "regressionChecked": [
+    "home-dictionary placeholder.awardsTitle removal: grep over src/e2e/docs finds no remaining reference; tsc and build clean",
+    "section ids unchanged vs homepage deep links",
+    "shared KudosPromo reused unchanged; (site) layout and proxy untouched",
+    "scroll-spy cleanup: hashchange listener, IntersectionObserver.disconnect and click-lock release (timer + scrollend) all torn down in effect cleanup; no hash write on scroll",
+    "click-lock race: second click releases the previous lock before creating a new one; 1s fallback when scrollend unsupported",
+    "XSS: no dangerouslySetInnerHTML in src; dictionary strings rendered as React text nodes",
+    "i18n: no hardcoded Vietnamese in awards components except unreachable CategoryNav default ariaLabel (page always passes messages.nav.ariaLabel)"
+  ],
+  "contractStatus": "OK",
+  "refuted": [],
+  "unproven": [],
+  "reachableRegressions": [],
+  "findings": [
+    {
+      "severity": "Low",
+      "category": "i18n",
+      "location": "src/components/awards/category-nav.tsx:18",
+      "summary": "Default ariaLabel is hardcoded Vietnamese; unreachable today (AwardDetailList always passes the localized label) but would leak VN to EN if reused without the prop; make ariaLabel required or drop the default",
+      "disposition": "Accept"
+    },
+    {
+      "severity": "Low",
+      "category": "Logic",
+      "location": "src/components/awards/use-active-category.ts:104-110",
+      "summary": "On scrollend/fallback release the spy is not recomputed, so if the click target cannot reach the spy line (last card near page bottom) the clicked item stays active until the next IO event; arguably desired, no user-visible defect proven",
+      "disposition": "Defer"
+    },
+    {
+      "severity": "Low",
+      "category": "Logic",
+      "location": "src/components/awards/use-active-category.ts:60-66",
+      "summary": "IO callback is only a trigger and reads layout (getBoundingClientRect) on each crossing; fine at 6 sections, no throttling needed",
+      "disposition": "Reject"
+    },
+    {
+      "severity": "Low",
+      "category": "Testing",
+      "location": "e2e/awards-information.spec.ts:226-233",
+      "summary": "Deep link load tested only for #mvp and against dev server (accepted trade-offs G2/G6); real-hash-before-hydration ordering under Suspense streaming relies on keep-prev behavior in selectActiveSection, which the unit tests cover",
+      "disposition": "Defer"
+    }
+  ],
+  "riskGate": {
+    "touchesSensitiveArea": false,
+    "signoffRequired": false,
+    "humanSignedOff": false
+  }
+}

@@ -58,7 +58,6 @@ export const homeMessagesVi: HomeMessages = {
   footer: { standardsLabel: "Tiêu chuẩn chung", copyright: "Bản quyền thuộc về Sun* © 2025" },
   widget: { label: "Thao tác nhanh", sendKudos: "Gửi Kudos", backToTop: "Về đầu trang" },
   placeholder: {
-    awardsTitle: "Hệ thống giải thưởng",
     kudosTitle: "Sun* Kudos",
     profileTitle: "Hồ sơ cá nhân",
     adminTitle: "Quản trị",

@@ -59,7 +59,6 @@ export const homeMessagesEn: HomeMessages = {
   footer: { standardsLabel: "General standards", copyright: "Copyright belongs to Sun* © 2025" },
   widget: { label: "Quick actions", sendKudos: "Send Kudos", backToTop: "Back to top" },
   placeholder: {
-    awardsTitle: "Award system",
     kudosTitle: "Sun* Kudos",
     profileTitle: "Profile",
     adminTitle: "Admin",
