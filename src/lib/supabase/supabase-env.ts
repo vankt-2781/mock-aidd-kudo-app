@@ -1,0 +1,16 @@
+export interface SupabaseEnv {
+  url: string;
+  anonKey: string;
+}
+
+/** Reads public Supabase config. Literal property access is required for Next to inline NEXT_PUBLIC_*. */
+export function getSupabaseEnv(): SupabaseEnv {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  if (!url || !anonKey) {
+    throw new Error(
+      "Missing NEXT_PUBLIC_SUPABASE_URL or NEXT_PUBLIC_SUPABASE_ANON_KEY (see .env.example)",
+    );
+  }
+  return { url, anonKey };
+}

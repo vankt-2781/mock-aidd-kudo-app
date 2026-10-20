@@ -1,0 +1,6 @@
+{
+  "command": "npx tsc --noEmit (after avatar-host hardening)",
+  "exitCode": 0,
+  "summary": "typecheck clean",
+  "ts": "2026-10-19T15:15:32.049Z"
+}

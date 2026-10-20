@@ -1,0 +1,31 @@
+{
+  "task": "Full automated test coverage for F001 Login with Google: component-level unit tests (vitest+jsdom) and Playwright E2E against the live local Supabase stack, per docs/features/F001_LoginWithGoogle/test-cases.md TC001-TC041.",
+  "mode": "fast",
+  "acceptanceCriteria": [
+    "vitest suite green including new component tests",
+    "playwright e2e suite green against the local stack",
+    "every TC row automated or explicitly justified as manual",
+    "tsc eslint lint and build all exit 0"
+  ],
+  "touchpoints": [
+    "src/**/*.test.ts",
+    "src/**/*.test.tsx",
+    "vitest.config.ts",
+    "e2e/**",
+    "playwright.config.ts",
+    "src/components/login/google-login-button.tsx",
+    "src/components/login/language-selector.tsx",
+    "src/app/todo/page.tsx"
+  ],
+  "blastRadius": [
+    "cursor-pointer classes added to login button and language selector (visual only)",
+    "await connection() added to /todo content (fixes dev cacheComponents Date.now error; build output shape unchanged)",
+    "vitest include widened to .test.tsx with per-file jsdom pragma; node env tests unchanged",
+    "playwright outputDir moved under node_modules to keep Tailwind source scan clean"
+  ],
+  "contracts": [
+    "test titles cite TC### codes from docs/features/F001_LoginWithGoogle/test-cases.md",
+    "e2e reads supabase keys at runtime via npx supabase status, never hardcoded",
+    "sb-127-auth-token cookie format (base64url JSON, chunked) accepted by the proxy"
+  ]
+}

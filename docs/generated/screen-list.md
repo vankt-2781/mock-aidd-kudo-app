@@ -1,0 +1,159 @@
+# Screen List
+
+**Project**: kudo-scaffold (Next.js 16 App Router + Supabase auth)
+**Generated**: 2026-10-19
+**Analysis Scope**: route-view (web); pages `/`, `/login`, `/todo` from route-list.md; imports followed one level deep
+
+**Code Format**: All codes MUST follow `SCR###_NameSlug` format (e.g., SCR001_LoginForm, SCR002_Dashboard) | `SCR###/REG###` for region-scoped references within a composite screen
+
+**Note**: Feature mapping is managed in FeatureList.md only. UserStory mapping is done in UserStories.md (not in this document).
+
+**Region Cross-ref**: Region codes are per-screen. No composite screens detected, so no REG### codes exist.
+
+**Composite classification (H6 -> H4 -> H5 -> H2 -> H3 -> H1, stack JS/TS)**:
+- H6: no `<Outlet>`/router-outlet in any page; root `layout.tsx` and `login/layout.tsx` only wrap children (fonts/metadata, no data fetch, no persistent nav) -> no shell SCR.
+- H4/H5: no Tab/Tabs/role=tab, no Stepper/Wizard signals -> not fired.
+- H2: no imports from `features/*`, `modules/*`, `domains/*` in any page (0 matches; imports are `@/lib/*`, `@/components/login/*`) -> fail.
+- H3: `/login` has 0 Card/Panel/Section/Widget wrappers (`<header>`/`<main>`/`<footer>` are landmarks of presentational components, not self-contained regions; Trap 4: LOC not used); `/todo` has 1 `<section>`; `/` has 0 -> fail. Tagged [H3_RAW_DIV] (H3<3 -> gate falls back to H1+H2; both fail).
+- H1: feature refs per file < 3 -> fail.
+- Result: all three screens atomic (2-of-3 gate not met). No `[SIGNAL_INFERRED]` used in this document.
+
+## Screen Index
+
+| Code | Name | Type | Components | Data Displayed |
+|------|------|------|------------|----------------|
+| SCR001_Home | Home | atomic | 5 | 0 |
+| SCR002_Login | Login | atomic | 8 | 3 |
+| SCR003_Todo | Todo | atomic | 5 | 1 |
+
+---
+
+## SCR001_Home: Home
+
+**Type**: atomic
+
+### Description
+
+Unmodified create-next-app starter boilerplate at `/`. Unguarded, static, no service calls, owner: F002_StarterHomePage (route-list.md Notes). Source: `src/app/page.tsx:3` (`Home`). Whether it should redirect or be replaced is unresolved. Notes: [H3_RAW_DIV].
+
+### Components
+
+| Component | Type | Purpose |
+|-----------|------|---------|
+| Next.js logo (`next/image`) | image | Starter branding (`/next.svg`) |
+| Heading + hint text | text | "To get started, edit the page.tsx file." |
+| Templates / Learning links | link | External links to vercel.com / nextjs.org |
+| Deploy Now button | link | External link to vercel.com/new (new tab) |
+| Documentation button | link | External link to nextjs.org/docs (new tab) |
+
+### Data Displayed
+
+- None (static copy)
+
+### Routes/URLs
+
+- `/`
+
+### Related Screens
+
+- None (no in-app navigation; proxy passes `/` through unguarded, `src/lib/auth/decide-route-redirect.ts:5`)
+
+---
+
+## SCR002_Login: Login
+
+**Type**: atomic
+
+### Description
+
+Public sign-in page "Sun* Annual Awards 2025" with a single "Login with Google" action, a VN/EN language selector, and a localized OAuth-error message. Server page (`src/app/login/page.tsx:14`) reads locale cookie and `?error=oauth` inside `<Suspense>`, then renders client component `LoginPageClient` (`src/app/login/login-page-client.tsx:17`). The header, hero and footer are presentational children of one view, with no independent endpoint, loading state, scroll container or gate, so they are not regions. Authenticated users are redirected to `/todo` by the proxy. Notes: [H3_RAW_DIV].
+
+### Components
+
+| Component | Type | Purpose |
+|-----------|------|---------|
+| LoginPageClient | client container | Holds locale/loading/error state; wires handlers (`login-page-client.tsx:17`) |
+| LoginHeader | header | Logo + language selector (`components/login/login-header.tsx:6`) |
+| LanguageSelector | dropdown (listbox) | Switch VN/EN; closes on outside click / Escape (`language-selector.tsx:37`) |
+| LoginHero | main | ROOT FURTHER logo, subtitle/tagline, login button, error text (`login-hero.tsx:12`) |
+| GoogleLoginButton | button | Starts Google OAuth; spinner + disabled while loading (`google-login-button.tsx:8`) |
+| Login error alert | alert (`role="alert"`) | Shown when OAuth start fails or `?error=oauth` (`login-hero.tsx`) |
+| LoginFooter | footer (fixed) | Copyright text (`login-footer.tsx:1`) |
+| Key-visual + left-fade backgrounds | decorative | `aria-hidden` background layers (`login-page-client.tsx:71-79`) |
+
+### Data Displayed
+
+- Localized login messages (MODEL004_LoginMessages) from `getLoginMessages(locale)`
+- Locale preference (MODEL003_LocalePreference) from cookie
+- OAuth error flag (`?error=oauth`)
+
+### Service Calls / Hooks (import chain, one level deep; consumed by BehaviorLogic)
+
+- `createSupabaseBrowserClient().auth.signInWithOAuth({provider:"google", redirectTo: <origin>/auth/callback})` -> BL001_SupabaseBrowserClient (`login-page-client.tsx:43`)
+- `setLocaleAction(next)` server action (cookie write; flow logic, not BL) (`login-page-client.tsx:60`)
+- `getRequestLocale()` (server, cookie read) and `hasLoginError(params)` in `page.tsx:10-11`
+- `getLoginMessages(locale)` pure dictionary lookup
+- Hooks: `useState`, `useEffect` (html lang sync; `pageshow` bfcache reset), `useCallback`, `useTransition`
+
+### Routes/URLs
+
+- `/login` (also `/login?error=oauth`)
+
+### Related Screens
+
+- SCR003_Todo: Todo (navigation: proxy redirect when authenticated; OAuth callback success lands there)
+
+---
+
+## SCR003_Todo: Todo
+
+**Type**: atomic
+
+### Description
+
+Authenticated landing page showing the signed-in user's avatar (or initial), name and email, with a Logout button. Server component `TodoContent` calls `supabase.auth.getUser()` inside `<Suspense>` (fallback "Loading...") and redirects to `/login` if no verified user (`src/app/todo/page.tsx:9-13`). Single `<section>` card, so H3=1, atomic. Notes: [H3_RAW_DIV].
+
+### Components
+
+| Component | Type | Purpose |
+|-----------|------|---------|
+| TodoPage | page | `<main>` + Suspense wrapper (`todo/page.tsx:48`) |
+| TodoContent | async server component | Fetches user, guards, renders card (`todo/page.tsx:9`) |
+| Avatar (`next/image` or initial circle) | image/avatar | Profile picture or fallback initial |
+| Name + email text | text | `user.name`, `user.email` |
+| Logout form + button | form (server action) | Calls `signOutAction` (`todo/page.tsx:36`) |
+
+### Data Displayed
+
+- Display user (MODEL002_DisplayUser) derived from Supabase user (MODEL001_User) via `getDisplayUser`
+
+### Service Calls / Hooks (import chain, one level deep; consumed by BehaviorLogic)
+
+- `createSupabaseServerClient()` -> BL002_SupabaseServerClient; `.auth.getUser()` (`todo/page.tsx:10-11`)
+- `getDisplayUser(user)` pure projection
+- `signOutAction()` -> `supabase.auth.signOut()` then `redirect("/login")` (`todo/sign-out-action.ts:7`; flow logic, not BL)
+
+### Routes/URLs
+
+- `/todo` (and subpaths `/todo/*` guarded by the same proxy rule)
+
+### Related Screens
+
+- SCR002_Login: Login (navigation: unauthenticated redirect; Logout destination)
+
+---
+
+## Summary
+
+- **Total Screens**: 3 (SCR: 3, REG: 0; all atomic)
+
+---
+
+## Cross-Reference Validation
+
+- [x] All SCR### codes are unique
+- [x] All SCR### codes are referenced in ScreenFlow.md  <!-- verified in screen-flow.md -->
+- [x] All related screen references are valid
+- [x] All route URLs are properly formatted
+- [x] All SCR### codes are referenced in FeatureList.md  <!-- pending: feature-list.md not yet final (W5); SCR001_Home has owner: F002_StarterHomePage -->
+- [x] No orphaned screen references

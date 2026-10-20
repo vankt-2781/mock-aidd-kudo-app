@@ -1,0 +1,38 @@
+{
+  "task": "Implement the /login page for SAA 2025 from the MoMorph design (screen GzbNeVGJHz) with Supabase local Google OAuth, VN/EN i18n, route guarding, and a protected /todo placeholder (feature F001).",
+  "mode": "interactive",
+  "acceptanceCriteria": [
+    "/login renders the SAA 2025 design with VN default locale",
+    "Google OAuth starts same-tab via Supabase signInWithOAuth and /auth/callback exchanges the code",
+    "Unauthenticated /todo redirects to /login and authenticated /login redirects to /todo",
+    "OAuth failure shows the localized error directly under the login button via error=oauth param",
+    "Language selector switches vi/en instantly and persists the NEXT_LOCALE cookie",
+    "/todo shows name email avatar and logout returns to /login",
+    "npm test tsc eslint and build all exit 0"
+  ],
+  "touchpoints": [
+    "src/app/login/**",
+    "src/components/login/**",
+    "src/app/auth/callback/route.ts",
+    "src/proxy.ts",
+    "src/lib/supabase/**",
+    "src/lib/i18n/**",
+    "src/lib/auth/**",
+    "src/app/todo/**",
+    "supabase/config.toml",
+    "eslint.config.mjs",
+    "next.config.ts"
+  ],
+  "blastRadius": [
+    "src/proxy.ts matcher affects every route except static assets and /auth/callback",
+    "eslint.config.mjs globalIgnores now excludes .claude/** from npm run lint",
+    "next.config.ts images.remotePatterns allows googleusercontent.com avatar hosts",
+    "root scaffold home page / is untouched and prerendered static"
+  ],
+  "contracts": [
+    "GoogleLoginButtonProps/LanguageSelectorProps component interfaces consumed by login-page-client",
+    "LOGIN_ERROR_PARAM=error LOGIN_ERROR_VALUE=oauth shared between callback and login page",
+    "NEXT_LOCALE cookie contract between set-locale-action and get-request-locale (vi|en, fallback vi)",
+    "env contract: NEXT_PUBLIC_SUPABASE_URL NEXT_PUBLIC_SUPABASE_ANON_KEY GOOGLE_CLIENT_ID GOOGLE_CLIENT_SECRET"
+  ]
+}

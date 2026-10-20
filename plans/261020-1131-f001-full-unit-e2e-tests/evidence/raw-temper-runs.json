@@ -1,0 +1,42 @@
+[
+  {
+    "command": "npm test",
+    "exitCode": 0,
+    "summary": "vitest: 10 files, 75 passed, 0 failed [exit 0]"
+  },
+  {
+    "command": "npx tsc --noEmit",
+    "exitCode": 0,
+    "summary": "tsc --noEmit: 0 type errors [exit 0]"
+  },
+  {
+    "command": "npx eslint src e2e playwright.config.ts",
+    "exitCode": 0,
+    "summary": "eslint src e2e playwright.config.ts: 0 errors, 0 warnings [exit 0]"
+  },
+  {
+    "command": "npm run lint",
+    "exitCode": 0,
+    "summary": "npm run lint (eslint): 0 errors, 0 warnings [exit 0]"
+  },
+  {
+    "command": "npm run build",
+    "exitCode": 0,
+    "summary": "next build 16.4.2: compiled, TypeScript pass, 7 static pages, routes /, /login, /todo, /auth/callback, Proxy [exit 0]"
+  },
+  {
+    "command": "npm run test:e2e",
+    "exitCode": 0,
+    "summary": "playwright: 23 passed, 0 skipped, 0 failed, 0 fixme [exit 0]"
+  },
+  {
+    "command": "npm test",
+    "exitCode": 0,
+    "summary": "vitest repeat: 10 files, 75 passed, 0 failed [exit 0]"
+  },
+  {
+    "command": "npm run test:e2e",
+    "exitCode": 0,
+    "summary": "playwright repeat: 23 passed, 0 skipped, 0 failed [exit 0]"
+  }
+]

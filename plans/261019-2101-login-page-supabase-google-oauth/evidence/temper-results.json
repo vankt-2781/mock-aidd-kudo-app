@@ -1,0 +1,130 @@
+{
+  "commands": [
+    {
+      "command": "npm test",
+      "exitCode": 0,
+      "status": "pass",
+      "summary": "vitest run: 39/39 tests passed across 6 files (plan expected about 44 across 7; see report)",
+      "ts": "1970-01-01T00:00:00.000Z"
+    },
+    {
+      "command": "npx tsc --noEmit",
+      "exitCode": 0,
+      "status": "pass",
+      "summary": "typecheck clean, no diagnostics",
+      "ts": "1970-01-01T00:00:00.000Z"
+    },
+    {
+      "command": "npx eslint src",
+      "exitCode": 0,
+      "status": "pass",
+      "summary": "eslint clean on src, no errors or warnings",
+      "ts": "1970-01-01T00:00:00.000Z"
+    },
+    {
+      "command": "npm run build",
+      "exitCode": 0,
+      "status": "pass",
+      "summary": "next build compiled, TypeScript clean, routes /, /login, /todo, /auth/callback generated; zero warnings in log",
+      "ts": "1970-01-01T00:00:00.000Z"
+    },
+    {
+      "command": "npx vitest run",
+      "exitCode": 0,
+      "status": "pass",
+      "summary": "flake check 1 of 3: 39/39 passed",
+      "ts": "1970-01-01T00:00:00.000Z"
+    },
+    {
+      "command": "npx vitest run",
+      "exitCode": 0,
+      "status": "pass",
+      "summary": "flake check 2 of 3: 39/39 passed",
+      "ts": "1970-01-01T00:00:00.000Z"
+    },
+    {
+      "command": "npx vitest run",
+      "exitCode": 0,
+      "status": "pass",
+      "summary": "flake check 3 of 3: 39/39 passed",
+      "ts": "1970-01-01T00:00:00.000Z"
+    },
+    {
+      "command": "bash smoke-assert.sh against npx next dev -p 3100 with placeholder .env.local",
+      "exitCode": 0,
+      "status": "pass",
+      "summary": "7 of 7 route checks pass: login 200 with ROOT FURTHER and VN; todo 307 to /login; auth callback 307 to /login?error=oauth; placeholder env removed after",
+      "ts": "1970-01-01T00:00:00.000Z"
+    },
+    {
+      "command": "chrome --headless --screenshot login 1440x900",
+      "exitCode": 0,
+      "status": "pass",
+      "summary": "desktop screenshot captured; logo top-left, VN with flag and chevron top-right, hero text and key visual, footer at bottom; button left-aligned vs TC expectation of centered",
+      "ts": "1970-01-01T00:00:00.000Z"
+    },
+    {
+      "command": "npm test",
+      "exitCode": 0,
+      "status": "pass",
+      "summary": "vitest run: 39/39 passed across 6 files; count 39 confirmed correct per orchestrator triage",
+      "ts": "1970-01-01T00:00:00.000Z"
+    },
+    {
+      "command": "npx tsc --noEmit",
+      "exitCode": 0,
+      "status": "pass",
+      "summary": "typecheck clean after footer and proxy try/catch fixes",
+      "ts": "1970-01-01T00:00:00.000Z"
+    },
+    {
+      "command": "npx eslint src",
+      "exitCode": 0,
+      "status": "pass",
+      "summary": "eslint clean on src",
+      "ts": "1970-01-01T00:00:00.000Z"
+    },
+    {
+      "command": "npm run lint",
+      "exitCode": 0,
+      "status": "pass",
+      "summary": "lint green after .claude/** ignore; previously exit 1 with 717 errors all under .claude/",
+      "ts": "1970-01-01T00:00:00.000Z"
+    },
+    {
+      "command": "npm run build",
+      "exitCode": 0,
+      "status": "pass",
+      "summary": "next build compiled; routes /, /login, /todo, /auth/callback; zero warnings in log",
+      "ts": "1970-01-01T00:00:00.000Z"
+    },
+    {
+      "command": "bash smoke-v2.sh against npx next dev -p 3100 with placeholder .env.local",
+      "exitCode": 0,
+      "status": "pass",
+      "summary": "10 of 10 pass: login 200, ROOT FURTHER, VN, footer fixed bottom-0 in HTML; todo 307 to /login with no cookie and with stale sb cookie; auth callback 307 to /login?error=oauth",
+      "ts": "1970-01-01T00:00:00.000Z"
+    },
+    {
+      "command": "chrome --headless --screenshot login 1440x900",
+      "exitCode": 0,
+      "status": "pass",
+      "summary": "footer rendered at bottom of viewport with own background; no overlap with hero",
+      "ts": "1970-01-01T00:00:00.000Z"
+    },
+    {
+      "command": "npm test (after avatar-host hardening in get-display-user)",
+      "exitCode": 0,
+      "status": "pass",
+      "summary": "vitest run: 40/40 tests passed across 6 files (added googleusercontent-only avatar rejection tests)",
+      "ts": "2026-10-19T15:15:32.049Z"
+    },
+    {
+      "command": "npx tsc --noEmit (after avatar-host hardening)",
+      "exitCode": 0,
+      "status": "pass",
+      "summary": "typecheck clean",
+      "ts": "2026-10-19T15:15:32.049Z"
+    }
+  ]
+}

@@ -1,0 +1,5 @@
+{
+  "command": "npm run build",
+  "exitCode": 0,
+  "summary": "next build 16.4.2: compiled, TypeScript pass, 7 static pages, routes /, /login, /todo, /auth/callback, Proxy [exit 0]"
+}

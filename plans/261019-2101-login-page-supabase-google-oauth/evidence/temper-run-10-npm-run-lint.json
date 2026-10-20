@@ -1,0 +1,1 @@
+{"command":"npm run lint","exitCode":1,"summary":"eslint exit 1: 717 errors and 258 warnings, all under .claude/ (hooks 121, skills 40, workflows 7, scripts 2, statusline 1); zero findings in src/"}

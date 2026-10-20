@@ -1,0 +1,1 @@
+{"command":"npx tsc --noEmit","exitCode":0,"summary":"typecheck clean after footer and proxy try/catch fixes"}
