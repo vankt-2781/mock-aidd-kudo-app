@@ -7,9 +7,10 @@ type PrelaunchCountdownUnitProps = {
 };
 
 export function PrelaunchCountdownUnit({ value, label }: PrelaunchCountdownUnitProps) {
-  const digits = value.padStart(2, "0").slice(-2).split("");
+  const padded = value.padStart(2, "0").slice(-2);
+  const digits = padded.split("");
   return (
-    <div role="group" aria-label={`${value} ${label}`} className="flex flex-col items-start gap-3 lg:gap-[21px]">
+    <div role="group" aria-label={`${padded} ${label}`} className="flex flex-col items-start gap-3 lg:gap-[21px]">
       <div className="flex items-center gap-2 sm:gap-4 lg:gap-[21px]">
         {digits.map((digit, index) => (
           <div
