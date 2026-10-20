@@ -13,6 +13,7 @@
 | F001 automated test coverage (unit+E2E) | Component unit tests (vitest+jsdom) + Playwright E2E for TC001–TC041 | Complete (2026-10-20) |
 | F003 — Homepage SAA | Public homepage at `/`, countdown, auth-aware header, admin guard, placeholder routes, vi/en i18n | Complete (2026-10-20) |
 | F004 — Awards Information | Full `/awards` page: hero, category nav (scroll-spy + focus a11y), 6 award cards, Kudos promo, vi/en i18n | Complete (2026-10-20) |
+| F005 — Countdown Prelaunch | `/countdown` live ticker, proxy launch gate with admin bypass, `GET /api/event-config`, `EVENT_START_AT` unification, vi/en i18n | Complete (2026-10-20) |
 | Todo app (main feature) | Real `/todo` functionality replacing the placeholder | Not started |
 
 ## F001 — Login with Google (shipped)
@@ -68,6 +69,21 @@ TC coverage 15/15 mapped (14 automated + 1 manual), 2 recorded deviations (publi
 `/awards` route vs TC — pending PM) —
 map at `plans/261020-1440-awards-information-implementation/reports/awards-tc-coverage-map.md`.
 Post-inspection fix: `CategoryNav` `ariaLabel` made required + tests updated.
+
+## F005 — Countdown Prelaunch (complete 2026-10-20)
+
+Plan: `plans/261020-1656-countdown-prelaunch-implementation/plan.md` — all 5 phases completed
+(plus Track A UI done up front).
+
+**Quality gates:** 312/312 vitest unit (35 files), 105/105 Playwright E2E,
+`tsc`/`eslint`/`lint`/`build` all exit 0. Inspection SEALED (score 8, 0 critical);
+3 Accept findings fixed post-inspection, 3 Defer findings logged.
+Pre-launch gate proven by unit matrix + scripted smoke —
+report at `plans/261020-1656-countdown-prelaunch-implementation/reports/tester-261020-prelaunch-smoke.md`.
+Spec promoted as `docs/features/F005_CountdownPrelaunch/` + `docs/screens/SCR006_CountdownPrelaunch/`.
+
+**Breaking:** `EVENT_START_AT` (server-only) replaces `NEXT_PUBLIC_EVENT_START_AT` —
+existing `.env.local` files need manual cleanup + dev server restart.
 
 ## Next Milestones
 
