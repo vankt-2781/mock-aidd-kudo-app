@@ -24,6 +24,8 @@ export default defineConfig({
     command: "npm run dev",
     url: `${BASE_URL}/login`,
     reuseExistingServer: true,
+    // Post-launch: gate off for e2e; pre-launch behavior is covered by unit tests.
+    env: { ...(process.env as Record<string, string>), EVENT_START_AT: "2025-12-26T18:30:00+07:00" },
     timeout: 120_000,
   },
 });
