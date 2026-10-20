@@ -1,0 +1,34 @@
+{
+  "task": "Implement the Awards Information page (MoMorph screen zFYDgyj_pD, He thong giai) at /awards: hero, category nav with scroll-spy, 6 award detail cards, Kudos promo, vi/en dictionary, full unit + e2e verification (feature F004).",
+  "mode": "interactive",
+  "acceptanceCriteria": [
+    "/awards renders the design with exact award quantities and prize values",
+    "category nav click scrolls to the section with active gold underline state and focus on the heading",
+    "scroll-spy follows the upper third of the viewport without touching the url hash",
+    "page content and tab title follow the VN EN switcher",
+    "homepage deep links to the six section ids keep working",
+    "all unit and e2e suites green with every MoMorph TC row mapped or justified"
+  ],
+  "touchpoints": [
+    "src/app/(site)/awards/**",
+    "src/components/awards/**",
+    "src/lib/i18n/awards-dictionary*",
+    "src/lib/i18n/home-dictionary* (placeholder key removal)",
+    "e2e/awards-information.spec.ts",
+    "e2e/README.md",
+    "public/images/awards/**"
+  ],
+  "blastRadius": [
+    "awards placeholder page replaced; section ids unchanged so F003 deep-link e2e stays green",
+    "home dictionary placeholder.awardsTitle removed (grep-verified unused)",
+    "shared KudosPromo reused unchanged; (site) layout untouched; proxy untouched (/awards public)",
+    "existing suites included in totals: 186 unit, 98 e2e"
+  ],
+  "contracts": [
+    "section ids = six canonical slugs from AWARD_CATEGORIES",
+    "CategoryNavProps {items, ariaLabel?} unchanged across phases",
+    "selectActiveSection pure ALG with SPY_LINE_RATIO 0.34; scrolling never writes the hash",
+    "getAwardsMessages(locale) parity vi/en; tab title via generateMetadata per locale",
+    "recorded TC deviations: public access and /awards route (TC said auth-only /he-thong-giai)"
+  ]
+}

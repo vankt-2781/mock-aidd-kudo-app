@@ -1,0 +1,5 @@
+{
+  "command": "npx tsc --noEmit && npm test (after required-ariaLabel fix per inspection Accept finding)",
+  "exitCode": 0,
+  "summary": "typecheck clean; all unit tests pass after making CategoryNav ariaLabel required and updating its tests"
+}

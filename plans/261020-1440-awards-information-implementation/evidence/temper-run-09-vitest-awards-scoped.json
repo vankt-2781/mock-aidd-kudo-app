@@ -1,0 +1,1 @@
+{"command":"npx vitest run src/components/awards src/lib/i18n/awards-dictionary.test.ts src/lib/site/award-categories.test.ts","exitCode":0,"summary":"awards-scoped unit: 4 files, 27/27 tests passed"}
