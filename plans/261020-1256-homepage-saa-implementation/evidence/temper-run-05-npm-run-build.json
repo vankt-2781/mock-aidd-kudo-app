@@ -1,0 +1,5 @@
+{
+  "command": "npm run build",
+  "exitCode": 0,
+  "summary": "next 16.4.2 build compiled, TypeScript ok, 11 routes generated"
+}

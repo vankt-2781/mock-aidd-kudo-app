@@ -1,0 +1,5 @@
+{
+  "command": "npm test",
+  "exitCode": 0,
+  "summary": "flake check 1: vitest 164/164 passed, 0 failed"
+}

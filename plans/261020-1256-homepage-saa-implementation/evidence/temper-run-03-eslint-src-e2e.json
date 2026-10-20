@@ -1,0 +1,5 @@
+{
+  "command": "npx eslint src e2e playwright.config.ts",
+  "exitCode": 0,
+  "summary": "eslint clean on src, e2e, playwright.config.ts"
+}

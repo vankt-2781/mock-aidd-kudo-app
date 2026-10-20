@@ -1,0 +1,60 @@
+{
+  "score": 8,
+  "criticalCount": 0,
+  "decision": "SEALED",
+  "acceptanceCovered": [
+    "homepage at / renders the MoMorph design with VN default and EN switch -- resolveLocale whitelists vi/en (tampered->vi), setLocaleAction whitelists input, httpOnly cookie; e2e homepage-i18n + public-render green",
+    "countdown computes from NEXT_PUBLIC_EVENT_START_AT with zero fallback on invalid -- strict ISO parser rejects lenient/rolled dates, computeCountdown clamps at 0 and zero-pads; server Date.now only after connection(); timer re-armed per minute boundary and cleared on unmount",
+    "header adapts to visitor, signed-in user and admin roles -- getCurrentViewer uses getUser (not getSession), isAdminUser reads app_metadata only; e2e homepage-auth-header uses real session cookies and admin fixture via admin API",
+    "award cards deep-link to /awards hash anchors and placeholder routes exist with admin guard -- awardHref tested; /admin re-checks decideAdminAccess server-side per request, deny-by-default for visitor and non-admin",
+    "all unit and e2e suites green with every MoMorph TC row mapped or justified -- vitest re-run by reviewer passes; temper-results 9 pass + 1 skipped-tool; coverage map present",
+    "tsc eslint lint and build all exit 0 -- recorded in temper-results.json (not re-run by reviewer except vitest)"
+  ],
+  "regressionChecked": [
+    "src/proxy.ts and matcher unchanged (git diff empty); decide-route-redirect keeps / public, /login and /todo behavior",
+    "login and todo routes untouched (no diff under src/app/login, todo)",
+    "src/app/page.tsx deletion replaced by (site)/page.tsx at same path, no duplicate route",
+    "e2e grep: no hardcoded Supabase keys; keys read at runtime from env or supabase status",
+    "no dangerouslySetInnerHTML anywhere in src; dictionary/award content rendered as React text",
+    "setLocaleAction server action input whitelisted"
+  ],
+  "contractStatus": "OK",
+  "refuted": [],
+  "unproven": [],
+  "reachableRegressions": [],
+  "findings": [
+    {
+      "severity": "Medium",
+      "category": "Security",
+      "location": "src/app/(site)/admin/page.tsx:11-17",
+      "summary": "Guard redirect() runs inside Suspense after the shell streams, so non-admins get HTTP 200 plus client-side redirect, not a 307. No admin content leaks (fallback null) but guard is not enforced at proxy/HTTP-status level; future admin data must stay behind the same per-request check",
+      "disposition": "Defer"
+    },
+    {
+      "severity": "Low",
+      "category": "Error handling",
+      "location": "src/lib/auth/get-current-viewer.ts:15-23",
+      "summary": "Broad try/catch wraps connection(); Next docs advise not catching dynamic-API signals. Build and e2e pass, so currently benign; narrow the try to the supabase calls",
+      "disposition": "Defer"
+    },
+    {
+      "severity": "Low",
+      "category": "Authorization",
+      "location": "src/app/(site)/admin/page.tsx:9",
+      "summary": "Admin role is based solely on app_metadata.role string; no audit or role-source doc beyond permissions.md. Acceptable for placeholder route, revisit when real admin features land",
+      "disposition": "Defer"
+    },
+    {
+      "severity": "Low",
+      "category": "Correctness",
+      "location": "src/components/home/live-hero-countdown.tsx:30-34",
+      "summary": "When remaining is an exact multiple of 60s the timer fires after 1ms (one extra immediate tick); harmless, no leak, cleared on unmount",
+      "disposition": "Reject"
+    }
+  ],
+  "riskGate": {
+    "touchesSensitiveArea": true,
+    "signoffRequired": true,
+    "humanSignedOff": true
+  }
+}

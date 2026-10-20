@@ -1,0 +1,5 @@
+{
+  "command": "npx playwright test --reporter=json",
+  "exitCode": 0,
+  "summary": "flake check 2: playwright 79 expected, 0 unexpected, 0 flaky (23.5s); per-test timings captured"
+}

@@ -1,0 +1,74 @@
+{
+  "commands": [
+    {
+      "command": "npm test",
+      "exitCode": 0,
+      "status": "pass",
+      "summary": "vitest: 164/164 passed, 24 files, 0 failed (1.65s)",
+      "ts": "1970-01-01T00:00:00.000Z"
+    },
+    {
+      "command": "npx tsc --noEmit",
+      "exitCode": 0,
+      "status": "pass",
+      "summary": "typecheck clean, no diagnostics",
+      "ts": "1970-01-01T00:00:00.000Z"
+    },
+    {
+      "command": "npx eslint src e2e playwright.config.ts",
+      "exitCode": 0,
+      "status": "pass",
+      "summary": "eslint clean on src, e2e, playwright.config.ts",
+      "ts": "1970-01-01T00:00:00.000Z"
+    },
+    {
+      "command": "npm run lint",
+      "exitCode": 0,
+      "status": "pass",
+      "summary": "project lint script clean",
+      "ts": "1970-01-01T00:00:00.000Z"
+    },
+    {
+      "command": "npm run build",
+      "exitCode": 0,
+      "status": "pass",
+      "summary": "next 16.4.2 build compiled, TypeScript ok, 11 routes generated",
+      "ts": "1970-01-01T00:00:00.000Z"
+    },
+    {
+      "command": "npm run test:e2e",
+      "exitCode": 0,
+      "status": "pass",
+      "summary": "playwright: 79 passed, 0 failed, 0 flaky, 0 skipped (19.9s)",
+      "ts": "1970-01-01T00:00:00.000Z"
+    },
+    {
+      "command": "npm test",
+      "exitCode": 0,
+      "status": "pass",
+      "summary": "flake check 1: vitest 164/164 passed, 0 failed",
+      "ts": "1970-01-01T00:00:00.000Z"
+    },
+    {
+      "command": "npm run test:e2e",
+      "exitCode": 0,
+      "status": "pass",
+      "summary": "flake check 1: playwright 79/79 passed, 0 failed (19.1s)",
+      "ts": "1970-01-01T00:00:00.000Z"
+    },
+    {
+      "command": "npx vitest run --coverage",
+      "exitCode": 0,
+      "status": "skipped",
+      "summary": "BLOCKED: @vitest/coverage-v8 not installed; no coverage numbers produced — provider not installed; percentage metrics out of scope this run",
+      "ts": "1970-01-01T00:00:00.000Z"
+    },
+    {
+      "command": "npx playwright test --reporter=json",
+      "exitCode": 0,
+      "status": "pass",
+      "summary": "flake check 2: playwright 79 expected, 0 unexpected, 0 flaky (23.5s); per-test timings captured",
+      "ts": "1970-01-01T00:00:00.000Z"
+    }
+  ]
+}

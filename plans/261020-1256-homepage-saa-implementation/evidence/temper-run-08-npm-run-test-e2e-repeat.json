@@ -1,0 +1,5 @@
+{
+  "command": "npm run test:e2e",
+  "exitCode": 0,
+  "summary": "flake check 1: playwright 79/79 passed, 0 failed (19.1s)"
+}
