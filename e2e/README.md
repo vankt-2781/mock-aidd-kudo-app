@@ -71,3 +71,26 @@ The countdown specs drive time with `page.clock` and read the event start from t
 - Exact pixel sizes of logo (spec 64x60; built 52x48 per Figma frame) and visual polish (glow, blur): visual review.
 - ID-60 invalid-env fallback at the browser level (env fixed for the dev server): unit-covered only.
 - Any TC row in the CSV beyond the 62 digested IDs is not represented in the digest; verify in Phase 08.
+
+# F004 Awards Information: E2E coverage
+
+Spec: `awards-information` (19 tests; titles cite the MoMorph `ID-xx` rows). Public page, no auth needed
+(one test repeats ID-0/1 with the `signedInContext` fixture). Click tests use the default smooth scroll and poll on
+`aria-current` / viewport / focus; no fixed sleeps.
+
+| TC IDs | Coverage |
+|--------|----------|
+| ID-0, 1 | e2e guest + authenticated open `/awards`: 200, no redirect. DEVIATION: the TC expects auth-only `/he-thong-giai`; clarifications make it public at `/awards` |
+| ID-2 | e2e `homepage-navigation` ID-21 (header Awards Information to `/awards`, selected item) plus deep-link tests; not duplicated |
+| ID-3-8 | e2e `awards-information` (layout order at 1440 and 375, caption + gold h1, 6 nav items in order, exact quantity/prize per card incl. Signature "Hoặc", 336x336 loaded images, Kudos block) |
+| ID-9-11 | e2e click each item: card in viewport, one `aria-current`, `#slug`, focus on card h2; gold/underline swap; hover background |
+| ID-12 | e2e Kudos "Chi tiết" opens `/kudos` |
+| ID-13 | e2e `/awards#khong-ton-tai`: no page/console error, page at top, first item active |
+| extra | scroll-spy (active follows scroll, hash unchanged), `/awards#mvp` on load, reduced-motion click, VN/EN copy + tab title + reload persistence, header nav selected state |
+
+## MANUAL / not automatable
+
+- ID-14 (Kudos navigation network failure to friendly error): `/kudos` is a placeholder page that renders, so a normal
+  navigation succeeds. Verify by hand: DevTools offline, click "Chi tiết", expect the browser/Next error handling, not a blank page.
+- EN copy and the EN tab title are dev drafts pending PM review; e2e asserts the current draft strings.
+- Visual polish (glow, text-shadow, pixel match of the keyvisual crop): visual review.
