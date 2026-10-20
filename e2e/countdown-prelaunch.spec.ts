@@ -3,9 +3,9 @@ import { expect, test } from "@playwright/test";
 import { test as authTest } from "./fixtures";
 
 // F005 Countdown Prelaunch, POST-launch environment (playwright.config.ts pins EVENT_START_AT to a past date,
-// so the launch gate is inert and /countdown redirects to /). Pre-launch gating is covered by the unit matrix
-// (src/lib/launch-gate/decide-launch-gate-redirect.test.ts, src/proxy.test.ts) and the scripted smoke in
-// plans/261020-1656-countdown-prelaunch-implementation/reports/tester-261020-prelaunch-smoke.md.
+// so the launch gate is inert and /countdown redirects to /). Pre-launch gating is covered in the browser by
+// e2e/prelaunch-gate.spec.ts (npm run test:e2e:prelaunch), plus the unit matrix
+// (src/lib/launch-gate/decide-launch-gate-redirect.test.ts, src/proxy.test.ts).
 // Spec IDs: SC-001 (event-config API), SC-004 (post-launch /countdown -> /), FR-007 (gate inert after launch).
 
 // Must match the EVENT_START_AT pin in playwright.config.ts webServer.env.

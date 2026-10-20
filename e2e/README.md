@@ -97,22 +97,34 @@ Spec: `awards-information` (19 tests; titles cite the MoMorph `ID-xx` rows). Pub
 
 # F005 Countdown Prelaunch: E2E coverage
 
-Spec: `countdown-prelaunch` (post-launch environment: `playwright.config.ts` pins `EVENT_START_AT` to a past date,
-so the launch gate is inert). `GET /api/event-config` is asserted against that pin; the homepage hero's
-`data-target-date` must equal the API `startAt`. Pre-launch behaviour cannot be driven from e2e (the server clock
-is not controllable from the browser, and one dev server carries one env), so it is covered by the unit matrix and
-the scripted pre-launch smoke below.
+Two Playwright configs, two environments. Both are self-contained; neither reuses the other's server.
+
+| Run | Command | Config | Env pin | Spec |
+|-----|---------|--------|---------|------|
+| Post-launch (default) | `npm run test:e2e` | `playwright.config.ts` (:3000, reuses a dev server) | `EVENT_START_AT=2025-12-26T18:30:00+07:00` (gate inert) | `countdown-prelaunch.spec.ts` (+ the other suites) |
+| Pre-launch | `npm run test:e2e:prelaunch` | `playwright.prelaunch.config.ts` (:3100, always fresh) | `EVENT_START_AT=2099-01-01T00:00:00+07:00` (gate active) | `prelaunch-gate.spec.ts` |
+
+The pre-launch config runs `npm run dev` with `NEXT_DIST_DIR=.next-prelaunch` (own build dir, gitignored, and
+ignored by ESLint), so it never collides with a running dev server. The default config's `testIgnore` keeps the
+pre-launch spec out of the post-launch run. Session cookies are bound to the active `baseURL` (`buildSessionCookies`),
+so the signed-in and admin fixtures work on either port.
+
+`GET /api/event-config` is asserted against the post-launch pin; the homepage hero's `data-target-date` must equal the
+API `startAt`. Pre-launch browser behaviour (gate redirects, bypass, page render, live minute roll-over) is asserted in
+`prelaunch-gate.spec.ts` against the :3100 server. The live tick uses Playwright's `page.clock`, so the minute
+roll-over is deterministic rather than a sleep.
 
 | Spec ID | Coverage |
 |---------|----------|
-| SC-004 | e2e `countdown-prelaunch`: guest, signed-in user and admin opening `/countdown` all end at `/` |
-| FR-007 | e2e `countdown-prelaunch`: guest `/` and `/awards` return 200 without redirect |
+| SC-004 | e2e `countdown-prelaunch`: guest, signed-in user and admin opening `/countdown` all end at `/` (post-launch) |
+| FR-007 | e2e `countdown-prelaunch`: guest `/` and `/awards` return 200 without redirect (post-launch) |
 | SC-001 / FR-004 | e2e `countdown-prelaunch`: `/api/event-config` returns the pinned `startAt`, `Cache-Control: no-store`, equals homepage `data-target-date` |
-| SC-002 / SC-003 / FR-005 / FR-006 | unit: `src/lib/launch-gate/decide-launch-gate-redirect.test.ts`, `src/proxy.test.ts`; pre-launch e2e not feasible (fixed server env). Smoke: `plans/261020-1656-countdown-prelaunch-implementation/reports/tester-261020-prelaunch-smoke.md` |
-| SC-005 / FR-002 / FR-003 | unit: `src/lib/countdown/compute-countdown.test.ts`, live countdown tests; ticking and the 1.5 s zero redirect are MANUAL (see smoke report) |
+| SC-002 / FR-005 | e2e `prelaunch-gate`: guest `/` and `/awards` redirect to `/countdown`; signed-in non-admin likewise; `/login` stays 200 |
+| SC-003 / FR-006 | e2e `prelaunch-gate`: admin stays on `/` and loads `/awards`; unit `src/lib/launch-gate/decide-launch-gate-redirect.test.ts`, `src/proxy.test.ts` |
+| SC-005 / FR-002 / FR-003 | e2e `prelaunch-gate`: rendered units, uppercase white labels, live minute roll-over; unit `src/lib/countdown/compute-countdown.test.ts`, live countdown tests |
 | FR-009 | unit: `src/lib/i18n/prelaunch-dictionary.test.ts` |
 
 ## MANUAL / not automatable
 
-- Pre-launch gate in a real browser (SC-002, SC-003): needs a dev server started with a future `EVENT_START_AT`; run the scripted smoke.
-- Countdown ticking and the 1.5 s redirect at zero (SC-005): the server clock is not controllable from e2e; verify by hand with a near-future `EVENT_START_AT`.
+- 1.5 s client redirect to `/` at zero (FR-003): unit-covered by `use-launch-redirect.test.tsx` and the live countdown tests. Not driven end to end: the server gate reads the server clock, which the browser clock cannot move. Verify by hand with a near-future `EVENT_START_AT` if needed.
+- Expired (not garbage) session JWT: the test suite cannot mint a JWT without the project secret; the invalid-cookie path is covered instead.

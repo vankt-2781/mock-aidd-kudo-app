@@ -71,16 +71,16 @@ export async function deleteTestUser(userId: string): Promise<void> {
 }
 
 /** Builds the cookies @supabase/ssr would set: "base64-" + base64url(session JSON), chunked. */
-export function buildSessionCookies(session: Session): SessionCookie[] {
+export function buildSessionCookies(session: Session, origin: string = APP_ORIGIN): SessionCookie[] {
   const name = getAuthCookieName();
   const value = `base64-${Buffer.from(JSON.stringify(session), "utf8").toString("base64url")}`;
-  if (value.length <= MAX_CHUNK_SIZE) return [{ name, value, url: APP_ORIGIN }];
+  if (value.length <= MAX_CHUNK_SIZE) return [{ name, value, url: origin }];
   const cookies: SessionCookie[] = [];
   for (let i = 0; i * MAX_CHUNK_SIZE < value.length; i++) {
     cookies.push({
       name: `${name}.${i}`,
       value: value.slice(i * MAX_CHUNK_SIZE, (i + 1) * MAX_CHUNK_SIZE),
-      url: APP_ORIGIN,
+      url: origin,
     });
   }
   return cookies;

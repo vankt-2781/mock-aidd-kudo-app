@@ -6,6 +6,8 @@ const BASE_URL = `http://localhost:${PORT}`;
 export default defineConfig({
   testDir: "./e2e",
   testMatch: "**/*.spec.ts",
+  // Pre-launch spec needs its own server (playwright.prelaunch.config.ts); keep it out of the post-launch run.
+  testIgnore: "prelaunch-gate.spec.ts",
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 1 : 0,

@@ -10,6 +10,7 @@
     "test": "vitest run",
     "supabase": "supabase",
     "test:e2e": "playwright test",
+    "test:e2e:prelaunch": "playwright test -c playwright.prelaunch.config.ts",
     "test:all": "vitest run && playwright test"
   },
   "dependencies": {
