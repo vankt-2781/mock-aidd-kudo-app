@@ -9,7 +9,7 @@
     "GET /api/event-config returns {startAt} from EVENT_START_AT, dynamic with no-store caching",
     "NEXT_PUBLIC_EVENT_START_AT fully replaced by server-only EVENT_START_AT with homepage hero unchanged in behavior",
     "title and tab title localized vi/en; unit labels stay EN uppercase per design",
-    "all suites green: 312 unit, 105 e2e, tsc, lint, build"
+    "all suites green: 312 unit, 105 e2e + 13 prelaunch e2e, tsc, lint, build"
   ],
   "touchpoints": [
     "src/app/countdown/**",

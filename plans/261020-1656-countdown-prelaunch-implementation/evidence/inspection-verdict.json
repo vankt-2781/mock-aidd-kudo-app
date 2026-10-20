@@ -10,7 +10,7 @@
     "GET /api/event-config returns {startAt} from EVENT_START_AT, dynamic with no-store caching (route.test 5 cases incl. no-store header + connection() + env change reflected; e2e SC-001 asserts pinned startAt + no-store)",
     "NEXT_PUBLIC_EVENT_START_AT fully replaced by server-only EVENT_START_AT with homepage hero unchanged in behavior (grep gate clean across src/e2e/README/.env.example/playwright.config.ts; homepage passes readEventStart()?.iso as same prop; homepage e2e untouched and green)",
     "title and tab title localized vi/en; unit labels stay EN uppercase per design (prelaunch-dictionary.test vi/en parity + exact strings + uppercase labels both locales; smoke: NEXT_LOCALE cookie flips title; generateMetadata localized)",
-    "all suites green: 312 unit, 105 e2e, tsc, lint, build (orchestrator first-hand post-fix run: tsc 0, lint 0, vitest 312/312 across 35 files, build 0, playwright 105/105; temper-run-08)"
+    "all suites green: 312 unit, 105 e2e + 13 prelaunch e2e, tsc, lint, build (final first-hand runs: tsc 0, lint 0, vitest 312/312 across 35 files, build 0, playwright 105/105 on :3000, prelaunch suite 13/13; temper-run-08/09)"
   ],
   "regressionChecked": [
     "updateSessionInProxy contract extended additively (isAdmin); degrade-to-unauthenticated path unchanged",

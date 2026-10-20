@@ -55,6 +55,13 @@
       "status": "pass",
       "summary": "post-fix verification: typecheck clean, 312/312 unit (35 files, +28 incl. matcher coverage + /api/other //auth/other gated cases), build clean, full e2e 105/105 (30.4s)",
       "ts": "1970-01-01T00:00:00.000Z"
+    },
+    {
+      "command": "npx tsc --noEmit && npm test && npx playwright test && npm run test:e2e:prelaunch (F005 TC-coverage completion: +37 component unit tests, new 13-test pre-launch browser suite on isolated :3100 server, aria-label pad fix)",
+      "exitCode": 0,
+      "status": "pass",
+      "summary": "tsc 0; vitest 349/349 (38 files); default e2e 105/105 on :3000; prelaunch e2e 13/13 x4 stable runs; 17/17 MoMorph TCs mapped (reports/tester-261020-2226-f005-tc-coverage-map.md)",
+      "ts": "1970-01-01T00:00:00.000Z"
     }
   ]
 }
