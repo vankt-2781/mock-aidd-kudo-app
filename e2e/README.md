@@ -53,7 +53,7 @@ Specs: `homepage-public-render`, `homepage-navigation`, `homepage-i18n`, `homepa
 `homepage-auth-header`, `homepage-menus-and-guards` (test titles cite the MoMorph `ID-xx` rows).
 Admin tests use the `adminUser` / `adminContext` fixtures (`app_metadata.role = "admin"` via the admin API).
 The countdown specs drive time with `page.clock` and read the event start from the rendered
-`data-target-date` attribute, so they follow `NEXT_PUBLIC_EVENT_START_AT` instead of hardcoding it.
+`data-target-date` attribute, so they follow `EVENT_START_AT` instead of hardcoding it.
 
 | TC IDs | Coverage |
 |--------|----------|
@@ -94,3 +94,25 @@ Spec: `awards-information` (19 tests; titles cite the MoMorph `ID-xx` rows). Pub
   navigation succeeds. Verify by hand: DevTools offline, click "Chi tiết", expect the browser/Next error handling, not a blank page.
 - EN copy and the EN tab title are dev drafts pending PM review; e2e asserts the current draft strings.
 - Visual polish (glow, text-shadow, pixel match of the keyvisual crop): visual review.
+
+# F005 Countdown Prelaunch: E2E coverage
+
+Spec: `countdown-prelaunch` (post-launch environment: `playwright.config.ts` pins `EVENT_START_AT` to a past date,
+so the launch gate is inert). `GET /api/event-config` is asserted against that pin; the homepage hero's
+`data-target-date` must equal the API `startAt`. Pre-launch behaviour cannot be driven from e2e (the server clock
+is not controllable from the browser, and one dev server carries one env), so it is covered by the unit matrix and
+the scripted pre-launch smoke below.
+
+| Spec ID | Coverage |
+|---------|----------|
+| SC-004 | e2e `countdown-prelaunch`: guest, signed-in user and admin opening `/countdown` all end at `/` |
+| FR-007 | e2e `countdown-prelaunch`: guest `/` and `/awards` return 200 without redirect |
+| SC-001 / FR-004 | e2e `countdown-prelaunch`: `/api/event-config` returns the pinned `startAt`, `Cache-Control: no-store`, equals homepage `data-target-date` |
+| SC-002 / SC-003 / FR-005 / FR-006 | unit: `src/lib/launch-gate/decide-launch-gate-redirect.test.ts`, `src/proxy.test.ts`; pre-launch e2e not feasible (fixed server env). Smoke: `plans/261020-1656-countdown-prelaunch-implementation/reports/tester-261020-prelaunch-smoke.md` |
+| SC-005 / FR-002 / FR-003 | unit: `src/lib/countdown/compute-countdown.test.ts`, live countdown tests; ticking and the 1.5 s zero redirect are MANUAL (see smoke report) |
+| FR-009 | unit: `src/lib/i18n/prelaunch-dictionary.test.ts` |
+
+## MANUAL / not automatable
+
+- Pre-launch gate in a real browser (SC-002, SC-003): needs a dev server started with a future `EVENT_START_AT`; run the scripted smoke.
+- Countdown ticking and the 1.5 s redirect at zero (SC-005): the server clock is not controllable from e2e; verify by hand with a near-future `EVENT_START_AT`.

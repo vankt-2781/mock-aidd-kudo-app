@@ -29,7 +29,7 @@ npm run dev                              # http://localhost:3000
 | `/login` | Visitors (signed-in users redirect to `/todo`) |
 | `/todo` | Signed-in only |
 
-Homepage countdown target: set `NEXT_PUBLIC_EVENT_START_AT` (ISO-8601 with offset, e.g. `2025-12-26T18:30:00+07:00`; default in `.env.example`). Invalid or missing renders zeros.
+Homepage countdown target: set server-only `EVENT_START_AT` (ISO-8601 with offset, e.g. `2025-12-26T18:30:00+07:00`; default in `.env.example`). Invalid or missing renders zeros.
 
 ## Scripts
 | Command | Purpose |
