@@ -171,3 +171,10 @@ Authenticated landing page showing the signed-in user's avatar (or initial), nam
 **Route:** /awards
 **Description:** Public award-system page — hero, left category nav (6 items, click + scroll-spy active), 6 award detail cards with quantity and prize values, Sun* Kudos promo.
 **States:** default, section-active (per category), vi, en
+
+## SCR006_CountdownPrelaunch
+
+**Feature:** F005 — Countdown Prelaunch
+**Route:** /countdown
+**Description:** Full-screen prelaunch countdown — dark organic background, i18n title, three LED two-digit units (DAYS/HOURS/MINUTES) ticking every second; shows 00s at zero then auto-redirects to /; reachable pre-launch by everyone, redirects to / post-launch.
+**States:** counting, zero (00s + redirect), vi, en, fail-open (no valid EVENT_START_AT -> redirect /)

@@ -33,6 +33,7 @@
 | F002_StarterHomePage | Starter Home Page | ui | TypeScript | . (repo root) | P3 |
 | F003_HomepageSaa | Homepage SAA | ui | TypeScript | . (repo root) | P1 |
 | F004_AwardsInformation | Awards Information | ui | TypeScript | . (repo root) | P1 |
+| F005_CountdownPrelaunch | Countdown Prelaunch | mixed | TypeScript | . (repo root) | P1 |
 
 ## Feature Details
 
@@ -168,3 +169,11 @@ Public SAA 2025 homepage at /: hero + countdown (env-configured), awards grid li
 Public /awards page detailing the 6 SAA 2025 award categories (nav + detail cards with prizes) and Kudos promo; replaces the F003-era placeholder page; deep-linked from homepage cards via hash slugs.
 
 **Related:** screens: SCR005 | routes: /awards | models: —
+
+### F005 — Countdown Prelaunch
+
+**Priority:** P1 | **Type:** mixed | **Status:** implemented | **Slug:** F005_CountdownPrelaunch
+
+Standalone /countdown prelaunch page (LED countdown DAYS/HOURS/MINUTES, per-second tick, auto-redirect at zero) plus site-wide proxy launch gate (pre-launch non-admin traffic -> /countdown, admin bypass, fail-open on missing env, post-launch inversion), GET /api/event-config, and env unification on EVENT_START_AT (replaces NEXT_PUBLIC_EVENT_START_AT).
+
+**Related:** screens: SCR006 | routes: /countdown, /api/event-config | models: —

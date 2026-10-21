@@ -53,7 +53,7 @@ Specs: `homepage-public-render`, `homepage-navigation`, `homepage-i18n`, `homepa
 `homepage-auth-header`, `homepage-menus-and-guards` (test titles cite the MoMorph `ID-xx` rows).
 Admin tests use the `adminUser` / `adminContext` fixtures (`app_metadata.role = "admin"` via the admin API).
 The countdown specs drive time with `page.clock` and read the event start from the rendered
-`data-target-date` attribute, so they follow `NEXT_PUBLIC_EVENT_START_AT` instead of hardcoding it.
+`data-target-date` attribute, so they follow `EVENT_START_AT` instead of hardcoding it.
 
 | TC IDs | Coverage |
 |--------|----------|
@@ -94,3 +94,37 @@ Spec: `awards-information` (19 tests; titles cite the MoMorph `ID-xx` rows). Pub
   navigation succeeds. Verify by hand: DevTools offline, click "Chi tiết", expect the browser/Next error handling, not a blank page.
 - EN copy and the EN tab title are dev drafts pending PM review; e2e asserts the current draft strings.
 - Visual polish (glow, text-shadow, pixel match of the keyvisual crop): visual review.
+
+# F005 Countdown Prelaunch: E2E coverage
+
+Two Playwright configs, two environments. Both are self-contained; neither reuses the other's server.
+
+| Run | Command | Config | Env pin | Spec |
+|-----|---------|--------|---------|------|
+| Post-launch (default) | `npm run test:e2e` | `playwright.config.ts` (:3000, reuses a dev server) | `EVENT_START_AT=2025-12-26T18:30:00+07:00` (gate inert) | `countdown-prelaunch.spec.ts` (+ the other suites) |
+| Pre-launch | `npm run test:e2e:prelaunch` | `playwright.prelaunch.config.ts` (:3100, always fresh) | `EVENT_START_AT=2099-01-01T00:00:00+07:00` (gate active) | `prelaunch-gate.spec.ts` |
+
+The pre-launch config runs `npm run dev` with `NEXT_DIST_DIR=.next-prelaunch` (own build dir, gitignored, and
+ignored by ESLint), so it never collides with a running dev server. The default config's `testIgnore` keeps the
+pre-launch spec out of the post-launch run. Session cookies are bound to the active `baseURL` (`buildSessionCookies`),
+so the signed-in and admin fixtures work on either port.
+
+`GET /api/event-config` is asserted against the post-launch pin; the homepage hero's `data-target-date` must equal the
+API `startAt`. Pre-launch browser behaviour (gate redirects, bypass, page render, live minute roll-over) is asserted in
+`prelaunch-gate.spec.ts` against the :3100 server. The live tick uses Playwright's `page.clock`, so the minute
+roll-over is deterministic rather than a sleep.
+
+| Spec ID | Coverage |
+|---------|----------|
+| SC-004 | e2e `countdown-prelaunch`: guest, signed-in user and admin opening `/countdown` all end at `/` (post-launch) |
+| FR-007 | e2e `countdown-prelaunch`: guest `/` and `/awards` return 200 without redirect (post-launch) |
+| SC-001 / FR-004 | e2e `countdown-prelaunch`: `/api/event-config` returns the pinned `startAt`, `Cache-Control: no-store`, equals homepage `data-target-date` |
+| SC-002 / FR-005 | e2e `prelaunch-gate`: guest `/` and `/awards` redirect to `/countdown`; signed-in non-admin likewise; `/login` stays 200 |
+| SC-003 / FR-006 | e2e `prelaunch-gate`: admin stays on `/` and loads `/awards`; unit `src/lib/launch-gate/decide-launch-gate-redirect.test.ts`, `src/proxy.test.ts` |
+| SC-005 / FR-002 / FR-003 | e2e `prelaunch-gate`: rendered units, uppercase white labels, live minute roll-over; unit `src/lib/countdown/compute-countdown.test.ts`, live countdown tests |
+| FR-009 | unit: `src/lib/i18n/prelaunch-dictionary.test.ts` |
+
+## MANUAL / not automatable
+
+- 1.5 s client redirect to `/` at zero (FR-003): unit-covered by `use-launch-redirect.test.tsx` and the live countdown tests. Not driven end to end: the server gate reads the server clock, which the browser clock cannot move. Verify by hand with a near-future `EVENT_START_AT` if needed.
+- Expired (not garbage) session JWT: the test suite cannot mint a JWT without the project secret; the invalid-cookie path is covered instead.

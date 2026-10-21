@@ -37,7 +37,14 @@ test.describe("Homepage public render (visitor, VN default)", () => {
   }) => {
     await page.goto("/");
     await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
-    await expect(page.getByText("Coming soon")).toBeVisible();
+    // "Coming soon" follows the env-driven start (EVENT_START_AT): shown only before the start (ID-42/43).
+    const target = await page.locator("[data-target-date]").getAttribute("data-target-date");
+    const beforeStart = Date.parse(target ?? "") > Date.now();
+    if (beforeStart) {
+      await expect(page.getByText("Coming soon")).toBeVisible();
+    } else {
+      await expect(page.getByText("Coming soon")).toHaveCount(0);
+    }
     for (const label of ["DAYS", "HOURS", "MINUTES"]) {
       await expect(page.getByText(label, { exact: true })).toBeVisible();
     }

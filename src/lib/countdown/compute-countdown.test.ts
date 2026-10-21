@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { computeCountdown, parseEventStart } from "./compute-countdown";
+import { computeCountdown, formatCountdownUnit, parseEventStart } from "./compute-countdown";
 
 describe("parseEventStart", () => {
   it("parses ISO-8601 with numeric offset", () => {
@@ -55,5 +55,36 @@ describe("computeCountdown", () => {
   it("renders days above 99 as-is", () => {
     const now = new Date(start.getTime() - 120 * 86_400_000);
     expect(computeCountdown(start, now).days).toBe("120");
+  });
+
+  it("caps days at maxDays when provided (prelaunch)", () => {
+    const now = new Date(start.getTime() - 120 * 86_400_000);
+    expect(computeCountdown(start, now, { maxDays: 99 }).days).toBe("99");
+  });
+
+  it("keeps 99d23h59m intact under the cap", () => {
+    const now = new Date(start.getTime() - ((99 * 24 + 23) * 60 + 59) * 60_000);
+    expect(computeCountdown(start, now, { maxDays: 99 })).toEqual({ days: "99", hours: "23", minutes: "59", reachedZero: false });
+  });
+
+  it("stays uncapped when opts has no maxDays", () => {
+    const now = new Date(start.getTime() - 120 * 86_400_000);
+    expect(computeCountdown(start, now, {}).days).toBe("120");
+  });
+});
+
+describe("formatCountdownUnit", () => {
+  it.each([
+    [0, 23, "00"],
+    [9, 23, "09"],
+    [23, 23, "23"],
+    [-1, 23, "00"],
+    [25, 23, "00"],
+    [60, 59, "00"],
+    [59, 59, "59"],
+    [Number.NaN, 59, "00"],
+    [1.5, 59, "00"],
+  ])("formats %s (max %s) as %s", (value, max, expected) => {
+    expect(formatCountdownUnit(value, max)).toBe(expected);
   });
 });

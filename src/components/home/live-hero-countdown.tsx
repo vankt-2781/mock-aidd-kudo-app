@@ -8,7 +8,7 @@ const MINUTE_MS = 60_000;
 const ZERO_VALUES = { days: "00", hours: "00", minutes: "00" };
 
 export interface LiveHeroCountdownProps {
-  /** ISO-8601 event start with offset (NEXT_PUBLIC_EVENT_START_AT). Invalid/missing renders zeros. */
+  /** ISO-8601 event start with offset (EVENT_START_AT, server env, passed by page). Invalid/missing renders zeros. */
   targetDate?: string;
   /** Server-supplied epoch ms; used for first render so SSR and hydration agree. */
   initialNow: number;

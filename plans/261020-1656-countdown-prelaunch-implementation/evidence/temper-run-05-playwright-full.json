@@ -1,0 +1,1 @@
+{"command":"npx playwright test","exitCode":0,"summary":"playwright full suite: 105/105 passed (25.4s) incl. 7 new countdown-prelaunch tests; fresh webServer with pinned post-launch EVENT_START_AT"}

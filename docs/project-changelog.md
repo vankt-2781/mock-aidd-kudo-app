@@ -2,6 +2,27 @@
 
 > Living document. Every significant change, feature, and fix is recorded here.
 
+## 2026-10-20 — F005: Countdown Prelaunch (feature, shipped)
+
+**Summary:** Live `/countdown` prelaunch screen with per-second ticker (days capped at 99), a proxy launch gate that routes visitors to `/countdown` before the event start (admins bypass), a public `GET /api/event-config` endpoint, and unification of the event start time on a single server-only `EVENT_START_AT` env var.
+
+**Shipped:**
+
+- `/countdown` page: server page + `LivePrelaunchCountdown` 1 s ticker, zero → `00 00 00` → redirect to `/` (`useLaunchRedirect`, 1.5 s then 5 s retries), localized `generateMetadata`, aria-labels on countdown units.
+- Proxy launch gate: pure `decideLaunchGateRedirect` runs before the route guard; `isAdmin` from verified claims in `updateSessionInProxy`; fail-open on missing/past/invalid env (doubles as kill-switch); pre-launch allow-list narrowed to exact `/api/event-config` + `/auth/callback`.
+- `GET /api/event-config`: dynamic JSON `{ startAt }` with `Cache-Control: no-store`.
+- Foundation libs: `computeCountdown` opt-in `maxDays`, `formatCountdownUnit` display guard, `readEventStart` single env reader, vi/en prelaunch dictionary.
+- Tests: new unit coverage (gate matrix, proxy wiring, route, ticker/hook, `src/proxy-matcher.test.ts`) + 7 new E2E tests (`e2e/countdown-prelaunch.spec.ts`) + scripted pre-launch smoke.
+- Flake fixes (debugger, root cause): awards `#mvp` deep-link Suspense reveal via ResizeObserver re-scroll in `use-active-category.ts` (with settle guard vs user input/stale hash), visible-wait in awards spec, clock margin in homepage-countdown spec.
+
+**BREAKING:** `EVENT_START_AT` (server-only) replaces `NEXT_PUBLIC_EVENT_START_AT`. Existing `.env.local` files must drop the old var manually and set the new one, then restart the dev server. Playwright pins a past date (post-launch) so existing specs stay un-gated.
+
+**Verification:** 312/312 unit (35 files), 105/105 E2E; `tsc`/`eslint`/`lint`/`build` exit 0; inspection SEALED (score 8, 0 critical). Scripted pre-launch smoke at `plans/261020-1656-countdown-prelaunch-implementation/reports/tester-261020-prelaunch-smoke.md`. Spec promoted as `docs/features/F005_CountdownPrelaunch/` + `docs/screens/SCR006_CountdownPrelaunch/`.
+
+**Deferred (logged):** invalid-env warning log, redirect retry cap, env-rename deploy note. EN copy + metadata titles remain dev drafts pending PM review.
+
+---
+
 ## 2026-10-20 — F004: Awards Information (feature, shipped)
 
 **Summary:** Full `/awards` page replacing the F003-era placeholder: hero, category navigation with click + scroll-spy + focus accessibility, six award detail cards with exact prize copy, Kudos promo section, and vi/en localization including a localized tab title.

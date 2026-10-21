@@ -1,0 +1,1 @@
+{"command":"npx playwright test (3 consecutive full runs + --repeat-each=4 --workers=10 stress, by debugger after flake fixes)","exitCode":0,"summary":"3x 105/105 consecutive full runs; stress 420/420; previously-flaky awards #mvp deep-link fixed at root cause (Suspense reveal vs native hash scroll, ResizeObserver one-shot re-scroll)"}

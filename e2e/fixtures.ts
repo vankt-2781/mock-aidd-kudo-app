@@ -41,18 +41,18 @@ export const test = base.extend<AuthFixtures>({
     }
   },
   adminUser: async ({}, provide) => provideUser(provide, { role: "admin" }),
-  adminContext: async ({ browser, adminUser }, provide) => {
+  adminContext: async ({ browser, adminUser, baseURL }, provide) => {
     const context = await browser.newContext();
-    await context.addCookies(buildSessionCookies(adminUser.session));
+    await context.addCookies(buildSessionCookies(adminUser.session, baseURL));
     try {
       await provide(context);
     } finally {
       await context.close();
     }
   },
-  signedInContext: async ({ browser, testUser }, provide) => {
+  signedInContext: async ({ browser, testUser, baseURL }, provide) => {
     const context = await browser.newContext();
-    await context.addCookies(buildSessionCookies(testUser.session));
+    await context.addCookies(buildSessionCookies(testUser.session, baseURL));
     try {
       await provide(context);
     } finally {

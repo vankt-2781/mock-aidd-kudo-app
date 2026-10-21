@@ -56,6 +56,34 @@ export function useActiveCategory(slugs: readonly string[]) {
     };
     window.addEventListener("hashchange", onHashChange);
 
+    // The browser's one-shot load-time hash scroll runs while the streamed Suspense content is
+    // still hidden (zero layout), so it lands at the top. Re-align once the section gets a box —
+    // but never fight the user: any scroll input, a changed hash, or a 2s timeout cancels it.
+    const deepLinkSlug = fromHash();
+    const deepLinkTarget = deepLinkSlug ? document.getElementById(deepLinkSlug) : null;
+    let settleObserver: ResizeObserver | null = null;
+    let settleTimer = 0;
+    const cancelSettle = () => {
+      settleObserver?.disconnect();
+      settleObserver = null;
+      window.clearTimeout(settleTimer);
+      window.removeEventListener("wheel", cancelSettle);
+      window.removeEventListener("touchstart", cancelSettle);
+      window.removeEventListener("keydown", cancelSettle);
+    };
+    if (deepLinkTarget && typeof ResizeObserver !== "undefined") {
+      settleObserver = new ResizeObserver(() => {
+        const stillWanted = fromHash() === deepLinkSlug;
+        cancelSettle();
+        if (stillWanted) deepLinkTarget.scrollIntoView({ behavior: "auto", block: "start" });
+      });
+      settleObserver.observe(deepLinkTarget);
+      settleTimer = window.setTimeout(cancelSettle, 2000);
+      window.addEventListener("wheel", cancelSettle, { passive: true });
+      window.addEventListener("touchstart", cancelSettle, { passive: true });
+      window.addEventListener("keydown", cancelSettle);
+    }
+
     const recompute = () => {
       if (lock.locked) return;
       const bands = order.flatMap((slug) => {
@@ -81,6 +109,7 @@ export function useActiveCategory(slugs: readonly string[]) {
     return () => {
       window.removeEventListener("hashchange", onHashChange);
       observer?.disconnect();
+      cancelSettle();
       lock.release?.();
     };
   }, [key, store]);

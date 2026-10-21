@@ -6,6 +6,8 @@ const BASE_URL = `http://localhost:${PORT}`;
 export default defineConfig({
   testDir: "./e2e",
   testMatch: "**/*.spec.ts",
+  // Pre-launch spec needs its own server (playwright.prelaunch.config.ts); keep it out of the post-launch run.
+  testIgnore: "prelaunch-gate.spec.ts",
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 1 : 0,
@@ -24,6 +26,8 @@ export default defineConfig({
     command: "npm run dev",
     url: `${BASE_URL}/login`,
     reuseExistingServer: true,
+    // Post-launch: gate off for e2e; pre-launch behavior is covered by unit tests.
+    env: { ...(process.env as Record<string, string>), EVENT_START_AT: "2025-12-26T18:30:00+07:00" },
     timeout: 120_000,
   },
 });

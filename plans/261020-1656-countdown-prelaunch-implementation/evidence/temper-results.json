@@ -1,0 +1,67 @@
+{
+  "commands": [
+    {
+      "command": "npx tsc --noEmit",
+      "exitCode": 0,
+      "status": "pass",
+      "summary": "typecheck clean, no diagnostics (orchestrator first-hand run after all phases + flake fixes)",
+      "ts": "1970-01-01T00:00:00.000Z"
+    },
+    {
+      "command": "npm run lint",
+      "exitCode": 0,
+      "status": "pass",
+      "summary": "project lint script (eslint) clean",
+      "ts": "1970-01-01T00:00:00.000Z"
+    },
+    {
+      "command": "npm test",
+      "exitCode": 0,
+      "status": "pass",
+      "summary": "vitest run: 34 files, 284/284 tests passed (baseline 186 + 98 new: countdown lib cap/format, event-config reader, prelaunch dictionary, launch-gate decision matrix, proxy wiring, api route, live ticker, redirect hook)",
+      "ts": "1970-01-01T00:00:00.000Z"
+    },
+    {
+      "command": "npm run build",
+      "exitCode": 0,
+      "status": "pass",
+      "summary": "next 16.4.2 build: compiled, TypeScript pass; /api/event-config dynamic, /countdown partial prerender; no warnings",
+      "ts": "1970-01-01T00:00:00.000Z"
+    },
+    {
+      "command": "npx playwright test",
+      "exitCode": 0,
+      "status": "pass",
+      "summary": "playwright full suite: 105/105 passed (25.4s) incl. 7 new countdown-prelaunch tests; fresh webServer with pinned post-launch EVENT_START_AT",
+      "ts": "1970-01-01T00:00:00.000Z"
+    },
+    {
+      "command": "npx playwright test (3 consecutive full runs + --repeat-each=4 --workers=10 stress, by debugger after flake fixes)",
+      "exitCode": 0,
+      "status": "pass",
+      "summary": "3x 105/105 consecutive full runs; stress 420/420; previously-flaky awards #mvp deep-link fixed at root cause (Suspense reveal vs native hash scroll, ResizeObserver one-shot re-scroll)",
+      "ts": "1970-01-01T00:00:00.000Z"
+    },
+    {
+      "command": "EVENT_START_AT=2099-01-01T00:00:00+07:00 npm run dev + curl matrix (scripted pre-launch smoke)",
+      "exitCode": 0,
+      "status": "pass",
+      "summary": "pre-launch gate: / /awards /todo -> 307 /countdown; /countdown 200; /login 200; /auth/callback no-code -> /login?error=oauth; /api/event-config 200 no-store with 2099 date; vi/en title via NEXT_LOCALE cookie; recorded in reports/tester-261020-prelaunch-smoke.md",
+      "ts": "1970-01-01T00:00:00.000Z"
+    },
+    {
+      "command": "npx tsc --noEmit && npm test && npm run build && npx playwright test (after 3 inspection Accept fixes: ResizeObserver settle guard, narrowed pre-launch allow-list to /api/event-config + /auth/callback, proxy matcher coverage test)",
+      "exitCode": 0,
+      "status": "pass",
+      "summary": "post-fix verification: typecheck clean, 312/312 unit (35 files, +28 incl. matcher coverage + /api/other //auth/other gated cases), build clean, full e2e 105/105 (30.4s)",
+      "ts": "1970-01-01T00:00:00.000Z"
+    },
+    {
+      "command": "npx tsc --noEmit && npm test && npx playwright test && npm run test:e2e:prelaunch (F005 TC-coverage completion: +37 component unit tests, new 13-test pre-launch browser suite on isolated :3100 server, aria-label pad fix)",
+      "exitCode": 0,
+      "status": "pass",
+      "summary": "tsc 0; vitest 349/349 (38 files); default e2e 105/105 on :3000; prelaunch e2e 13/13 x4 stable runs; 17/17 MoMorph TCs mapped (reports/tester-261020-2226-f005-tc-coverage-map.md)",
+      "ts": "1970-01-01T00:00:00.000Z"
+    }
+  ]
+}

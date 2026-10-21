@@ -7,6 +7,7 @@ import { HeroSection } from "@/components/home/hero-section";
 import { KudosPromo } from "@/components/home/kudos-promo";
 import { LiveHeroCountdown } from "@/components/home/live-hero-countdown";
 import { RootFurtherContent } from "@/components/home/root-further-content";
+import { readEventStart } from "@/lib/event-config/read-event-start";
 import { getHomeMessages } from "@/lib/i18n/home-dictionary";
 import { getRequestLocale } from "@/lib/i18n/get-request-locale";
 import { AWARD_CATEGORIES, awardHref } from "@/lib/site/award-categories";
@@ -46,7 +47,7 @@ async function HomePageContent() {
         <HeroSection
           countdown={
             <LiveHeroCountdown
-              targetDate={process.env.NEXT_PUBLIC_EVENT_START_AT}
+              targetDate={readEventStart()?.iso}
               initialNow={initialNow}
               comingSoonLabel={m.hero.comingSoon}
               labels={m.hero.countdownLabels}

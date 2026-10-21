@@ -1,10 +1,13 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
+import { isAdminUser } from "../auth/is-admin-user";
 import { getSupabaseEnv } from "./supabase-env";
 
 export interface ProxySession {
   response: NextResponse;
   isAuthenticated: boolean;
+  /** True only for a verified session whose app_metadata.role is "admin"; false on any failure. */
+  isAdmin: boolean;
 }
 
 /** Refreshes the Supabase session cookies and reports whether a verified user exists. */
@@ -30,10 +33,15 @@ export async function updateSessionInProxy(request: NextRequest): Promise<ProxyS
   // not crash the proxy with a 500 (e.g. stale session cookie while the local stack is down).
   try {
     const { data, error } = await supabase.auth.getClaims();
-    return { response, isAuthenticated: !error && !!data?.claims };
+    const claims = !error ? data?.claims : undefined;
+    return {
+      response,
+      isAuthenticated: !!claims,
+      isAdmin: !!claims && isAdminUser({ app_metadata: claims.app_metadata }),
+    };
   } catch (err) {
     console.error("Supabase session check failed in proxy", err);
-    return { response, isAuthenticated: false };
+    return { response, isAuthenticated: false, isAdmin: false };
   }
 }
 

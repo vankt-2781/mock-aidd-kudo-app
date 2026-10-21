@@ -1,0 +1,76 @@
+{
+  "score": 8,
+  "criticalCount": 0,
+  "decision": "SEALED",
+  "acceptanceCovered": [
+    "/countdown renders the frame design with three LED units ticking every second, zero-padded, days capped at 99, invalid values clamped to 00 (unit: live-prelaunch-countdown.test 6 cases incl. days cap 99 + padding; formatCountdownUnit table clamps -1/25/60 to 00; e2e GUI TCs; visual check vs frame by Track A)",
+    "at or past zero all units show 00 and the page auto-redirects to / after 1.5s with a bounded retry loop guard (unit: use-launch-redirect.test 1500/6500/11500ms cadence + unmount cleanup; live-prelaunch-countdown zero cases)",
+    "pre-launch non-admin traffic on any route except /countdown /login /auth/* /api/* and assets is redirected to /countdown; admin (app_metadata.role admin) bypasses (unit: decide-launch-gate-redirect matrix 15 paths x admin/non-admin; proxy.test gate-before-guard + cookie carry; scripted smoke with 2099 date: / /awards /todo -> 307 /countdown, /login 200)",
+    "post-launch /countdown redirects to /; missing or invalid EVENT_START_AT fails open as launched (unit matrix now==start / now>start / start null; e2e SC-004 guest+user+admin /countdown -> /; fail-open tested in proxy.test with empty env)",
+    "GET /api/event-config returns {startAt} from EVENT_START_AT, dynamic with no-store caching (route.test 5 cases incl. no-store header + connection() + env change reflected; e2e SC-001 asserts pinned startAt + no-store)",
+    "NEXT_PUBLIC_EVENT_START_AT fully replaced by server-only EVENT_START_AT with homepage hero unchanged in behavior (grep gate clean across src/e2e/README/.env.example/playwright.config.ts; homepage passes readEventStart()?.iso as same prop; homepage e2e untouched and green)",
+    "title and tab title localized vi/en; unit labels stay EN uppercase per design (prelaunch-dictionary.test vi/en parity + exact strings + uppercase labels both locales; smoke: NEXT_LOCALE cookie flips title; generateMetadata localized)",
+    "all suites green: 312 unit, 105 e2e + 13 prelaunch e2e, tsc, lint, build (final first-hand runs: tsc 0, lint 0, vitest 312/312 across 35 files, build 0, playwright 105/105 on :3000, prelaunch suite 13/13; temper-run-08/09)"
+  ],
+  "regressionChecked": [
+    "updateSessionInProxy contract extended additively (isAdmin); degrade-to-unauthenticated path unchanged",
+    "gate runs before decideRouteRedirect; /countdown is not guarded by the /todo rule so guests are not bounced to /login",
+    "authenticated non-admin on /login pre-launch takes /todo then /countdown (extra hop, still gated)",
+    "computeCountdown optional maxDays; homepage caller unchanged",
+    "playwright webServer pins a past EVENT_START_AT so existing e2e stay ungated",
+    "git-tracked env files: only .env.example and supabase/.env.example"
+  ],
+  "contractStatus": "CHANGED",
+  "refuted": [],
+  "unproven": [],
+  "reachableRegressions": [],
+  "findings": [
+    {
+      "severity": "Medium",
+      "category": "Logic",
+      "location": "src/components/awards/use-active-category.ts:59-69",
+      "summary": "ResizeObserver re-scroll can hijack scroll: it fires whenever the deep-link section first gets a box, with no check that the user has not scrolled or that location.hash still equals the captured slug (user can click another category or scroll during slow Suspense streaming and be yanked back). Fix: in the callback bail out unless fromHash() === slug and no wheel/touch/keydown/scroll input occurred since mount, and add a ~2s safety disconnect",
+      "disposition": "Accept"
+    },
+    {
+      "severity": "Low",
+      "category": "Security",
+      "location": "src/lib/launch-gate/decide-launch-gate-redirect.ts:4",
+      "summary": "Allow-list prefixes /api/ and /auth/ are open-ended: any future API route or page added under them is reachable by non-admins pre-launch. Fine today (only /api/event-config exists); narrow to /api/event-config and /auth/callback or add a unit test that enumerates routes under src/app/api",
+      "disposition": "Accept"
+    },
+    {
+      "severity": "Low",
+      "category": "Testing",
+      "location": "src/proxy.ts:24-28",
+      "summary": "Matcher regex is not tested against the allow-list assumptions, and the pre-launch gate has no e2e (webServer pins a past date); only unit tests with mocked session cover it. Add a matcher test over sample paths and one pre-launch e2e project with a future EVENT_START_AT",
+      "disposition": "Accept"
+    },
+    {
+      "severity": "Low",
+      "category": "Logic",
+      "location": "src/lib/event-config/read-event-start.ts:12-16",
+      "summary": "Fail-open is per spec (BR-003) but means a production deploy that forgets EVENT_START_AT silently opens the whole site pre-launch; add a one-time server log warning when the var is set but invalid, and document the required env in the deploy checklist",
+      "disposition": "Defer"
+    },
+    {
+      "severity": "Low",
+      "category": "Logic",
+      "location": "src/components/prelaunch/use-launch-redirect.ts:19-21",
+      "summary": "Retry interval repeats router.replace every 5s indefinitely if the proxy keeps bouncing (clock skew or env mismatch); bounded in rate, not in count. Cap at a handful of retries or stop once the tab is hidden",
+      "disposition": "Defer"
+    },
+    {
+      "severity": "Low",
+      "category": "Compatibility",
+      "location": ".env.example:5-7",
+      "summary": "Breaking env rename (NEXT_PUBLIC_EVENT_START_AT removed): deployments without server-side EVENT_START_AT silently fail open; call out in changelog and deploy notes",
+      "disposition": "Defer"
+    }
+  ],
+  "riskGate": {
+    "touchesSensitiveArea": true,
+    "signoffRequired": true,
+    "humanSignedOff": true
+  }
+}

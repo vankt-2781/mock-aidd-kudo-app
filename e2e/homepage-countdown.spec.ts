@@ -4,7 +4,7 @@ const MINUTE = 60_000;
 const HOUR = 60 * MINUTE;
 const DAY = 24 * HOUR;
 
-/** The event start is env-driven (NEXT_PUBLIC_EVENT_START_AT); read it from the rendered page, never hardcode. */
+/** The event start is env-driven (EVENT_START_AT, server-only); read it from the rendered page, never hardcode. */
 async function readEventStart(page: Page): Promise<number> {
   await page.goto("/");
   const iso = await page.locator("[data-target-date]").getAttribute("data-target-date");
@@ -40,7 +40,7 @@ test.describe("Homepage countdown (page.clock drives time; start read from the e
   });
 
   test("ID-56 / ID-57 multi-digit days are shown unpadded and hours/minutes roll correctly", async ({ page }) => {
-    await openAt(page, start - (10 * DAY + 23 * HOUR + 59 * MINUTE + 1_000));
+    await openAt(page, start - (10 * DAY + 23 * HOUR + 59 * MINUTE + 30_000));
     await expectValues(page, "10", "23", "59");
   });
 

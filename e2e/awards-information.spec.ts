@@ -250,6 +250,8 @@ test.describe("Awards Information: category nav behavior", () => {
 
   test("scroll-spy: scrolling to a far card moves the active item WITHOUT changing the URL hash", async ({ page }) => {
     await page.goto("/awards");
+    // Streamed Suspense content can still be hidden (zero layout) at load; scrollIntoView is a no-op until revealed.
+    await expect(section(page, "top-talent")).toBeVisible();
     for (const slug of ["best-manager", "mvp", "top-project"] as const) {
       await section(page, slug).evaluate((el) => el.scrollIntoView({ behavior: "instant", block: "start" }));
       await expect.poll(() => scrollY(page)).toBeGreaterThan(0);

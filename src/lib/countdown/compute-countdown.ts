@@ -27,15 +27,33 @@ function pad2(n: number): string {
   return String(n).padStart(2, "0");
 }
 
+/** Zero-padded unit for display; NaN, non-integer, negative or above-max values render "00". */
+export function formatCountdownUnit(value: number, max: number): string {
+  if (!Number.isInteger(value) || value < 0 || value > max) return "00";
+  return pad2(value);
+}
+
+export interface ComputeCountdownOptions {
+  /** Upper bound for the days value (e.g. 99). Omit to leave days uncapped. */
+  maxDays?: number;
+}
+
 /** Whole-minute countdown, clamped at zero. Pure: callers supply `now`. */
-export function computeCountdown(eventStart: Date, now: Date): CountdownValues {
+export function computeCountdown(
+  eventStart: Date,
+  now: Date,
+  options?: ComputeCountdownOptions,
+): CountdownValues {
   const diffMs = eventStart.getTime() - now.getTime();
   const reachedZero = diffMs <= 0;
   const totalMinutes = reachedZero ? 0 : Math.floor(diffMs / 60_000);
+  const rawDays = Math.floor(totalMinutes / 1440);
+  const maxDays = options?.maxDays;
+  const days = maxDays !== undefined && Number.isFinite(maxDays) ? Math.min(rawDays, maxDays) : rawDays;
   return {
-    days: pad2(Math.floor(totalMinutes / 1440)),
-    hours: pad2(Math.floor((totalMinutes % 1440) / 60)),
-    minutes: pad2(totalMinutes % 60),
+    days: pad2(days),
+    hours: formatCountdownUnit(Math.floor((totalMinutes % 1440) / 60), 23),
+    minutes: formatCountdownUnit(totalMinutes % 60, 59),
     reachedZero,
   };
 }
