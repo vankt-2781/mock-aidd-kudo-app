@@ -1,5 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { createClient, type Session, type SupabaseClient } from "@supabase/supabase-js";
+import { releaseTestUserRows } from "./kudos-db-admin";
 import { getSupabaseLocalEnv } from "./supabase-local-env";
 
 export interface TestUser {
@@ -65,9 +66,17 @@ export async function createTestUser(options: { appMetadata?: Record<string, unk
   return { id: created.user.id, email, name, session: signedIn.session };
 }
 
+/**
+ * Removes the user's kudos rows and profile links first (the auth trigger's profile would otherwise
+ * be orphaned), then the auth user itself.
+ */
 export async function deleteTestUser(userId: string): Promise<void> {
-  const { error } = await adminClient().auth.admin.deleteUser(userId);
-  if (error) throw new Error(`deleteUser(${userId}) failed: ${error.message}`);
+  try {
+    await releaseTestUserRows(userId);
+  } finally {
+    const { error } = await adminClient().auth.admin.deleteUser(userId);
+    if (error) throw new Error(`deleteUser(${userId}) failed: ${error.message}`);
+  }
 }
 
 /** Builds the cookies @supabase/ssr would set: "base64-" + base64url(session JSON), chunked. */
