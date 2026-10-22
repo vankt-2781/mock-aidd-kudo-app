@@ -2,6 +2,7 @@ import type { NextRequest } from "next/server";
 import { decideLaunchGateRedirect } from "@/lib/launch-gate/decide-launch-gate-redirect";
 import { readEventStart } from "@/lib/event-config/read-event-start";
 import { decideRouteRedirect } from "@/lib/auth/decide-route-redirect";
+import { RETURN_TO_PARAM } from "@/lib/auth/return-to";
 import {
   redirectWithCookies,
   updateSessionInProxy,
@@ -17,7 +18,7 @@ export async function proxy(request: NextRequest) {
       now: new Date(),
       start: readEventStart()?.start ?? null,
       isAdmin,
-    }) ?? decideRouteRedirect(pathname, isAuthenticated);
+    }) ?? decideRouteRedirect(pathname, isAuthenticated, request.nextUrl.searchParams.get(RETURN_TO_PARAM));
   return target ? redirectWithCookies(request, target, response) : response;
 }
 

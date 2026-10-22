@@ -34,6 +34,7 @@
 | F003_HomepageSaa | Homepage SAA | ui | TypeScript | . (repo root) | P1 |
 | F004_AwardsInformation | Awards Information | ui | TypeScript | . (repo root) | P1 |
 | F005_CountdownPrelaunch | Countdown Prelaunch | mixed | TypeScript | . (repo root) | P1 |
+| F006_KudosLiveBoard | Kudos Live Board | mixed | TypeScript | . (repo root) | P1 |
 
 ## Feature Details
 
@@ -177,3 +178,11 @@ Public /awards page detailing the 6 SAA 2025 award categories (nav + detail card
 Standalone /countdown prelaunch page (LED countdown DAYS/HOURS/MINUTES, per-second tick, auto-redirect at zero) plus site-wide proxy launch gate (pre-launch non-admin traffic -> /countdown, admin bypass, fail-open on missing env, post-launch inversion), GET /api/event-config, and env unification on EVENT_START_AT (replaces NEXT_PUBLIC_EVENT_START_AT).
 
 **Related:** screens: SCR006 | routes: /countdown, /api/event-config | models: —
+
+### F006 — Kudos Live Board
+
+**Priority:** P1 | **Type:** mixed | **Status:** implemented | **Slug:** F006_KudosLiveBoard
+
+Public /kudos live board: KV banner, compose pill (stub dialog), HIGHLIGHT top-5 carousel by like count, hashtag/department filters (DB-sourced, URL params), SVG spotlight word-cloud (pan/zoom, tooltip, search), ALL KUDOS infinite-scroll feed, sidebar personal stats + gift leaderboard. First real Supabase data domain (kudos, kudos_likes with hearts_awarded, hashtags, departments, profiles, special_days, gift_events, secret_boxes; like/unlike via one SECURITY DEFINER function). Return-to login via exact allow-list (/login?next=/kudos).
+
+**Related:** screens: SCR007 | routes: /kudos, /kudos/[id] (placeholder) | models: kudos domain

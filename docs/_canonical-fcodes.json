@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-20T12:19:14Z",
+  "generated_at": "2026-10-21T16:52:38Z",
   "plan": "261019-2101-login-page-supabase-google-oauth",
   "features": [
     {
@@ -118,6 +118,23 @@
       "related": {
         "screens": [
           "SCR006_CountdownPrelaunch"
+        ],
+        "user_stories": [],
+        "routes": [],
+        "models": [],
+        "bl": [],
+        "perms": []
+      }
+    },
+    {
+      "fcode": "F006",
+      "name": "Kudos Live Board",
+      "slug": "F006_KudosLiveBoard",
+      "priority": "P1",
+      "type": "mixed",
+      "related": {
+        "screens": [
+          "SCR007_KudosLiveBoard"
         ],
         "user_stories": [],
         "routes": [],

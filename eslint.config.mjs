@@ -9,8 +9,6 @@ const eslintConfig = defineConfig([
   globalIgnores([
     // Default ignores of eslint-config-next:
     ".next/**",
-    // Isolated pre-launch e2e build dir (NEXT_DIST_DIR, see playwright.prelaunch.config.ts).
-    ".next-prelaunch/**",
     "out/**",
     "build/**",
     "next-env.d.ts",

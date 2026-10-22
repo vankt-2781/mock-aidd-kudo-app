@@ -5,6 +5,7 @@ import { LoginHeader } from "@/components/login/login-header";
 import { LoginHero } from "@/components/login/login-hero";
 import { LoginFooter } from "@/components/login/login-footer";
 import { createSupabaseBrowserClient } from "@/lib/supabase/supabase-browser-client";
+import { RETURN_TO_PARAM } from "@/lib/auth/return-to";
 import { getLoginMessages } from "@/lib/i18n/login-dictionary";
 import { setLocaleAction } from "@/lib/i18n/set-locale-action";
 import type { Locale } from "@/lib/i18n/locale";
@@ -12,9 +13,11 @@ import type { Locale } from "@/lib/i18n/locale";
 interface LoginPageClientProps {
   initialLocale: Locale;
   initialHasError: boolean;
+  /** Already allow-list-resolved by the server page; null means default landing. */
+  returnTo?: string | null;
 }
 
-export function LoginPageClient({ initialLocale, initialHasError }: LoginPageClientProps) {
+export function LoginPageClient({ initialLocale, initialHasError, returnTo = null }: LoginPageClientProps) {
   const [locale, setLocale] = useState<Locale>(initialLocale);
   const [loading, setLoading] = useState(false);
   const [hasError, setHasError] = useState(initialHasError);
@@ -39,10 +42,14 @@ export function LoginPageClient({ initialLocale, initialHasError }: LoginPageCli
     if (loading) return;
     setHasError(false);
     setLoading(true);
+    const callbackUrl = `${window.location.origin}/auth/callback`;
+    const redirectTo = returnTo
+      ? `${callbackUrl}?${RETURN_TO_PARAM}=${encodeURIComponent(returnTo)}`
+      : callbackUrl;
     try {
       const { error } = await createSupabaseBrowserClient().auth.signInWithOAuth({
         provider: "google",
-        options: { redirectTo: `${window.location.origin}/auth/callback` },
+        options: { redirectTo },
       });
       if (error) throw error;
       // Success: browser is navigating to Google; keep loading on.
@@ -51,7 +58,7 @@ export function LoginPageClient({ initialLocale, initialHasError }: LoginPageCli
       setLoading(false);
       setHasError(true);
     }
-  }, [loading]);
+  }, [loading, returnTo]);
 
   const handleLocaleChange = useCallback((next: Locale) => {
     setLocale(next);

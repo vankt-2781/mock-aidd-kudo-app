@@ -178,3 +178,10 @@ Authenticated landing page showing the signed-in user's avatar (or initial), nam
 **Route:** /countdown
 **Description:** Full-screen prelaunch countdown — dark organic background, i18n title, three LED two-digit units (DAYS/HOURS/MINUTES) ticking every second; shows 00s at zero then auto-redirects to /; reachable pre-launch by everyone, redirects to / post-launch.
 **States:** counting, zero (00s + redirect), vi, en, fail-open (no valid EVENT_START_AT -> redirect /)
+
+## SCR007_KudosLiveBoard
+
+**Feature:** F006 — Kudos Live Board
+**Route:** /kudos
+**Description:** Live kudos board — KV banner, compose pill, top-5 highlight carousel, hashtag/department filters, spotlight word-cloud (pan/zoom/search), infinite-scroll feed, sidebar stats + gift leaderboard; public viewing, interactions gated to signed-in users.
+**States:** guest (stats hidden, actions -> /login?next=/kudos), signed-in, filtered (hashtag/department), carousel-paged, feed-paged, empty ("Hiện tại chưa có Kudos nào." / "Chưa có dữ liệu"), spotlight loading/empty/interactive, vi, en
