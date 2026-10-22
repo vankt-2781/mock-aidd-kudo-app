@@ -1,25 +1,20 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
-import { getHomeMessages } from "@/lib/i18n/home-dictionary";
+
+import { getKudosMessages } from "@/lib/i18n/kudos-dictionary";
 import { getRequestLocale } from "@/lib/i18n/get-request-locale";
+import { KudosBoard, type KudosSearchParams } from "./kudos-board";
 
-export const metadata: Metadata = { title: "Sun* Kudos" };
-
-async function PlaceholderContent() {
-  const { placeholder } = getHomeMessages(await getRequestLocale());
-  return (
-    <>
-      <h1 className="text-4xl font-bold">{placeholder.kudosTitle}</h1>
-      <p className="mt-4 text-white/70">{placeholder.underConstruction}</p>
-    </>
-  );
+export async function generateMetadata(): Promise<Metadata> {
+  return { title: getKudosMessages(await getRequestLocale()).meta.title };
 }
 
-export default function Page() {
+export default function KudosPage({ searchParams }: { searchParams: KudosSearchParams }) {
   return (
-    <main className="mx-auto w-full max-w-5xl px-6 py-16 text-white">
+    // mm:2940:13431 — -mt-20 slides the keyvisual under the sticky header like the homepage
+    <main className="relative -mt-20 flex flex-1 flex-col pb-[120px] text-white">
       <Suspense fallback={null}>
-        <PlaceholderContent />
+        <KudosBoard searchParams={searchParams} />
       </Suspense>
     </main>
   );
