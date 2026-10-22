@@ -1,4 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
+import { RETURN_TO_PARAM } from "@/lib/auth/return-to";
 import { resolveCallbackRedirect } from "@/lib/auth/resolve-callback-redirect";
 import { createSupabaseServerClient } from "@/lib/supabase/supabase-server-client";
 
@@ -19,6 +20,11 @@ export async function GET(request: NextRequest) {
     }
   }
 
-  const target = resolveCallbackRedirect({ code, providerError, exchangeFailed });
+  const target = resolveCallbackRedirect({
+    code,
+    providerError,
+    exchangeFailed,
+    next: params.get(RETURN_TO_PARAM),
+  });
   return NextResponse.redirect(new URL(target, request.url));
 }

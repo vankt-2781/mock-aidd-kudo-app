@@ -74,6 +74,21 @@ describe("proxy launch gate wiring", () => {
     expect(location(await run("/todo", PAST))).toBe("/login");
   });
 
+  it("post-launch signed-in /login?next=/kudos follows next", async () => {
+    session.isAuthenticated = true;
+    expect(location(await run("/login?next=%2Fkudos", PAST))).toBe("/kudos");
+  });
+
+  it("post-launch signed-in /login with external next falls back to /todo", async () => {
+    session.isAuthenticated = true;
+    expect(location(await run("/login?next=https%3A%2F%2Fevil.com", PAST))).toBe("/todo");
+  });
+
+  it("post-launch signed-in plain /login still goes to /todo", async () => {
+    session.isAuthenticated = true;
+    expect(location(await run("/login", PAST))).toBe("/todo");
+  });
+
   it("fails open when EVENT_START_AT is empty: no gate, /countdown goes to /", async () => {
     expect(await run("/awards", "")).toSatisfy((r: Response) => !r.headers.get("location"));
     expect(location(await run("/countdown", ""))).toBe("/");

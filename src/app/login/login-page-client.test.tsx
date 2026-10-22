@@ -58,6 +58,26 @@ describe("LoginPageClient", () => {
     });
   });
 
+  it("returnTo=/kudos is carried on the callback redirectTo", async () => {
+    signInWithOAuth.mockReturnValue(new Promise(() => {}));
+    render(<LoginPageClient initialLocale="vi" initialHasError={false} returnTo="/kudos" />);
+    await userEvent.click(loginButton());
+    expect(signInWithOAuth).toHaveBeenCalledWith({
+      provider: "google",
+      options: { redirectTo: `${window.location.origin}/auth/callback?next=%2Fkudos` },
+    });
+  });
+
+  it("returnTo=null keeps the plain callback redirectTo", async () => {
+    signInWithOAuth.mockReturnValue(new Promise(() => {}));
+    render(<LoginPageClient initialLocale="vi" initialHasError={false} returnTo={null} />);
+    await userEvent.click(loginButton());
+    expect(signInWithOAuth).toHaveBeenCalledWith({
+      provider: "google",
+      options: { redirectTo: `${window.location.origin}/auth/callback` },
+    });
+  });
+
   it("TC024: repeated clicks while loading start exactly one sign-in", async () => {
     signInWithOAuth.mockReturnValue(new Promise(() => {}));
     render(<LoginPageClient initialLocale="vi" initialHasError={false} />);
