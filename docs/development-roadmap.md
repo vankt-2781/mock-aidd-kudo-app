@@ -1,7 +1,7 @@
 # Development Roadmap
 
 > Living document. Updated after each feature lands or a phase changes status.
-> Last updated: 2026-10-20
+> Last updated: 2026-10-23
 
 ## Current Status
 
@@ -14,6 +14,8 @@
 | F003 — Homepage SAA | Public homepage at `/`, countdown, auth-aware header, admin guard, placeholder routes, vi/en i18n | Complete (2026-10-20) |
 | F004 — Awards Information | Full `/awards` page: hero, category nav (scroll-spy + focus a11y), 6 award cards, Kudos promo, vi/en i18n | Complete (2026-10-20) |
 | F005 — Countdown Prelaunch | `/countdown` live ticker, proxy launch gate with admin bypass, `GET /api/event-config`, `EVENT_START_AT` unification, vi/en i18n | Complete (2026-10-20) |
+| F006 — Kudos Live Board | Live board at `/kudos` on real Supabase data (feed, highlights, filters, stats), spec promoted as `docs/features/F006_*` + SCR007 | Complete (2026-10-22, PR #5) |
+| F007 — Kudos Send Dialog (Viết Kudo) | Compose modal: TipTap editor, mentions, hashtags, images, anonymous send; masked definer views + `send_kudos` RPC + `kudos-images` Storage; 68 new e2e | Complete (2026-10-23) |
 | Todo app (main feature) | Real `/todo` functionality replacing the placeholder | Not started |
 
 ## F001 — Login with Google (shipped)
@@ -84,6 +86,20 @@ Spec promoted as `docs/features/F005_CountdownPrelaunch/` + `docs/screens/SCR006
 
 **Breaking:** `EVENT_START_AT` (server-only) replaces `NEXT_PUBLIC_EVENT_START_AT` —
 existing `.env.local` files need manual cleanup + dev server restart.
+
+## F007 — Kudos Send Dialog / Viết Kudo (complete 2026-10-23)
+
+Plan: `plans/261022-2157-viet-kudo-send-dialog/plan.md` — phases 01–06 completed, phase 07
+verification run inline (Track A UI done up front).
+
+**Quality gates:** 634/634 vitest unit, 181/181 Playwright E2E (×2 consecutive runs after
+`supabase db reset` ×2) + seed-sanity 7/7, `tsc`/`eslint`/`build` all exit 0.
+Inspection round 1 returned REWORK (critical: anonymous-image identity leak via uid storage paths) —
+reworked to identity-free image registry paths; re-inspection SEALED (score 8, 0 critical).
+
+**Deferred:** full F006 45-e2e regression until PR #6 (`fix/kudos-spotlight-and-e2e`) merges and
+main is re-merged; PM copy review list; `app_settings.storage_public_base` per-environment deploy
+note; hardening (reserve race, send rate limit, orphan sweep).
 
 ## Next Milestones
 
