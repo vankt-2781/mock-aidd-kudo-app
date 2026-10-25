@@ -15,7 +15,7 @@ function builder(table: string) {
     state.calls.push([`${table}.${name}`, ...args]);
     return b;
   };
-  for (const name of ["select", "eq", "in", "contains", "or", "order", "limit"]) b[name] = record(name);
+  for (const name of ["select", "eq", "in", "contains", "or", "order", "limit", "maybeSingle"]) b[name] = record(name);
   b.then = (resolve: (v: unknown) => unknown, reject: (e: unknown) => unknown) =>
     Promise.resolve(state.result).then(resolve, reject);
   return b;
@@ -25,7 +25,7 @@ vi.mock("@/lib/supabase/supabase-server-client", () => ({
   createSupabaseServerClient: async () => ({ from: (t: string) => builder(t) }),
 }));
 
-import { buildKeysetFilter, getFeedPage, getHighlightKudos } from "./kudos-board-queries";
+import { buildKeysetFilter, getFeedPage, getHighlightKudos, getViewerStats } from "./kudos-board-queries";
 
 const viewer = { signedIn: false, profileId: null };
 const none = { hashtag: null, department: null };
@@ -35,6 +35,9 @@ function row(i: number): KudosFeedRow {
     id: `k${i}`,
     created_at: `2026-10-21T10:00:${String(59 - i).padStart(2, "0")}+00:00`,
     content: "c",
+    title: null,
+    is_anonymous: false,
+    viewer_is_sender: false,
     images: [],
     sender_id: "s",
     sender_display_name: "S",
@@ -103,5 +106,21 @@ describe("getHighlightKudos", () => {
   it("degrades to an empty list on error", async () => {
     state.result = { data: null, error: { message: "boom" }, count: null };
     await expect(getHighlightKudos(none, viewer)).resolves.toEqual([]);
+  });
+});
+
+describe("getViewerStats", () => {
+  it("returns null for visitors without querying", async () => {
+    await expect(getViewerStats(viewer)).resolves.toBeNull();
+    expect(state.calls).toEqual([]);
+  });
+
+  it("reads the owner-only viewer_kudos_stats view (no id filter) and secret boxes", async () => {
+    state.result = { data: { kudos_received: 2, kudos_sent: 3, hearts_received: 4 }, error: null, count: null };
+    await getViewerStats({ signedIn: true, profileId: "me" });
+    expect(state.calls).toContainEqual(["viewer_kudos_stats.select", "kudos_received,kudos_sent,hearts_received"]);
+    expect(state.calls).toContainEqual(["viewer_kudos_stats.maybeSingle"]);
+    expect(state.calls.some((c: Call) => c[0] === "viewer_kudos_stats.eq")).toBe(false);
+    expect(state.calls.some((c: Call) => c[0].startsWith("profile_kudos_stats"))).toBe(false);
   });
 });

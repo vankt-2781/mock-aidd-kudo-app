@@ -1,4 +1,4 @@
-import { CardDivider, KudosDetailLink, KudosHashtags, KudosMessageBox, KudosParties } from "./kudos-card-parts";
+import { CardDivider, KudosDetailLink, KudosHashtags, KudosMessageBox, KudosParties, KudosTitleLine } from "./kudos-card-parts";
 import type { KudosBoardPost } from "@/lib/kudos/kudos-board-types";
 import type { KudosCardEnv } from "./kudos-card-env";
 import { KudosCopyLinkButton } from "./kudos-copy-link-button";
@@ -22,9 +22,10 @@ export function KudosHighlightCard({ post, env, className = "" }: KudosHighlight
       <KudosParties post={post} env={env} />
       <CardDivider />
       {/* mm:I2940:13465;335:9448 */}
-      <div className="flex flex-col gap-4 lg:h-[240px]">
+      <div className="flex flex-col gap-4 lg:min-h-[240px]">
         {/* mm:I2940:13465;335:9449 */}
         <p className="text-base font-bold leading-6 tracking-[0.5px] text-[#999]">{post.sentAtLabel}</p>
+        <KudosTitleLine title={post.title} />
         <KudosMessageBox text={post.content} clampClass="line-clamp-3" heightClass="h-[120px] py-[11px]" />
         {/* mm:I2940:13465;335:9459 */}
         <KudosHashtags tags={post.hashtags} filters={env.filters} max={5} className="truncate" />

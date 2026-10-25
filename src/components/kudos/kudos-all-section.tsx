@@ -36,7 +36,8 @@ export function KudosAllSection({ feed, env, stats, giftRecipients, messages }: 
         {/* mm:2940:13482 */}
         <div className="flex w-full flex-col gap-6 lg:max-w-[680px]">
           <KudosFeedList
-            key={`${filters.hashtag ?? ""}|${filters.department ?? ""}`}
+            // First post id in the key: after router.refresh() a new kudos remounts the list so it shows up.
+            key={`${filters.hashtag ?? ""}|${filters.department ?? ""}|${feed.posts[0]?.id ?? ""}`}
             initialPosts={feed.posts}
             initialCursor={feed.nextCursor}
             filters={filters}

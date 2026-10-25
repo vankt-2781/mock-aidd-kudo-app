@@ -8,14 +8,16 @@ export interface KudosBoardUser extends KudosUser {
   stars: KudosStars;
 }
 
-/**
- * A kudos post as served by the data layer. Track A's `KudosPost.title` has no DB source
- * ("IDOL GIỚI TRẺ" is a hashtag), so it is omitted here.
- */
+/** A kudos post as served by the data layer (masked by the `kudos_feed` view for anonymous senders). */
 export interface KudosBoardPost extends Omit<KudosPost, "title" | "sender" | "receiver"> {
   sender: KudosBoardUser;
   receiver: KudosBoardUser;
+  /** Optional sender-written title; null when absent. */
+  title: string | null;
+  /** True when the sender chose to stay anonymous; `sender` then holds the alias only. */
+  senderAnonymous: boolean;
   likedByViewer: boolean;
+  /** From the view's `viewer_is_sender` (sender_id is null for anonymous rows). */
   viewerIsSender: boolean;
   /** ISO timestamp, verbatim from the database (feed cursor source). */
   createdAt: string;

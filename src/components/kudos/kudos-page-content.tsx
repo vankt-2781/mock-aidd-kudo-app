@@ -49,7 +49,7 @@ export function KudosPageContent({
           <div className="flex flex-col gap-16">
             <div className="mx-auto flex w-full max-w-[1440px] flex-col gap-16 px-4 md:px-12 xl:px-36">
               <KudosBanner messages={messages.banner} />
-              <KudosActionBar signedIn={signedIn} messages={messages} />
+              <KudosActionBar signedIn={signedIn} messages={messages} hashtagNames={options.hashtags} />
             </div>
             <KudosHighlightSection posts={highlightPosts} env={env} options={options} messages={messages} />
           </div>
