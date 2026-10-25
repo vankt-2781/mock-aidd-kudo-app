@@ -1,0 +1,1 @@
+{"command":"npm test","exitCode":0,"summary":"vitest 626/626 across 69 files (baseline 483 + 143 new: dictionary compose, editor helpers + jsdom smoke, validation/sanitize/normalize/image-url/parse matrices, actions, mappers anonymous+title, controller/reducer 28, launcher, feed-key fix)"}
