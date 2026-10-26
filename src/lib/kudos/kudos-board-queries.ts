@@ -81,7 +81,7 @@ export async function getHighlightKudos(filters: KudosFilters, viewer: KudosView
     if (error) throw error;
     const rows = (data ?? []) as KudosFeedRow[];
     const liked = await likedIdsFor(client, rows, viewer);
-    return rows.map((r) => mapFeedRow(r, liked, viewer.profileId));
+    return rows.map((r) => mapFeedRow(r, liked));
   } catch (error) {
     console.error("[kudos] getHighlightKudos failed", error);
     return [];
@@ -108,7 +108,7 @@ export async function getFeedPage(
     const last = rows[rows.length - 1];
     const liked = await likedIdsFor(client, rows, viewer);
     return {
-      posts: rows.map((r) => mapFeedRow(r, liked, viewer.profileId)),
+      posts: rows.map((r) => mapFeedRow(r, liked)),
       nextCursor: all.length > FEED_PAGE_SIZE && last ? encodeCursor({ createdAt: last.created_at, id: last.id }) : null,
     };
   } catch (error) {
@@ -133,16 +133,15 @@ export async function getGiftRecipients(): Promise<SunnerRef[]> {
   }
 }
 
-/** The viewer's own totals; null for visitors. No profile id is ever accepted from callers (BR-005). */
+/** The viewer's own totals (owner-only view, counts anonymous sends); null for visitors. No id is accepted from callers (BR-005). */
 export async function getViewerStats(viewer: KudosViewer): Promise<KudosStats | null> {
   if (!viewer.profileId) return null;
   try {
     const client = await createSupabaseServerClient();
     const [stats, boxes] = await Promise.all([
       client
-        .from("profile_kudos_stats")
+        .from("viewer_kudos_stats")
         .select("kudos_received,kudos_sent,hearts_received")
-        .eq("profile_id", viewer.profileId)
         .maybeSingle(),
       client.from("secret_boxes").select("opened_at").eq("profile_id", viewer.profileId),
     ]);

@@ -58,13 +58,23 @@ export function KudosParties({ post, env }: { post: KudosBoardPost; env: KudosCa
   return (
     // mm:I3127:21871;256:4857
     <div className="flex w-full flex-col items-center gap-2 sm:flex-row sm:items-start sm:justify-between sm:gap-0">
-      <KudosUserInfo user={post.sender} env={env} />
+      <KudosUserInfo user={post.sender} env={env} anonymous={post.senderAnonymous} />
       {/* mm:I3127:21871;256:5161 */}
       <div className="flex shrink-0 sm:pt-4">
         <IconSend className="size-8 rotate-90 text-[#00101A] sm:rotate-0" />
       </div>
       <KudosUserInfo user={post.receiver} env={env} />
     </div>
+  );
+}
+
+/** Optional sender-written title (F007 FR-028); renders nothing when absent. */
+export function KudosTitleLine({ title }: { title: string | null }) {
+  if (!title) return null;
+  return (
+    <p data-kudos-title className="line-clamp-2 text-center text-xl font-bold leading-8 text-[#00101A]">
+      {title}
+    </p>
   );
 }
 

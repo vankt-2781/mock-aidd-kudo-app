@@ -1,0 +1,96 @@
+{
+  "score": 8,
+  "criticalCount": 0,
+  "decision": "SEALED",
+  "acceptanceCovered": [
+    "signed-in compose pill opens the modal; guests are routed to /login?next=%2Fkudos (launcher/controller unit tests and e2e open-and-layout)",
+    "Gửi is always clickable and validates on click with per-field red errors (\"Không được để trống\"); valid form submits, shows loading, closes, toasts and the new kudos appears at the top of the feed (validate-on-click, sending-ref double-submit guard, imageUploading message when submit races an upload, router.refresh + toast; controller/reducer tests and e2e submit spec)",
+    "recipient autocomplete searches profiles (trim, cap 10, excludes self); @mention suggestions work in the editor (searchSunners trim/escapeLike/neq self/limit 10; mention provider reuses it)",
+    "editor supports bold/italic/strike/ordered list/link/quote with sanitized HTML stored plus content_text for the board clamp (5000-char cap) (sanitizer allow-list matches TipTap marks (class now stripped); content_text derived server-side; DB 5000 check; RPC caps content at 50000; direct-RPC raw-HTML gap documented)",
+    "hashtags: pick existing or create new (normalized, unique by lower(name)), 1..5 enforced with \"Tối đa 5 hashtag\" and a format message for invalid new tags (mergeHashtag + SQL charset rule + unique lower(name) index; max 5 enforced client, server and RPC)",
+    "images: up to 5 jpg/png <=5MB upload to the kudos-images bucket own folder; pdf/mp4/txt refused with the format error; add control hides at 5 and returns after delete; storage policy proven with real JWTs (bucket mime/size limits; 'own folder' is superseded by registry-owned identity-free paths (reserve_kudos_image_path, 25/hour); INSERT policy via definer predicate over kudos_image_uploads owner=auth.uid(); e2e storage-rules covers anon, unregistered, legacy uid-folder, foreign-reserved, text/PDF, 5MiB+1)",
+    "anonymous send masks the sender everywhere public: alias or \"Ẩn danh\", default avatar, no profile link, sender_id unreadable, public kudos_sent and hearts_received exclude anonymous while the owner sidebar counts all (views mask sender/name/avatar/dept/stars; sender_id column revoked; public stats exclude anonymous for sent and hearts; viewer_kudos_stats owner-only; image URLs now carry no uid)",
+    "send_kudos rejects foreign-origin image URLs (full-origin anchor via app_settings), self-kudos, bad tags and forged inputs; the board renders danh hiệu lines and storage-hosted images without crashing (send_kudos: sender=auth.uid(); full-origin anchor via app_settings + bucket prefix + uuid/uuid.(jpg|jpeg|png) regex + registry ownership + 500-char cap; legacy uid paths refused; self-kudos, bad tags, forged inputs rejected)",
+    "all suites green: 634 unit, 181 e2e twice consecutively + seed-sanity, tsc, lint, build; F006 seed invariants intact (full F006 regression rerun pending PR #6 merge) (per temper-results and coordinator re-run (db reset x2, tsc 0, lint 0, vitest 634, build 0, playwright 181/181 twice + seed-sanity 7/7); not re-run by reviewer; F006 regression rerun deferred to PR #6 merge)",
+    "anonymous-image identity leak closed: public image paths are identity-free (registry-owned uuid paths), profiles.auth_user_id unreadable to clients, proven by e2e (reserve RPC returns uuid/uuid paths, kudos_image_uploads has RLS and no client grants, profiles column re-grant excludes auth_user_id, viewer_profile owner-only definer view; e2e anonymous-images asserts no auth uid in URLs or full feed row and permission-denied on auth_user_id)"
+  ],
+  "regressionChecked": [
+    "views recreated with identical leading columns, appended title/is_anonymous/viewer_is_sender; kudos_highlights column list matches kudos_feed",
+    "mapFeedRow signature change: only two call sites (kudos-board-queries.ts:84,111), both updated",
+    "kudos.sender_id revoked from client roles: views are DEFINER so reads work; PostgREST embeds/filters/order on sender_id fail by design",
+    "public profile_kudos_stats excludes anonymous for kudos_sent and hearts_received; viewer_kudos_stats owner-only (auth.uid() scoped, anon revoked)",
+    "viewer_is_sender is per-viewer true only for the viewer's own kudos, null-safe for guests",
+    "likes path (set_kudos_like) unchanged and exposes only likers",
+    "profiles column re-grant (id, display_name, avatar_url, department_id, created_at) covers client reads; owner self-lookup moved to viewer_profile (kudos-viewer.ts, kudos-compose-actions.ts)",
+    "secret_boxes owner policy rewritten onto viewer_profile; anon select revoked",
+    "storage policy relies on definer predicate is_reserved_kudos_image_path; registry RLS on, no client grants",
+    "next.config dangerouslyAllowLocalIP gated to non-production; remotePatterns scoped to /storage/v1/object/public/**"
+  ],
+  "contractStatus": "CHANGED",
+  "refuted": [],
+  "unproven": [],
+  "reachableRegressions": [],
+  "findings": [
+    {
+      "severity": "Critical",
+      "category": "Security",
+      "location": "supabase/migrations/20261022000004_kudos_images_storage_bucket.sql:32",
+      "summary": "Fixed: identity-free uuid/uuid image paths via reserve_kudos_image_path; ownership in client-inaccessible kudos_image_uploads; anonymous-images e2e proves it",
+      "disposition": "Accept"
+    },
+    {
+      "severity": "Critical",
+      "category": "Security",
+      "location": "supabase/migrations/20261022000002_kudos_masked_views_and_column_grants.sql:17",
+      "summary": "Fixed: profiles.auth_user_id revoked via explicit column re-grant; viewer_profile definer view serves owner only",
+      "disposition": "Accept"
+    },
+    {
+      "severity": "Medium",
+      "category": "Validation",
+      "location": "supabase/migrations/20261022000003_kudos_send_function.sql:78",
+      "summary": "Fixed: p_content capped at 50000 and image URLs at 500 chars in the RPC",
+      "disposition": "Accept"
+    },
+    {
+      "severity": "Medium",
+      "category": "Logic",
+      "location": "src/components/kudos-compose/kudos-compose-controller.tsx:86",
+      "summary": "Fixed: submit while uploading now surfaces compose.errors.imageUploading",
+      "disposition": "Accept"
+    },
+    {
+      "severity": "Low",
+      "category": "Craft",
+      "location": "src/lib/kudos-compose/kudos-html-sanitize.ts:20",
+      "summary": "Fixed: class no longer allowed on mention spans",
+      "disposition": "Accept"
+    },
+    {
+      "severity": "Low",
+      "category": "Documentation",
+      "location": "supabase/migrations/20261022000002_kudos_masked_views_and_column_grants.sql:6",
+      "summary": "ROLLBACK header comment is garbled (interleaved lines from two edits); rewrite as ordered runnable steps",
+      "disposition": "Accept"
+    },
+    {
+      "severity": "Medium",
+      "category": "Security",
+      "location": "supabase/migrations/20261022000004_kudos_images_storage_bucket.sql:54",
+      "summary": "Reserve rate limit is count-then-insert (concurrent calls can exceed 25); no send_kudos rate limit or orphan sweep; accepted risk",
+      "disposition": "Defer"
+    },
+    {
+      "severity": "Low",
+      "category": "Logic",
+      "location": "supabase/migrations/20261022000003_kudos_send_function.sql:119",
+      "summary": "Registry proves reservation, not that the object was uploaded; dangling URLs render broken images. Optionally check storage.objects",
+      "disposition": "Defer"
+    }
+  ],
+  "riskGate": {
+    "touchesSensitiveArea": true,
+    "signoffRequired": true,
+    "humanSignedOff": true
+  }
+}

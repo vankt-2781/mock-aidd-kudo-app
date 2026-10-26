@@ -28,6 +28,7 @@ export const kudosMessagesVi: KudosMessages = {
     copyFailed: "Không thể sao chép liên kết. Vui lòng thử lại.", // PM-review
     emptyKudos: "Hiện tại chưa có Kudos nào.",
     openImage: "Mở ảnh", // PM-review
+    anonymousAlias: "Ẩn danh",
   },
   stars: {
     tooltip: {
@@ -57,6 +58,55 @@ export const kudosMessagesVi: KudosMessages = {
     openBox: "Mở Secret Box",
   },
   giftList: { title: "10 SUNNER NHẬN QUÀ\nMỚI NHẤT", empty: "Chưa có dữ liệu" },
+  compose: {
+    title: "Gửi lời cám ơn và ghi nhận đến đồng đội",
+    recipient: "Người nhận",
+    recipientPlaceholder: "Tìm kiếm",
+    recipientEmpty: "Không tìm thấy đồng nghiệp", // PM-review
+    badge: "Danh hiệu",
+    badgePlaceholder: "Dành tặng một danh hiệu cho đồng đội",
+    badgeHint: "Ví dụ: Người truyền động lực cho tôi.\nDanh hiệu sẽ hiển thị làm tiêu đề Kudos của bạn.",
+    guidelines: "Tiêu chuẩn cộng đồng",
+    editorPlaceholder: "Hãy gửi gắm lời cám ơn và ghi nhận đến đồng đội tại đây nhé!",
+    mentionHint: "Bạn có thể “@ + tên” để nhắc tới đồng nghiệp khác",
+    hashtag: "Hashtag",
+    image: "Image",
+    maxFive: "Tối đa 5",
+    maxHashtags: "Tối đa 5 hashtag",
+    hashtagInvalid: "Hashtag chỉ gồm chữ, số và dấu gạch dưới (tối đa 30 ký tự)", // PM-review
+    anonymous: "Gửi lời cám ơn và ghi nhận ẩn danh",
+    anonymousNamePlaceholder: "Tên hiển thị ẩn danh", // not in Figma frame
+    cancel: "Hủy",
+    send: "Gửi",
+    submitting: "Đang gửi...", // PM-review
+    required: "Không được để trống",
+    removeImage: "Xóa ảnh",
+    removeHashtag: "Xóa hashtag",
+    format: {
+      bold: "In đậm",
+      italic: "In nghiêng",
+      strike: "Gạch ngang",
+      list: "Danh sách đánh số",
+      link: "Chèn liên kết",
+      quote: "Trích dẫn",
+    },
+    link: {
+      title: "Chèn liên kết", // PM-review
+      urlLabel: "Đường dẫn", // PM-review
+      urlPlaceholder: "https://", // PM-review
+      apply: "Áp dụng", // PM-review
+      remove: "Gỡ liên kết", // PM-review
+      invalid: "Đường dẫn không hợp lệ", // PM-review
+    },
+    errors: {
+      imageFormat: "Chỉ hỗ trợ ảnh JPG hoặc PNG", // PM-review
+      imageSize: "Ảnh không được vượt quá 5MB", // PM-review
+      uploadFailed: "Tải ảnh lên thất bại. Vui lòng thử lại.", // PM-review
+      imageUploading: "Ảnh đang được tải lên, vui lòng đợi", // PM-review
+      submit: "Không thể gửi Kudos lúc này. Vui lòng thử lại.", // PM-review
+    },
+    toast: { success: "Đã gửi lời cám ơn thành công!" }, // PM-review
+  },
   placeholder: {
     sendDialogTitle: "Gửi lời cảm ơn", // PM-review
     secretBoxTitle: "Secret Box", // PM-review

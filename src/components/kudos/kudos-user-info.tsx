@@ -9,10 +9,25 @@ import { KudosStarRating } from "./kudos-star-rating";
 export interface KudosUserInfoProps {
   user: KudosBoardUser;
   env: Pick<KudosCardEnv, "signedIn" | "messages">;
+  /** Anonymous sender: alias + default avatar only, no link, stars, department or badge. */
+  anonymous?: boolean;
+}
+
+const AVATAR_CLASS = "size-16 rounded-full border-[1.869px] border-white bg-[#EEE] object-cover";
+const NAME_CLASS = "truncate text-center text-base font-bold leading-6 tracking-[0.15px] text-[#00101A]";
+
+function AnonymousInfo({ user, env }: Pick<KudosUserInfoProps, "user" | "env">) {
+  return (
+    <div data-kudos-anonymous className="flex w-[235px] min-w-0 shrink flex-col items-center gap-[13px]">
+      <Image src={user.avatarSrc} alt="" width={64} height={64} className={`shrink-0 ${AVATAR_CLASS}`} />
+      <span className={`w-full ${NAME_CLASS}`}>{user.name || env.messages.card.anonymousAlias}</span>
+    </div>
+  );
 }
 
 /** Sender / receiver block: 64px avatar, name + stars, department · hero badge (mm:256:4830). */
-export function KudosUserInfo({ user, env }: KudosUserInfoProps) {
+export function KudosUserInfo({ user, env, anonymous = false }: KudosUserInfoProps) {
+  if (anonymous) return <AnonymousInfo user={user} env={env} />;
   const href = profileHref(env.signedIn);
   return (
     // mm:I3127:21871;256:4858
@@ -24,7 +39,7 @@ export function KudosUserInfo({ user, env }: KudosUserInfoProps) {
           alt=""
           width={64}
           height={64}
-          className="size-16 rounded-full border-[1.869px] border-white bg-[#EEE] object-cover"
+          className={AVATAR_CLASS}
         />
       </Link>
       {/* mm:I3127:21871;256:4858;256:4737 */}
@@ -33,7 +48,7 @@ export function KudosUserInfo({ user, env }: KudosUserInfoProps) {
         <div className="flex items-center justify-center gap-1">
           <Link
             href={href}
-            className="truncate text-center text-base font-bold leading-6 tracking-[0.15px] text-[#00101A] hover:underline"
+            className={`${NAME_CLASS} hover:underline`}
           >
             {user.name}
           </Link>

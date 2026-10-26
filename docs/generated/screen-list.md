@@ -185,3 +185,10 @@ Authenticated landing page showing the signed-in user's avatar (or initial), nam
 **Route:** /kudos
 **Description:** Live kudos board — KV banner, compose pill, top-5 highlight carousel, hashtag/department filters, spotlight word-cloud (pan/zoom/search), infinite-scroll feed, sidebar stats + gift leaderboard; public viewing, interactions gated to signed-in users.
 **States:** guest (stats hidden, actions -> /login?next=/kudos), signed-in, filtered (hashtag/department), carousel-paged, feed-paged, empty ("Hiện tại chưa có Kudos nào." / "Chưa có dữ liệu"), spotlight loading/empty/interactive, vi, en
+
+## SCR008_KudosSendDialog
+
+**Feature:** F007 — Kudos Send Dialog
+**Route:** /kudos (modal overlay)
+**Description:** "Viết Kudo" compose modal — cream panel over dark overlay: recipient autocomplete, optional danh hiệu, TipTap toolbar editor with @mention, hashtag chips (1-5), image upload (max 5, jpg/png), anonymous checkbox with optional alias, Hủy/Gửi footer with validate-on-click errors.
+**States:** closed, open-empty, recipient-dropdown, hashtag-dropdown, errors (per-field red), uploading, 5-images (add hidden), anonymous (name field shown), submitting (loading), success (closed + toast), vi, en

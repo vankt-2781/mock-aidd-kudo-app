@@ -8,13 +8,18 @@ export const AVATAR_FALLBACK = "/images/kudos/avatar-sunner.png";
 export interface KudosFeedRow {
   id: string;
   created_at: string;
+  /** `content_text` of the kudos (plain text). */
   content: string;
+  title: string | null;
+  /** Masked by the view for anonymous rows: sender_* are null and `sender_display_name` is the alias. */
+  is_anonymous: boolean;
+  viewer_is_sender: boolean;
   images: string[] | null;
-  sender_id: string;
-  sender_display_name: string;
+  sender_id: string | null;
+  sender_display_name: string | null;
   sender_avatar_url: string | null;
   sender_department_code: string | null;
-  sender_stars: number;
+  sender_stars: number | null;
   receiver_id: string;
   receiver_display_name: string;
   receiver_avatar_url: string | null;
@@ -72,14 +77,25 @@ function mapUser(
   };
 }
 
-export function mapFeedRow(
-  row: KudosFeedRow,
-  likedIds: ReadonlySet<string>,
-  viewerProfileId: string | null,
-): KudosBoardPost {
+/** Anonymous sender: alias only (empty = card shows the default alias), default avatar, no identity. */
+function mapAnonymousSender(alias: string | null): KudosBoardUser {
+  return { profileId: "", name: alias ?? "", department: "", stars: 0, heroTier: "new", avatarSrc: AVATAR_FALLBACK };
+}
+
+export function mapFeedRow(row: KudosFeedRow, likedIds: ReadonlySet<string>): KudosBoardPost {
+  const sender = row.is_anonymous
+    ? mapAnonymousSender(row.sender_display_name)
+    : mapUser(
+        row.sender_id ?? "",
+        row.sender_display_name ?? "",
+        row.sender_avatar_url,
+        row.sender_department_code,
+        row.sender_stars ?? 0,
+      );
   return {
     id: row.id,
-    sender: mapUser(row.sender_id, row.sender_display_name, row.sender_avatar_url, row.sender_department_code, row.sender_stars),
+    sender,
+    senderAnonymous: row.is_anonymous,
     receiver: mapUser(
       row.receiver_id,
       row.receiver_display_name,
@@ -87,6 +103,7 @@ export function mapFeedRow(
       row.receiver_department_code,
       row.receiver_stars,
     ),
+    title: row.title?.trim() || null,
     sentAtLabel: formatKudosTime(row.created_at),
     createdAt: row.created_at,
     content: row.content,
@@ -95,7 +112,7 @@ export function mapFeedRow(
     likeCount: row.like_count,
     detailHref: `/kudos/${row.id}`,
     likedByViewer: likedIds.has(row.id),
-    viewerIsSender: viewerProfileId !== null && viewerProfileId === row.sender_id,
+    viewerIsSender: row.viewer_is_sender,
   };
 }
 
