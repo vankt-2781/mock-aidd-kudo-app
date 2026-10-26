@@ -1,0 +1,43 @@
+{
+  "task": "Implement the Viết Kudo send dialog (MoMorph screen ihQ26W78P2) as F007: compose modal on /kudos with recipient autocomplete, optional danh hiệu, TipTap rich text + @mention, 1-5 hashtags, up to 5 images via Supabase Storage, anonymous send with full identity masking (branch feature/kudos-send-dialog).",
+  "mode": "interactive",
+  "acceptanceCriteria": [
+    "signed-in compose pill opens the modal; guests are routed to /login?next=%2Fkudos",
+    "Gửi is always clickable and validates on click with per-field red errors (\"Không được để trống\"); valid form submits, shows loading, closes, toasts and the new kudos appears at the top of the feed",
+    "recipient autocomplete searches profiles (trim, cap 10, excludes self); @mention suggestions work in the editor",
+    "editor supports bold/italic/strike/ordered list/link/quote with sanitized HTML stored plus content_text for the board clamp (5000-char cap)",
+    "hashtags: pick existing or create new (normalized, unique by lower(name)), 1..5 enforced with \"Tối đa 5 hashtag\" and a format message for invalid new tags",
+    "images: up to 5 jpg/png <=5MB upload to the kudos-images bucket own folder; pdf/mp4/txt refused with the format error; add control hides at 5 and returns after delete; storage policy proven with real JWTs",
+    "anonymous send masks the sender everywhere public: alias or \"Ẩn danh\", default avatar, no profile link, sender_id unreadable, public kudos_sent and hearts_received exclude anonymous while the owner sidebar counts all",
+    "send_kudos rejects foreign-origin image URLs (full-origin anchor via app_settings), self-kudos, bad tags and forged inputs; the board renders danh hiệu lines and storage-hosted images without crashing",
+    "all suites green: 634 unit, 181 e2e twice consecutively + seed-sanity, tsc, lint, build; F006 seed invariants intact (full F006 regression rerun pending PR #6 merge)",
+    "anonymous-image identity leak closed: public image paths are identity-free (registry-owned uuid paths), profiles.auth_user_id unreadable to clients, proven by e2e"
+  ],
+  "touchpoints": [
+    "supabase/migrations/20261022000001..4",
+    "next.config.ts",
+    "package.json (tiptap 3.32.0, sanitize-html 2.18.1)",
+    "src/components/kudos-compose/** (Track A modal + editor/ + controller/reducer/hooks)",
+    "src/lib/kudos-compose/**",
+    "src/lib/i18n/kudos-dictionary*",
+    "src/lib/kudos/{kudos-row-mappers,kudos-board-types,kudos-board-queries}.ts",
+    "src/components/kudos/{kudos-action-bar,kudos-compose-launcher,kudos-all-section,kudos-user-info,kudos-card-parts,kudos-post-card,kudos-highlight-card,kudos-page-content,kudos-test-fixtures}",
+    "e2e/kudos-compose-*.spec.ts + helpers + playwright.config.ts (write-isolation projects)"
+  ],
+  "blastRadius": [
+    "kudos table gains title/content_text/is_anonymous/anonymous_name; content stays untrusted HTML at rest (accepted: direct RPC callers bypass the action sanitizer; board renders content_text only; detail screens must sanitize at render)",
+    "board views recreated as masked DEFINER views with identical leading columns (content now from content_text) + appended title/is_anonymous/viewer_is_sender; kudos.sender_id revoked from client roles — PostgREST select=* on kudos now errors by design",
+    "public stats semantics changed: anonymous kudos excluded from kudos_sent AND hearts_received (differential-leak defense, user-approved beyond spec)",
+    "first Supabase Storage usage: kudos-images bucket, own-folder authenticated writes, public read; orphan objects accepted (no cleanup job)",
+    "playwright.config.ts now runs three projects (chromium parallel, kudos-writes serial, kudos-seed-sanity last); F006 45-e2e regression deferred until PR #6 merges into main",
+    "existing suites included in totals: 626 unit, 173 e2e"
+  ],
+  "contracts": [
+    "send_kudos(p_receiver_id,...) SECURITY DEFINER: sender always auth.uid(); hashtags 1..5 reuse-by-lower else create with charset rule; image URLs must start with app_settings.storage_public_base + own-folder path; errcodes unauthenticated/no_profile/self_kudos/receiver_not_found/invalid_argument:<field>",
+    "SendKudosResult {status: ok|unauthenticated|invalid|error}; sanitizeKudosHtml allow-list matches the TipTap marks and round-trips real editor output",
+    "KudosEditor {messages, mentionProvider, onChange{html,text,isEmpty,length}, editorRef{toggle,reset,focus}}; mention span data attrs survive sanitize",
+    "KudosBoardPost gains title + senderAnonymous; mapFeedRow drops the viewerProfileId arg (viewer_is_sender comes from the view)",
+    "recorded PM deviations: Gửi clickable (ID-48/49), Danh hiệu optional vs frame asterisk, +Image hides at 5 vs frame, TipTap-default link dialog, Tiêu chuẩn cộng đồng stub, ID-28/29/32 unit-covered only",
+    "open items: EN copy + several vi drafts pending PM; exact Figma icons (asset 401); storage_public_base must be set per environment"
+  ]
+}

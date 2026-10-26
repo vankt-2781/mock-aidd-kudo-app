@@ -3,6 +3,13 @@ import { defineConfig, devices } from "@playwright/test";
 const PORT = 3000;
 const BASE_URL = `http://localhost:${PORT}`;
 
+// Write-isolation (F007): specs that create kudos rows or upload Storage objects run only in
+// `kudos-writes` (serial, after the parallel read suite). The seed-sanity spec runs last so it
+// proves the writes cleaned up after themselves (388 kudos, 8 hashtags, top-5 intact).
+const WRITE_SPECS = /kudos-compose-writes-.*\.spec\.ts/;
+const SEED_SANITY_SPEC = /kudos-compose-seed-sanity\.spec\.ts/;
+const CHROME = { ...devices["Desktop Chrome"] };
+
 export default defineConfig({
   testDir: "./e2e",
   testMatch: "**/*.spec.ts",
@@ -19,7 +26,30 @@ export default defineConfig({
     baseURL: BASE_URL,
     trace: "retain-on-failure",
   },
-  projects: [{ name: "chromium", use: { ...devices["Desktop Chrome"] } }],
+  projects: [
+    {
+      name: "chromium",
+      use: CHROME,
+      testIgnore: [WRITE_SPECS, SEED_SANITY_SPEC],
+    },
+    {
+      // Runs after the read suite. Local single-file debug: `--project=kudos-writes --no-deps`.
+      name: "kudos-writes",
+      use: CHROME,
+      testMatch: WRITE_SPECS,
+      dependencies: ["chromium"],
+      fullyParallel: false,
+      workers: 1,
+    },
+    {
+      name: "kudos-seed-sanity",
+      use: CHROME,
+      testMatch: SEED_SANITY_SPEC,
+      dependencies: ["kudos-writes"],
+      fullyParallel: false,
+      workers: 1,
+    },
+  ],
   webServer: {
     command: "npm run dev",
     url: `${BASE_URL}/login`,

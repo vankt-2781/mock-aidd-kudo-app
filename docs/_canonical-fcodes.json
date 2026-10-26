@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-21T16:52:38Z",
+  "generated_at": "2026-10-23T07:19:51Z",
   "plan": "261019-2101-login-page-supabase-google-oauth",
   "features": [
     {
@@ -135,6 +135,23 @@
       "related": {
         "screens": [
           "SCR007_KudosLiveBoard"
+        ],
+        "user_stories": [],
+        "routes": [],
+        "models": [],
+        "bl": [],
+        "perms": []
+      }
+    },
+    {
+      "fcode": "F007",
+      "name": "Kudos Send Dialog",
+      "slug": "F007_KudosSendDialog",
+      "priority": "P1",
+      "type": "mixed",
+      "related": {
+        "screens": [
+          "SCR008_KudosSendDialog"
         ],
         "user_stories": [],
         "routes": [],

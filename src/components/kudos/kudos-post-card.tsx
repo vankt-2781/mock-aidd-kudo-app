@@ -2,7 +2,7 @@ import Image from "next/image";
 
 import type { KudosBoardPost } from "@/lib/kudos/kudos-board-types";
 import type { KudosCardEnv } from "./kudos-card-env";
-import { CardDivider, KudosHashtags, KudosMessageBox, KudosParties } from "./kudos-card-parts";
+import { CardDivider, KudosHashtags, KudosMessageBox, KudosParties, KudosTitleLine } from "./kudos-card-parts";
 import { KudosCopyLinkButton } from "./kudos-copy-link-button";
 import { KudosLikeButton } from "./kudos-like-button";
 
@@ -23,6 +23,7 @@ export function KudosPostCard({ post, env }: KudosPostCardProps) {
       <div className="flex flex-col gap-4">
         {/* mm:I3127:21871;256:5229 */}
         <p className="text-base font-bold leading-6 tracking-[0.5px] text-[#999]">{post.sentAtLabel}</p>
+        <KudosTitleLine title={post.title} />
         <KudosMessageBox text={post.content} clampClass="line-clamp-5" heightClass="h-[192px] py-4" />
         {/* mm:I3127:21871;256:5176 */}
         <ul className="flex flex-wrap items-center gap-4">

@@ -15,9 +15,8 @@ export async function getKudosViewer(): Promise<KudosViewer> {
     if (error || !authUserId) return VISITOR_VIEWER;
 
     const { data: profile, error: profileError } = await supabase
-      .from("profiles")
+      .from("viewer_profile")
       .select("id")
-      .eq("auth_user_id", authUserId)
       .maybeSingle();
     if (profileError) {
       console.error("[kudos] viewer profile lookup failed", profileError);

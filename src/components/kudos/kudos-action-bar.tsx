@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 
 import type { KudosMessages } from "@/lib/i18n/kudos-dictionary";
 import { profileHref } from "./kudos-card-env";
-import { KudosGatedDialogButton } from "./kudos-gated-dialog-button";
+import { KudosComposeLauncher } from "./kudos-compose-launcher";
 import { IconPen, IconSearch } from "./kudos-icons";
 
 const PILL_CLASS =
@@ -20,23 +20,26 @@ function PillContent({ icon, label }: { icon: ReactNode; label: string }) {
 
 export interface KudosActionBarProps {
   signedIn: boolean;
-  messages: Pick<KudosMessages, "actionBar" | "placeholder">;
+  messages: Pick<KudosMessages, "actionBar" | "compose">;
+  /** Existing hashtag names for the compose dialog (already loaded by the board). */
+  hashtagNames: string[];
 }
 
-/** Button chức năng: A.1 compose pill (placeholder dialog) + Sunner search pill (profile navigation, DEC-002). */
-export function KudosActionBar({ signedIn, messages }: KudosActionBarProps) {
-  const { actionBar, placeholder } = messages;
+/** Button chức năng: A.1 compose pill (opens the Viết Kudo dialog) + Sunner search pill (profile navigation, DEC-002). */
+export function KudosActionBar({ signedIn, messages, hashtagNames }: KudosActionBarProps) {
+  const { actionBar, compose } = messages;
   return (
     // mm:2940:13448
     <div className="flex w-full flex-col gap-4 md:flex-row md:gap-8">
       {/* mm:2940:13449 */}
-      <KudosGatedDialogButton
+      <KudosComposeLauncher
         signedIn={signedIn}
         className={`${PILL_CLASS} md:flex-1`}
-        dialog={{ title: placeholder.sendDialogTitle, body: placeholder.underConstruction, close: placeholder.close }}
+        messages={compose}
+        hashtagNames={hashtagNames}
       >
         <PillContent icon={<IconPen className="shrink-0" />} label={actionBar.composePlaceholder} />
-      </KudosGatedDialogButton>
+      </KudosComposeLauncher>
       {/* mm:2940:13450 */}
       <Link href={profileHref(signedIn)} className={`${PILL_CLASS} md:w-[381px] md:shrink-0`}>
         <PillContent icon={<IconSearch className="shrink-0" />} label={actionBar.searchSunnerLabel} />

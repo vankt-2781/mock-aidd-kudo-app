@@ -35,6 +35,7 @@
 | F004_AwardsInformation | Awards Information | ui | TypeScript | . (repo root) | P1 |
 | F005_CountdownPrelaunch | Countdown Prelaunch | mixed | TypeScript | . (repo root) | P1 |
 | F006_KudosLiveBoard | Kudos Live Board | mixed | TypeScript | . (repo root) | P1 |
+| F007_KudosSendDialog | Kudos Send Dialog | mixed | TypeScript | . (repo root) | P1 |
 
 ## Feature Details
 
@@ -186,3 +187,11 @@ Standalone /countdown prelaunch page (LED countdown DAYS/HOURS/MINUTES, per-seco
 Public /kudos live board: KV banner, compose pill (stub dialog), HIGHLIGHT top-5 carousel by like count, hashtag/department filters (DB-sourced, URL params), SVG spotlight word-cloud (pan/zoom, tooltip, search), ALL KUDOS infinite-scroll feed, sidebar personal stats + gift leaderboard. First real Supabase data domain (kudos, kudos_likes with hearts_awarded, hashtags, departments, profiles, special_days, gift_events, secret_boxes; like/unlike via one SECURITY DEFINER function). Return-to login via exact allow-list (/login?next=/kudos).
 
 **Related:** screens: SCR007 | routes: /kudos, /kudos/[id] (placeholder) | models: kudos domain
+
+### F007 — Kudos Send Dialog
+
+**Priority:** P1 | **Type:** mixed | **Status:** implemented | **Slug:** F007_KudosSendDialog
+
+"Viết Kudo" compose modal on /kudos: recipient autocomplete, optional danh hiệu (kudos.title), TipTap rich-text editor (bold/italic/strike/ordered list/link/quote + @mention, sanitized HTML + content_text), 1-5 hashtags (pick or create), up to 5 jpg/png images via the kudos-images Storage bucket, optional anonymous send (masked sender: definer views, sender_id column revoke, public kudos_sent/hearts_received exclude anonymous). Validate-on-click submit; success closes the modal and refreshes the board.
+
+**Related:** screens: SCR008 | routes: /kudos (modal) | models: kudos domain + storage

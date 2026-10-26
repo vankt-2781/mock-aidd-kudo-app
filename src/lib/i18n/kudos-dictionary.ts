@@ -21,6 +21,7 @@ export type KudosMessages = {
     copyFailed: string;
     emptyKudos: string;
     openImage: string;
+    anonymousAlias: string;
   };
   stars: { tooltip: Record<1 | 2 | 3, string> };
   heroLabels: Record<KudosHeroTierKey, string>;
@@ -45,6 +46,35 @@ export type KudosMessages = {
     openBox: string;
   };
   giftList: { title: string; empty: string };
+  compose: {
+    title: string;
+    recipient: string;
+    recipientPlaceholder: string;
+    recipientEmpty: string;
+    badge: string;
+    badgePlaceholder: string;
+    badgeHint: string;
+    guidelines: string;
+    editorPlaceholder: string;
+    mentionHint: string;
+    hashtag: string;
+    image: string;
+    maxFive: string;
+    maxHashtags: string;
+    hashtagInvalid: string;
+    anonymous: string;
+    anonymousNamePlaceholder: string;
+    cancel: string;
+    send: string;
+    submitting: string;
+    required: string;
+    removeImage: string;
+    removeHashtag: string;
+    format: { bold: string; italic: string; strike: string; list: string; link: string; quote: string };
+    link: { title: string; urlLabel: string; urlPlaceholder: string; apply: string; remove: string; invalid: string };
+    errors: { imageFormat: string; imageSize: string; uploadFailed: string; imageUploading: string; submit: string };
+    toast: { success: string };
+  };
   placeholder: {
     sendDialogTitle: string;
     secretBoxTitle: string;

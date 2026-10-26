@@ -167,7 +167,7 @@ restored in teardown; a fresh DB reset is not needed between runs.
 | SC-006 | filters | `kudos-board-filters-and-carousel` |
 | SC-007 | carousel ends, pager | `kudos-board-filters-and-carousel` |
 | SC-008 | feed paging | `kudos-board-feed-infinite-scroll` |
-| SC-009 | spotlight | `kudos-board-spotlight-and-copy-link` (node click FAILS, see Known defect) |
+| SC-009 | spotlight | `kudos-board-spotlight-and-copy-link` (incl. node click -> `/kudos/[id]`, fixed by the drag-threshold pointer capture) |
 | SC-010 | Copy Link | `kudos-board-spotlight-and-copy-link` |
 | SC-011 | sidebar stats and gifts | `kudos-board-persona`, `kudos-board-public-render` |
 | SC-012 | Mở quà / compose stubs | `kudos-board-persona`, `kudos-board-guest-gating` |
@@ -188,11 +188,92 @@ restored in teardown; a fresh DB reset is not needed between runs.
 - Real Google consent and a real authorization code exchange: Google is stubbed; the authorize `redirect_to` is asserted, the exchange with a bad code is asserted.
 - Visual polish (glow, gradients, pixel match of the banner and keyvisual): visual review.
 
-## Known defect (red on purpose)
+# F007 Viết Kudo (send dialog): E2E and DB/Storage rules
 
-`kudos-board-spotlight-and-copy-link.spec.ts` › "a signed-in node click opens the receiver's latest kudos detail page" fails
-in every run. The node link has the correct `href` (`/kudos/<latest id>`), but a real click lands on the `<svg>`, not the
-`<a>`, so the browser never navigates (diagnosed with `click` capture: `CLICK_TARGETS ["svg defaultPrevented=false"]`).
-The SVG calls `setPointerCapture` on pointerdown (`src/components/kudos/kudos-spotlight-canvas.tsx`), which retargets the
-click. Not yet bisected further; the probable fix is to capture only once a drag starts past the threshold. The test is kept
-failing and must not be skipped to clear the build.
+Screen: MoMorph `ihQ26W78P2`. Specs: `kudos-compose-open-and-layout`, `kudos-compose-validation`,
+`kudos-compose-editor`, `kudos-images-storage-rules` (read-only, parallel `chromium` project);
+`kudos-compose-writes-{submit,anonymous,images,db-rules}` (write project); `kudos-compose-seed-sanity` (last).
+Helpers: `kudos-compose-ui.ts` (locators, pick/type/submit, send interception), `kudos-compose-cleanup.ts`
+(service/anon/user clients, ordered teardown, kudos lookup), `kudos-compose-test-files.ts` (in-memory images).
+
+## Projects and write isolation
+
+| Project | Specs | Runs |
+|---------|-------|------|
+| `chromium` | everything except the two patterns below (F001-F005 + read-only F007) | parallel |
+| `kudos-writes` | `kudos-compose-writes-*.spec.ts` | after `chromium`, `workers: 1`, creates kudos rows and uploads |
+| `kudos-seed-sanity` | `kudos-compose-seed-sanity.spec.ts` | after `kudos-writes`; asserts the F006 seed invariants |
+
+- Rule: a spec that inserts a kudos row or uploads to Storage lives in `kudos-compose-writes-*`. Read-only
+  specs guard against it: `blockKudosSends(page)` aborts any server-action POST that carries `contentHtml`,
+  and the tests assert zero attempts.
+- Each write test: fresh sender (`testUser` fixture), fresh recipient (`createTestUser`), unique `e2e_<8hex>`
+  hashtags and a unique content token. `afterEach` runs `cleanupComposeRun`: kudos of the run's profiles
+  (explicit delete), `hashtags ilike 'e2e\_%'`, Storage objects at the paths the user reserved (registry `kudos_image_uploads`; paths carry no uid), then the users. Failures
+  are collected and rethrown together.
+- Seed-sanity checks 388 kudos (table and `kudos_feed`), 8 hashtags, no e2e hashtags, top-5 like counts
+  `[1000,980,960,940,920]`, persona stats 25/25/25, no e2e auth users, no orphan Storage folder.
+- Run one write file on its own with `npx playwright test e2e/kudos-compose-writes-submit.spec.ts --project=kudos-writes --no-deps`.
+- The F006 read suite (PR #6) is not on this branch. Its seed invariants are enforced by the seed-sanity spec.
+
+## TC map (digest buckets; ID-xx = MoMorph TC row)
+
+| TC | Coverage |
+|----|----------|
+| ID-0 | e2e `open-and-layout` (signed-in pill opens modal) |
+| ID-1 | e2e `open-and-layout` (guest pill is a link to `/login?next=%2Fkudos`, no modal) |
+| ID-2, ID-3, ID-4, ID-5, ID-6 | e2e `open-and-layout` (fields, order by y-position, placeholders, checkbox unchecked) |
+| ID-7/50, ID-11/51, ID-14/52, ID-56 | e2e `validation` (red field, required text, no submit, all three at once) |
+| ID-48/49 | DEVIATION (clarifications): Gửi stays enabled and validates on click; asserted in `validation` ID-56 |
+| ID-8/25, ID-9, ID-10, ID-26 | e2e `validation` (filter, special chars, trim, pick fills and closes) |
+| typed-not-picked recipient, self never offered | e2e `validation` |
+| ID-12/13/33 | e2e `editor` (@ suggestion, pick inserts mention, Esc closes the list only) |
+| ID-27 (bold), ID-30 (ordered list) | e2e `editor` (browser spot-check, see deferred) |
+| ID-28, ID-29, ID-32 (italic, strike, quote) | unit only: `kudos-editor-format-commands.test.ts` (see deferred) |
+| ID-31 (link) | e2e `editor` (`javascript:` URL refused, no anchor inserted) |
+| ID-15 | e2e `writes-submit` (one tag, card at feed top, DB row) |
+| ID-16, ID-17/53 | e2e `validation` (five accepted; sixth refused with "Tối đa 5 hashtag") |
+| ID-34/35, ID-36 | e2e `validation` (typed and dropdown add, chip remove) |
+| invalid hashtag characters | e2e `validation` (not added, alert shown; message text is a finding, see below) |
+| ID-18, ID-19/38/54, ID-20 | e2e `writes-images` (three, five, add control hidden at five) |
+| ID-21/22/37 | e2e `writes-images` (jpg and png upload and decode) |
+| ID-23/24/55 | e2e `writes-images` (pdf, mp4, txt refused; nothing uploaded) |
+| over 5 MiB | e2e `writes-images` (size error; nothing uploaded) |
+| ID-39, ID-40 | e2e `writes-images` (remove frees a slot, add returns) |
+| ID-41, ID-42, ID-43/44 | e2e `writes-anonymous` (checkbox, name field, alias, "Ẩn danh") |
+| SC-016 | e2e `writes-anonymous` (public `profile_kudos_stats` unchanged; `viewer_kudos_stats` +1) |
+| SC-012 | e2e `writes-anonymous` (guest view masked; `kudos_feed.sender_id` null; `kudos.sender_id` unreadable for anon and authenticated; PostgREST embed denied) |
+| ID-45 | e2e `open-and-layout` (Hủy and Esc discard; reopened modal empty; overlay click is inert, SC-008) |
+| ID-46 (text) | e2e `writes-submit` (title, bold, mention, two hashtags, loading held then released, toast, card, row) |
+| ID-46 (images) | e2e `writes-submit` — GREEN (next/image storage hosts whitelisted; dev allows local IP) |
+| ID-47 | e2e `writes-submit` (no images, empty image list) |
+| FR-015 | e2e `writes-submit` (dropped action: error toast, values kept, nothing stored) |
+| SC-015 | e2e `open-and-layout` (EN copy on the same modal) |
+| SC-011 | e2e `writes-db-rules` (anon denied; self, 0 and 6 tags, 6 reserved images, unregistered / foreign-registry / external-host / over-long URLs, content > 50000, blank text, title length, anonymous name without flag; valid call; raw HTML stored as given, feed exposes content_text) — GREEN (send_kudos anchors the full storage origin via app_settings + registry ownership) |
+| SC-014 | e2e `images-storage-rules` (anon denied, unregistered / legacy uid-folder / foreign-reserved paths denied, reserve RPC, registry unreadable, text/plain and PDF denied, 5 MiB+1 denied, bucket config) + `writes-db-rules` (reserved-path upload, public URL 200, RPC accepts it) + `writes-anonymous-images` (anonymous + images leaks no auth uid; `profiles.auth_user_id` permission-denied; normal kudos with images) |
+
+## Open defects
+
+None. Two defects found by this suite were fixed at the root cause and re-verified (181/181 twice):
+1. `send_kudos` now anchors the FULL storage origin (`app_settings.storage_public_base`) and requires
+   registry-owned, identity-free `<uuid>/<uuid>.<ext>` paths — foreign hosts and legacy uid folders are refused.
+2. `next/image` now whitelists the Supabase Storage hosts (`127.0.0.1:54321` locally, `*.supabase.co` hosted)
+   and allows local-IP upstreams outside production, so storage-hosted images render on the board.
+
+## Observations (no red test)
+
+- (fixed) The image-format copy now matches the JPG/PNG-only rule; send_kudos anchors the full storage origin via app_settings; next/image whitelists the Supabase Storage hosts.
+- An invalid hashtag (for example `bad tag!`) shows "Không được để trống" (required). `mergeHashtag` returns
+  `invalid`, which the controller maps to the required message. The test asserts only that the chip is not added and an alert shows.
+- Removing a thumbnail does not delete its Storage object (no client delete policy). The object is an accepted orphan
+  and is removed by test cleanup only.
+
+## Deferred / not in the browser
+
+- ID-28 (italic), ID-29 (strike), ID-32 (quote): TipTap toggles share the path proven by bold and the ordered list.
+  Their command-to-format mapping is asserted by `kudos-editor-format-commands.test.ts`. Adding them browser-level would
+  cost about 10 s each with no new branch.
+- 5000-character cap: optional per the plan. Length enforcement is in `kudos-compose-limits` and the send
+  validation tests. Not driven in the browser.
+- Sanitizer and reducer edge cases (allow-list, entity decoding, reducer transitions): unit only, by design.
+- jsdom-only editor behaviors are not run here; the editor specs use the real TipTap in Chromium.

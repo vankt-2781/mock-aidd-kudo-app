@@ -5,6 +5,9 @@ const row: KudosFeedRow = {
   id: "k1",
   created_at: "2025-10-30T03:00:00+00:00",
   content: "Thanks",
+  title: "Hero",
+  is_anonymous: false,
+  viewer_is_sender: false,
   images: ["/a.png"],
   sender_id: "p-sender",
   sender_display_name: "Sender",
@@ -22,7 +25,9 @@ const row: KudosFeedRow = {
 
 describe("mapFeedRow", () => {
   it("maps users, tiers, label, hashtags and links", () => {
-    const post = mapFeedRow(row, new Set(), null);
+    const post = mapFeedRow(row, new Set());
+    expect(post.title).toBe("Hero");
+    expect(post.senderAnonymous).toBe(false);
     expect(post.sender).toMatchObject({
       profileId: "p-sender",
       name: "Sender",
@@ -40,17 +45,45 @@ describe("mapFeedRow", () => {
     expect(post.images).toEqual(["/a.png"]);
   });
 
-  it("flags liked and own posts", () => {
-    expect(mapFeedRow(row, new Set(["k1"]), "p-sender")).toMatchObject({ likedByViewer: true, viewerIsSender: true });
-    expect(mapFeedRow(row, new Set(), "other")).toMatchObject({ likedByViewer: false, viewerIsSender: false });
+  it("flags liked posts and reads viewer_is_sender from the row (never from sender_id)", () => {
+    expect(mapFeedRow(row, new Set(["k1"]))).toMatchObject({ likedByViewer: true, viewerIsSender: false });
+    expect(mapFeedRow({ ...row, viewer_is_sender: true }, new Set())).toMatchObject({ viewerIsSender: true });
   });
 
-  it("never marks a visitor as sender", () => {
-    expect(mapFeedRow(row, new Set(), null).viewerIsSender).toBe(false);
+  it("normalizes title: blank and null become null", () => {
+    expect(mapFeedRow({ ...row, title: "   " }, new Set()).title).toBeNull();
+    expect(mapFeedRow({ ...row, title: null }, new Set()).title).toBeNull();
+  });
+
+  it("masks an anonymous sender: alias, default avatar, no stars/department/identity", () => {
+    const post = mapFeedRow(
+      { ...row, is_anonymous: true, viewer_is_sender: true, sender_id: null, sender_display_name: "Ghost", sender_avatar_url: null, sender_department_code: null, sender_stars: null },
+      new Set(),
+    );
+    expect(post.senderAnonymous).toBe(true);
+    expect(post.viewerIsSender).toBe(true);
+    expect(post.sender).toEqual({
+      profileId: "",
+      name: "Ghost",
+      department: "",
+      stars: 0,
+      heroTier: "new",
+      avatarSrc: "/images/kudos/avatar-sunner.png",
+    });
+  });
+
+  it("leaves the anonymous name empty for the card to fill with the default alias", () => {
+    const post = mapFeedRow({ ...row, is_anonymous: true, sender_id: null, sender_display_name: null }, new Set());
+    expect(post.sender.name).toBe("");
+  });
+
+  it("ignores any leaked sender fields on an anonymous row", () => {
+    const post = mapFeedRow({ ...row, is_anonymous: true, sender_avatar_url: "/leak.png", sender_stars: 3 }, new Set());
+    expect(post.sender).toMatchObject({ stars: 0, avatarSrc: "/images/kudos/avatar-sunner.png", profileId: "" });
   });
 
   it("clamps unexpected star values", () => {
-    expect(mapFeedRow({ ...row, sender_stars: 99 }, new Set(), null).sender.stars).toBe(3);
+    expect(mapFeedRow({ ...row, sender_stars: 99 }, new Set()).sender.stars).toBe(3);
   });
 });
 

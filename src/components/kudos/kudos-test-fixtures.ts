@@ -18,6 +18,8 @@ export function makePost(over: Partial<KudosBoardPost> = {}): KudosBoardPost {
     id: "11111111-1111-4111-8111-111111111111",
     sender: USER,
     receiver: { ...USER, name: "Trần Thị B", profileId: "p-2" },
+    title: null,
+    senderAnonymous: false,
     sentAtLabel: "10:00 - 10/30/2025",
     content: "Cảm ơn bạn rất nhiều!",
     hashtags: ["#Pioneer", "#Teamwork"],

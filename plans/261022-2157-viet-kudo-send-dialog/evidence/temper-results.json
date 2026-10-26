@@ -1,0 +1,74 @@
+{
+  "commands": [
+    {
+      "command": "npx supabase db reset (x2 in phase 02; again after send_kudos origin-anchor fix)",
+      "exitCode": 0,
+      "status": "pass",
+      "summary": "7 migrations applied (3 F006 + 4 new F007: compose columns+backfill+hashtag lower(name) index, masked definer views + sender_id column revoke, send_kudos + app_settings origin anchor, kudos-images bucket+policy); seed invariants intact (388 kudos, 8 hashtags, top-5 1000/980/960/940/920)",
+      "ts": "1970-01-01T00:00:00.000Z"
+    },
+    {
+      "command": "SQL role-simulation smoke matrix (phase 02, in-container psql)",
+      "exitCode": 0,
+      "status": "pass",
+      "summary": "anon/authenticated denied kudos.sender_id and direct table select; masked feed shows alias (\"Ẩn danh\" or custom) with null avatar/stars for anonymous rows; public stats exclude anonymous (kudos_sent and hearts_received), owner viewer_kudos_stats counts all; send_kudos rejects self/0 tags/6 tags/31-char tag/bad charset/foreign folder/traversal/6 images/blank text; set_kudos_like self-guard still works",
+      "ts": "1970-01-01T00:00:00.000Z"
+    },
+    {
+      "command": "npx tsc --noEmit",
+      "exitCode": 0,
+      "status": "pass",
+      "summary": "typecheck clean after all 6 phases + defect fixes",
+      "ts": "1970-01-01T00:00:00.000Z"
+    },
+    {
+      "command": "npm run lint",
+      "exitCode": 0,
+      "status": "pass",
+      "summary": "eslint clean incl. e2e",
+      "ts": "1970-01-01T00:00:00.000Z"
+    },
+    {
+      "command": "npm test",
+      "exitCode": 0,
+      "status": "pass",
+      "summary": "vitest 626/626 across 69 files (baseline 483 + 143 new: dictionary compose, editor helpers + jsdom smoke, validation/sanitize/normalize/image-url/parse matrices, actions, mappers anonymous+title, controller/reducer 28, launcher, feed-key fix)",
+      "ts": "1970-01-01T00:00:00.000Z"
+    },
+    {
+      "command": "npm run build",
+      "exitCode": 0,
+      "status": "pass",
+      "summary": "next build clean with TipTap + sanitize-html + storage remotePatterns",
+      "ts": "1970-01-01T00:00:00.000Z"
+    },
+    {
+      "command": "npx playwright test (twice consecutively on one db reset) + --project=kudos-seed-sanity --no-deps",
+      "exitCode": 0,
+      "status": "pass",
+      "summary": "173/173 both runs (105 existing + 68 new F007: 36 read-only parallel, 25 serial write-isolated with service-role cleanup, 7 seed-sanity) + standalone seed-sanity 7/7; covers 50+ of the 57 MoMorph TCs browser-level incl. real Storage upload policy (own folder ok, foreign folder/5MB/.txt refused)",
+      "ts": "1970-01-01T00:00:00.000Z"
+    },
+    {
+      "command": "phase-06 RED -> fixes -> GREEN (3 real defects found by tests, fixed at root cause, suite rerun twice)",
+      "exitCode": 0,
+      "status": "pass",
+      "summary": "(1) send_kudos accepted foreign-host image URLs mimicking the bucket path — now anchors the FULL origin via app_settings.storage_public_base; (2) a storage-hosted image crashed /kudos render (next/image host not whitelisted) — remotePatterns now include 127.0.0.1:54321 and *.supabase.co storage paths; (3) image-format copy said WebP while only JPG/PNG allowed + invalid hashtag showed the required message — dictionary fixed, compose.hashtagInvalid added and wired",
+      "ts": "1970-01-01T00:00:00.000Z"
+    },
+    {
+      "command": "inspection REWORK cycle: identity-free image registry + profiles.auth_user_id revoke + caps + upload feedback + sanitizer tighten + dangerouslyAllowLocalIP(dev); full gates rerun",
+      "exitCode": 0,
+      "status": "pass",
+      "summary": "db reset x2; tsc 0; lint 0; vitest 634/634; build 0; playwright 181/181 twice + seed-sanity 7/7; new anonymous-image e2e proves no auth uid in any public surface and registry/column denials",
+      "ts": "1970-01-01T00:00:00.000Z"
+    },
+    {
+      "command": "user-feedback fix: dropdowns close on outside click (hashtag + recipient) — unit RED->GREEN, full gates rerun",
+      "exitCode": 0,
+      "status": "pass",
+      "summary": "useCloseOnOutsidePointer hook (click phase — mousedown-close broke Chromium label->checkbox forwarding, found via e2e timeout + aria snapshot + jsdom probe); tsc 0, eslint 0, vitest 637/637 (71 files, +3), playwright 181/181 twice consecutively on one db reset",
+      "ts": "1970-01-01T00:00:00.000Z"
+    }
+  ]
+}
