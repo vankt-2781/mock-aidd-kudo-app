@@ -1,9 +1,14 @@
+"use client";
+
+import { useRef } from "react";
+
 import { HASHTAG_MAX } from "@/lib/kudos-compose/kudos-compose-limits";
 
 import { ComposeAddButton } from "./kudos-compose-add-button";
 import { ComposeFieldError, ComposeFieldLabel } from "./kudos-compose-field-label";
 import { IconCheckCircle, IconClose } from "./kudos-compose-icons";
 import { COMPOSE_MAX_HASHTAGS, type ComposeHashtag, type ComposeMessages } from "./kudos-compose-types";
+import { useCloseOnOutsidePointer } from "./use-close-on-outside-pointer";
 
 interface HashtagFieldProps {
   messages: ComposeMessages;
@@ -22,6 +27,9 @@ interface HashtagFieldProps {
 /** mm:520:9890 — "Hashtag" row: label, chips, typed-entry input, "+ Hashtag" trigger; dropdown per mm:p9zO-c4a4x. */
 export function ComposeHashtagField(props: HashtagFieldProps) {
   const { messages, selected, options, query, open, error, onToggleDropdown, onToggle, onQueryChange, onSubmit, onRemove } = props;
+  const dropdownRef = useRef<HTMLDivElement>(null);
+  // Selecting items keeps the list open (multi-select); a pointer outside it closes.
+  useCloseOnOutsidePointer(open, dropdownRef, onToggleDropdown);
   const full = selected.length >= COMPOSE_MAX_HASHTAGS;
   const border = error ? "border-[#CF1322]" : "border-[#998C5F]";
   return (
@@ -66,7 +74,7 @@ export function ComposeHashtagField(props: HashtagFieldProps) {
           />
           {!full && (
             <>
-              <div className="relative">
+              <div ref={dropdownRef} className="relative">
                 <ComposeAddButton label={messages.hashtag} hint={messages.maxFive} expanded={open} onClick={onToggleDropdown} />
                 {open && (
                   <ul

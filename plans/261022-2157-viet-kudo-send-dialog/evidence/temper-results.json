@@ -62,6 +62,13 @@
       "status": "pass",
       "summary": "db reset x2; tsc 0; lint 0; vitest 634/634; build 0; playwright 181/181 twice + seed-sanity 7/7; new anonymous-image e2e proves no auth uid in any public surface and registry/column denials",
       "ts": "1970-01-01T00:00:00.000Z"
+    },
+    {
+      "command": "user-feedback fix: dropdowns close on outside click (hashtag + recipient) — unit RED->GREEN, full gates rerun",
+      "exitCode": 0,
+      "status": "pass",
+      "summary": "useCloseOnOutsidePointer hook (click phase — mousedown-close broke Chromium label->checkbox forwarding, found via e2e timeout + aria snapshot + jsdom probe); tsc 0, eslint 0, vitest 637/637 (71 files, +3), playwright 181/181 twice consecutively on one db reset",
+      "ts": "1970-01-01T00:00:00.000Z"
     }
   ]
 }

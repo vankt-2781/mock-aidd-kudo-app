@@ -1,7 +1,12 @@
+"use client";
+
+import { useRef } from "react";
+
 import { IconChevronDown } from "@/components/kudos/kudos-icons";
 
 import { ComposeFieldError, ComposeFieldLabel, FIELD_BORDER, FIELD_ERROR_BORDER } from "./kudos-compose-field-label";
 import type { ComposeMessages, ComposeSunner, KudosComposeValues } from "./kudos-compose-types";
+import { useCloseOnOutsidePointer } from "./use-close-on-outside-pointer";
 
 interface RecipientFieldProps {
   messages: ComposeMessages;
@@ -17,13 +22,15 @@ interface RecipientFieldProps {
 /** mm:520:9871 — "Người nhận" row: label + 56px search input + dropdown of Sunners (mm:QIMJNgFb8K). */
 export function ComposeRecipientField({ messages, values, error, open, options, onQueryChange, onToggle, onSelect }: RecipientFieldProps) {
   const { recipient, recipientQuery } = values;
+  const containerRef = useRef<HTMLDivElement>(null);
+  useCloseOnOutsidePointer(open, containerRef, onToggle);
   return (
     <div className="flex flex-col gap-1">
       <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-4">
         <ComposeFieldLabel required htmlFor="compose-recipient">
           {messages.recipient}
         </ComposeFieldLabel>
-        <div className="relative min-w-0 flex-1">
+        <div ref={containerRef} className="relative min-w-0 flex-1">
           <div
             className={`flex h-14 items-center justify-between gap-2 rounded-lg border bg-white px-6 py-4 ${
               error ? FIELD_ERROR_BORDER : FIELD_BORDER
