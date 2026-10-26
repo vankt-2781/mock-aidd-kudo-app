@@ -53,7 +53,8 @@ export function KudosSpotlightCanvas({ canvas, words, viewBox, setViewBox, mode,
     if (e.button !== 0) return;
     drag.current = { x: e.clientX, y: e.clientY, moved: false };
     suppressClick.current = false;
-    e.currentTarget.setPointerCapture?.(e.pointerId);
+    // Do NOT capture here: capturing retargets the eventual click to the svg,
+    // so node <a> links would never navigate. Capture starts with the drag.
   };
 
   const onPointerMove = (e: React.PointerEvent<SVGSVGElement>) => {
@@ -62,6 +63,7 @@ export function KudosSpotlightCanvas({ canvas, words, viewBox, setViewBox, mode,
     const dx = e.clientX - start.x;
     const dy = e.clientY - start.y;
     if (!start.moved && Math.hypot(dx, dy) < DRAG_THRESHOLD_PX) return;
+    if (!start.moved) e.currentTarget.setPointerCapture?.(e.pointerId);
     start.moved = true;
     suppressClick.current = true;
     start.x = e.clientX;

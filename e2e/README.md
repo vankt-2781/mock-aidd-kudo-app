@@ -125,6 +125,69 @@ pre-launch suite was built and then removed as not needed). It is covered by the
 - 1.5 s client redirect to `/` at zero (FR-003): unit-covered by `use-launch-redirect.test.tsx` and the live countdown tests. Not driven end to end: the server gate reads the server clock, which the browser clock cannot move.
 - Expired (not garbage) session JWT: the test suite cannot mint a JWT without the project secret; the invalid-cookie path is covered instead.
 
+# F006 Sun* Kudos live board: E2E coverage
+
+Precondition: `npx supabase db reset` (deterministic seed, see `supabase/seed.sql` header). `kudos-seed-sanity.spec.ts`
+fails first with "run `npx supabase db reset` first" when the seed drifted. Constants mirror the seed in
+`helpers/kudos-seed-constants.ts`.
+
+Specs (`kudos-*.spec.ts`) run in the default `npx playwright test` suite; no pre-launch config is used.
+
+| Spec | Scope | Mode |
+|------|-------|------|
+| `kudos-seed-sanity` | seed counts, top-5 ranking, persona stats, Pioneer, CEVC99 | parallel |
+| `kudos-board-public-render` | visitor render, vi/en copy, empty department, `/kudos/[id]` placeholder | parallel |
+| `kudos-board-filters-and-carousel` | hashtag/department filters, URL state, tag click, carousel ends and pager | parallel |
+| `kudos-board-feed-infinite-scroll` | 10 → 20 on scroll, Pioneer 10 → 12 then no further requests, thumbnail popup | parallel |
+| `kudos-board-guest-gating` | every gated control links to `/login?next=%2Fkudos`; visitor heart writes nothing | parallel |
+| `kudos-board-like-toggle` | signed-in like/unlike (DB row + reload), highlight/feed sync on a Pioneer kudos | parallel |
+| `kudos-board-persona` | sender heart disabled, sidebar stats 25/25/25/25/25, placeholder dialogs | serial, persona claim |
+| `kudos-like-db-rules` | anon/authenticated RLS denials, forged self-like, double like, special day 2 → revoke 2, secret boxes | serial, API level |
+| `kudos-board-spotlight-and-copy-link` | spotlight total, tooltip, search highlight/dim, 100-char cap, pan/zoom, node click, Copy Link toast + clipboard | parallel |
+| `kudos-login-return-to` | Google authorize `redirect_to` carries `next=/kudos`; bad-code callback; signed-in `next` handling | parallel |
+
+Helpers: `helpers/kudos-seed-constants.ts` (seed ids and counts), `helpers/kudos-db-admin.ts` (service-role and per-user
+clients, claim/release persona, special-day set/restore, like lookups), `helpers/kudos-board-ui.ts` (regions, card lookup,
+feed loader), `helpers/kudos-fixtures.ts` (`personaContext`). `deleteTestUser` now releases the test user's likes and
+profile links before deleting the auth user, so the shared `testUser` fixture leaves no `E2E Tester` profiles behind.
+
+Data rules: no spec creates or deletes kudos. Like targets are seeded kudos 201..204 (0 likes, never top-5); each test owns one
+and asserts per-user rows or relative counts. The sync test picks a Pioneer kudos from the DB. Persona and special-day state is
+restored in teardown; a fresh DB reset is not needed between runs.
+
+## TC map
+
+| Spec ID | Test cases | Coverage |
+|---------|-----------|----------|
+| SC-001 | TC-71b3ef43 (view part) | `kudos-board-public-render`, `kudos-board-guest-gating` |
+| SC-002 | TC-71b3ef43 (interaction part) | `kudos-board-guest-gating`, `kudos-login-return-to` |
+| SC-003 | like/unlike rows | `kudos-board-like-toggle` |
+| SC-004 | no self-like, one like per user | `kudos-board-persona`, `kudos-like-db-rules` |
+| SC-005 | special-day hearts | `kudos-like-db-rules` |
+| SC-006 | filters | `kudos-board-filters-and-carousel` |
+| SC-007 | carousel ends, pager | `kudos-board-filters-and-carousel` |
+| SC-008 | feed paging | `kudos-board-feed-infinite-scroll` |
+| SC-009 | spotlight | `kudos-board-spotlight-and-copy-link` (incl. node click -> `/kudos/[id]`, fixed by the drag-threshold pointer capture) |
+| SC-010 | Copy Link | `kudos-board-spotlight-and-copy-link` |
+| SC-011 | sidebar stats and gifts | `kudos-board-persona`, `kudos-board-public-render` |
+| SC-012 | Mở quà / compose stubs | `kudos-board-persona`, `kudos-board-guest-gating` |
+| SC-013 | RLS and grants | `kudos-like-db-rules` |
+| SC-014 | vi exact copy, en draft | `kudos-board-public-render` |
+| SC-015 | return-to allow-list | `kudos-login-return-to` |
+
+### Deferred or deviated TCs (not run here)
+
+- f183a3e4, ca8f60b3 (send-dialog required field and save): the Viết Kudo dialog is a separate screen, deferred to its own task (clarifications: live board only).
+- 43b54c29 ("Mở quà" opens the real Secret Box dialog): the dialog is a placeholder stub; e2e asserts the stub opens. Deviation recorded for PM.
+- TC-9e689933 (empty spotlight search must show a required error): deviation. Empty input is a no-op per clarifications; e2e asserts the no-op.
+- Hover preview of profiles: separate frame, stub, not automated.
+- Spotlight empty and gift-list empty states: jsdom only (05/06 unit). Emptying shared tables would break the parallel specs (F005 precedent).
+
+## MANUAL / not automatable
+
+- Real Google consent and a real authorization code exchange: Google is stubbed; the authorize `redirect_to` is asserted, the exchange with a bad code is asserted.
+- Visual polish (glow, gradients, pixel match of the banner and keyvisual): visual review.
+
 # F007 Viết Kudo (send dialog): E2E and DB/Storage rules
 
 Screen: MoMorph `ihQ26W78P2`. Specs: `kudos-compose-open-and-layout`, `kudos-compose-validation`,
