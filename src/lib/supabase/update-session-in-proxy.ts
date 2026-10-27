@@ -1,5 +1,6 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
+import { LOGIN_PATH } from "../auth/decide-route-redirect";
 import { isAdminUser } from "../auth/is-admin-user";
 import { getSupabaseEnv } from "./supabase-env";
 
@@ -34,6 +35,16 @@ export async function updateSessionInProxy(request: NextRequest): Promise<ProxyS
   try {
     const { data, error } = await supabase.auth.getClaims();
     const claims = !error ? data?.claims : undefined;
+    // A validly signed JWT can outlive its user row (db reset, deleted/banned user). getClaims never
+    // hits GoTrue, so on /login that stale session would bounce to /todo and back forever. Only on
+    // /login, confirm the user exists; if not, drop the stale cookies and treat as a guest.
+    if (claims && request.nextUrl.pathname === LOGIN_PATH) {
+      const { error: userError } = await supabase.auth.getUser();
+      if (userError) {
+        await supabase.auth.signOut({ scope: "local" });
+        return { response, isAuthenticated: false, isAdmin: false };
+      }
+    }
     return {
       response,
       isAuthenticated: !!claims,
