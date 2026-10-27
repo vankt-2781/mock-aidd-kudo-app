@@ -90,13 +90,14 @@ graph TB
 | `src/lib/supabase/` | Env, browser client, server client (cookies), `update-session-in-proxy`; the server client is the single data access path for kudos |
 | `src/lib/auth/` | Pure decision functions (route guard, callback target with return-to allow-list), `is-admin-user`, `get-display-user`, `get-current-viewer` (verified viewer used for gating and stats) |
 | `src/lib/kudos/` | Typed query functions (highlight, feed page, spotlight, stats, gift list, filter options), and the like action logic; `kudos-viewer.ts` reads the signed-in profile through the `viewer_profile` view; row mappers read `content_text`, `title` and the masked anonymous fields |
+| `src/lib/profile/` | F008 profile layer: `?id`/`?dir` resolution, header and feed queries (Received via `kudos_feed`, own Sent via `own_sent_kudos`), infinite-scroll page action; page loaders in `src/app/(site)/profile/` |
 | `src/lib/countdown/` | Pure strict-ISO parse and countdown computation |
 | `src/lib/i18n/` | Locale cookie, request locale, login / awards / prelaunch / kudos dictionaries (vi exact design copy, en draft), `setLocaleAction` |
 | `src/app/` | `/`, `/login`, `/todo`, `/countdown`, `/auth/callback`, `/api/event-config`, `(site)/kudos` page, `/kudos/[id]` placeholder |
 | `src/components/kudos/` | Presentational kudos components (banner, pill, carousel, cards, spotlight, sidebar) with typed props; the pill opens the compose modal when signed in and cards render the title line and the anonymous alias |
 | `src/lib/kudos-compose/` | Send-kudos pieces: `sendKudos` and `searchSunners` server actions, input parse and form validation, hashtag normalization, server-only `sanitize-html` derivation of HTML and `content_text`, image URL shape check, browser image upload (reserve then upload), shared limits |
 | `src/components/kudos-compose/` | Compose modal components (title, recipient, editor shell, hashtag, image, anonymous, footer) with typed props; the TipTap editor plugs into the editor slot |
-| `supabase/migrations/`, `supabase/seed.sql` | Schema, RLS policies, like function, view(s), seed data; the Viết Kudo migrations (`20261022000001` to `4`) add columns and hashtag index, the masked definer views with column-level grants (incl. `viewer_profile`), `app_settings` + `kudos_image_uploads` + `send_kudos`, and the Storage bucket with `reserve_kudos_image_path` and its insert policy |
+| `supabase/migrations/`, `supabase/seed.sql` | Schema, RLS policies, like function, view(s), seed data; the Viết Kudo migrations (`20261022000001` to `4`) add columns and hashtag index, the masked definer views with column-level grants (incl. `viewer_profile`), `app_settings` + `kudos_image_uploads` + `send_kudos`, and the Storage bucket with `reserve_kudos_image_path` and its insert policy; `20261027000001` adds the `own_sent_kudos` definer view (F008) |
 | `src/components/login/`, `src/components/prelaunch/` | Presentational login and countdown components |
 
 ## Data Flow
@@ -266,6 +267,8 @@ erDiagram
 
 - Next 16 `proxy` is the guard/session-refresh layer; auth verified with `getClaims()`, never `getSession()`.
 - DEC-001: guard `/login` (authed -> `/todo`) and `/todo/**` (unauthed -> `/login`). Roles only matter for the launch gate and the admin menu item. `/kudos` is public: the proxy is not changed; interaction gating happens in the page and the action.
+- DEC-003 (F008): `/profile` is guarded in `decideRouteRedirect` (guest -> `/login?next=%2Fprofile`, `/profile` exact in the return-to allow-list). The own-Sent feed reads `own_sent_kudos`: SECURITY DEFINER, scoped to `auth.uid()`, same 19 columns as `kudos_feed`, `authenticated` only, so anonymous kudos show real identity to their sender alone. The OTHER face reads Received only and shows no counts.
+- DEC-004 (8b677e2): `getClaims()` validates the JWT locally and never reaches GoTrue, so a signed token can outlive its user (db reset, deleted/banned). On `/login` only, `updateSessionInProxy` additionally calls `getUser()`; on error it clears local session cookies and treats the request as a guest. Other routes keep claims-only checks to avoid a GoTrue call per request.
 - DEC-002: callback redirect target is resolved from an allow-list (no open redirect): a `next` query param accepted only if it is an exact internal allow-listed path (at least `/kudos`), default `/todo`; failure -> `/login?error=oauth`. The login page carries a valid `next` into the OAuth `redirectTo` for `/auth/callback`; the pure callback-target resolver validates it. Gated Kudos actions link to `/login?next=/kudos`.
 - Fail-open: a missing or invalid `EVENT_START_AT` is treated as already launched.
 - Launch gate evaluates first in `proxy.ts`; after launch the existing rules behave as today.

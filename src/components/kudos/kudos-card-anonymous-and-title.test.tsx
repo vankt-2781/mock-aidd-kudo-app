@@ -44,8 +44,8 @@ describe.each(["post", "highlight"] as const)("%s card", (kind) => {
   it("shows the default alias for an anonymous sender without link, stars or department", () => {
     const { container } = renderWith(kind, { senderAnonymous: true, sender: anonymousSender });
     expect(screen.getByText(viMessages.card.anonymousAlias)).toBeTruthy();
-    // only the receiver keeps a profile link (avatar + name)
-    expect(container.querySelectorAll('a[href="/profile"]').length).toBe(2);
+    // only the receiver keeps a profile link (avatar + name), now to the receiver's own profile
+    expect(container.querySelectorAll('a[href="/profile?id=p-2"]').length).toBe(2);
     expect(container.querySelectorAll("[data-kudos-anonymous] a").length).toBe(0);
   });
 

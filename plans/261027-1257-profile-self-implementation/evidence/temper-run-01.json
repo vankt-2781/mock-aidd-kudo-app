@@ -1,0 +1,5 @@
+{
+  "command": "npx supabase db reset (phase 01 ×2; once before the double e2e gate)",
+  "exitCode": 0,
+  "summary": "migration 20261027000001 applied; information_schema column gate: kudos_feed vs own_sent_kudos 0 mismatches both directions (19 columns)"
+}

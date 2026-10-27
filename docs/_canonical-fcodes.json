@@ -1,6 +1,6 @@
 {
   "generated_at": "2026-10-23T07:19:51Z",
-  "plan": "261019-2101-login-page-supabase-google-oauth",
+  "plan": "261027-1257-profile-self-implementation",
   "features": [
     {
       "fcode": "F001",
@@ -152,6 +152,24 @@
       "related": {
         "screens": [
           "SCR008_KudosSendDialog"
+        ],
+        "user_stories": [],
+        "routes": [],
+        "models": [],
+        "bl": [],
+        "perms": []
+      }
+    },
+    {
+      "fcode": "F008",
+      "name": "Profile",
+      "slug": "F008_Profile",
+      "priority": "P1",
+      "type": "mixed",
+      "related": {
+        "screens": [
+          "SCR009_ProfileSelf",
+          "SCR010_ProfileOther"
         ],
         "user_stories": [],
         "routes": [],

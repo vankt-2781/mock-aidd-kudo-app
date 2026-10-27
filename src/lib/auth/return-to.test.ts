@@ -10,11 +10,18 @@ import {
 describe("resolveReturnTo (FR-030, SC-015)", () => {
   it("exports the agreed param and allow-list", () => {
     expect(RETURN_TO_PARAM).toBe("next");
-    expect([...RETURN_TO_ALLOW_LIST]).toEqual(["/kudos"]);
+    expect([...RETURN_TO_ALLOW_LIST]).toEqual(["/kudos", "/profile"]);
   });
 
   it("allows the exact /kudos path", () => {
     expect(resolveReturnTo("/kudos")).toBe("/kudos");
+  });
+
+  it("allows the exact /profile path only", () => {
+    expect(resolveReturnTo("/profile")).toBe("/profile");
+    expect(resolveReturnTo("/profile?id=x")).toBeNull();
+    expect(resolveReturnTo("/profile/x")).toBeNull();
+    expect(resolveReturnTo("/profile/")).toBeNull();
   });
 
   it.each([
@@ -42,6 +49,10 @@ describe("buildLoginHref", () => {
   it("encodes an allowed next", () => {
     expect(buildLoginHref("/kudos")).toBe("/login?next=%2Fkudos");
     expect(KUDOS_LOGIN_HREF).toBe("/login?next=%2Fkudos");
+  });
+  it("encodes /profile and never forwards ?id", () => {
+    expect(buildLoginHref("/profile")).toBe("/login?next=%2Fprofile");
+    expect(buildLoginHref("/profile?id=abc")).toBe("/login");
   });
   it("falls back to plain /login for a disallowed next", () => {
     expect(buildLoginHref("https://evil.com")).toBe("/login");

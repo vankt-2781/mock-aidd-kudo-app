@@ -1,0 +1,5 @@
+{
+  "command": "live sanity (phase 03 dev server + curl)",
+  "exitCode": 0,
+  "summary": "guest /profile and /profile?id= → 307 /login?next=%2Fprofile; persona self 'Đã nhận (25)'/'Đã gửi (25)' with 10 cards (both dirs); other face ...010001: write bar 'Gửi lời cám ơn và ghi nhận đến Huỳnh Dương Xuân', static 'Đã nhận', 6 cards, zero 'Đã gửi (' and zero 'Đã nhận ('; ?id=banana → 'Không tìm thấy hồ sơ'"
+}

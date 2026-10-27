@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 
 import { loadMoreKudos } from "@/lib/kudos/kudos-actions";
-import type { KudosBoardPost, KudosFilters } from "@/lib/kudos/kudos-board-types";
+import type { KudosBoardPost, KudosFeedPage, KudosFilters } from "@/lib/kudos/kudos-board-types";
 import type { KudosCardEnv } from "./kudos-card-env";
 import { KudosPostCard } from "./kudos-post-card";
 
@@ -13,10 +13,12 @@ export interface KudosFeedListProps {
   filters: KudosFilters;
   env: KudosCardEnv;
   emptyText: string;
+  /** Next-page loader (cursor -> page). Must be referentially stable. Defaults to the board's `loadMoreKudos` with `filters`. */
+  loadPage?: (cursor: string) => Promise<KudosFeedPage>;
 }
 
 /** C.2 feed: server-rendered first page, then keyset pages appended as the sentinel scrolls into view. */
-export function KudosFeedList({ initialPosts, initialCursor, filters, env, emptyText }: KudosFeedListProps) {
+export function KudosFeedList({ initialPosts, initialCursor, filters, env, emptyText, loadPage }: KudosFeedListProps) {
   const [posts, setPosts] = useState(initialPosts);
   const [cursor, setCursor] = useState(initialCursor);
   const sentinel = useRef<HTMLDivElement>(null);
@@ -29,7 +31,7 @@ export function KudosFeedList({ initialPosts, initialCursor, filters, env, empty
     const observer = new IntersectionObserver((entries) => {
       if (!entries.some((entry) => entry.isIntersecting) || loading.current) return;
       loading.current = true;
-      loadMoreKudos({ hashtag, department }, cursor)
+      (loadPage ? loadPage(cursor) : loadMoreKudos({ hashtag, department }, cursor))
         .then((page) => {
           setPosts((current) => {
             const known = new Set(current.map((post) => post.id));
@@ -47,7 +49,7 @@ export function KudosFeedList({ initialPosts, initialCursor, filters, env, empty
     });
     observer.observe(node);
     return () => observer.disconnect();
-  }, [cursor, hashtag, department]);
+  }, [cursor, hashtag, department, loadPage]);
 
   if (posts.length === 0) {
     return <p className="py-10 text-center text-xl font-bold text-white/80">{emptyText}</p>;

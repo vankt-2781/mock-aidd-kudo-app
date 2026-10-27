@@ -1,7 +1,7 @@
 # Development Roadmap
 
 > Living document. Updated after each feature lands or a phase changes status.
-> Last updated: 2026-10-23
+> Last updated: 2026-10-27
 
 ## Current Status
 
@@ -16,6 +16,8 @@
 | F005 — Countdown Prelaunch | `/countdown` live ticker, proxy launch gate with admin bypass, `GET /api/event-config`, `EVENT_START_AT` unification, vi/en i18n | Complete (2026-10-20) |
 | F006 — Kudos Live Board | Live board at `/kudos` on real Supabase data (feed, highlights, filters, stats), spec promoted as `docs/features/F006_*` + SCR007 | Complete (2026-10-22, PR #5) |
 | F007 — Kudos Send Dialog (Viết Kudo) | Compose modal: TipTap editor, mentions, hashtags, images, anonymous send; masked definer views + `send_kudos` RPC + `kudos-images` Storage; 68 new e2e | Complete (2026-10-23) |
+| F008 — Profile | Private `/profile`: SELF face (hero, badges, counters, Received/Sent feed) + OTHER face (`?id=`, Received-only); `own_sent_kudos` definer view; `/profile` guard + return-to; vi/en dictionary | Complete (2026-10-27, branch `feature/profile-self`) |
+| Auth fix 8b677e2 | `/login` verifies `getUser()` after `getClaims()` and clears stale cookies (breaks `/login`<->`/todo` loop) | Complete (2026-10-27) |
 | Todo app (main feature) | Real `/todo` functionality replacing the placeholder | Not started |
 
 ## F001 — Login with Google (shipped)
@@ -100,6 +102,14 @@ reworked to identity-free image registry paths; re-inspection SEALED (score 8, 0
 **Deferred:** full F006 45-e2e regression until PR #6 (`fix/kudos-spotlight-and-e2e`) merges and
 main is re-merged; PM copy review list; `app_settings.storage_public_base` per-environment deploy
 note; hardening (reserve race, send rate limit, orphan sweep).
+
+## F008 — Profile (complete 2026-10-27)
+
+Plan: `plans/261027-1257-profile-self-implementation/plan.md`. Spec promoted as `docs/features/F008_Profile/` (SCR009/SCR010 in `docs/generated/screen-list.md`).
+
+**Anonymity boundary:** OTHER face has no counts and no Sent feed; own Sent uses caller-scoped `own_sent_kudos`. See [changelog](project-changelog.md).
+
+**Deferred / open:** Secret Box opening stays disabled; badge slots are locked placeholders; `docs/generated/` inventories need `/tkm:rebuild-spec` (pre-F006 stale); `/admin` is still a placeholder.
 
 ## Next Milestones
 

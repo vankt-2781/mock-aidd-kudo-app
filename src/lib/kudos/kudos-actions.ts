@@ -5,6 +5,7 @@ import type { KudosFeedPage, KudosFilters } from "./kudos-board-types";
 import { getFeedPage, getFilterOptions } from "./kudos-board-queries";
 import { decodeCursor } from "./kudos-feed-cursor";
 import { parseKudosFilters, sanitizeKudosFilters } from "./kudos-filter-params";
+import { isUuid } from "./kudos-uuid";
 import { getKudosViewer } from "./kudos-viewer";
 
 export type LikeResult =
@@ -13,7 +14,6 @@ export type LikeResult =
   | { status: "forbidden" }
   | { status: "error" };
 
-const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const EMPTY_PAGE: KudosFeedPage = { posts: [], nextCursor: null };
 
 function mapRpcError(error: { message?: string; code?: string }): LikeResult {
@@ -28,7 +28,7 @@ function mapRpcError(error: { message?: string; code?: string }): LikeResult {
 
 /** Desired-state like. Identity comes only from the verified session; the RPC re-derives it. */
 export async function toggleKudosLike(kudosId: string, liked: boolean): Promise<LikeResult> {
-  if (typeof kudosId !== "string" || !UUID.test(kudosId) || typeof liked !== "boolean") {
+  if (!isUuid(kudosId) || typeof liked !== "boolean") {
     return { status: "error" };
   }
   try {

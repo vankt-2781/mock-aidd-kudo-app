@@ -15,7 +15,7 @@ lang: en
 | Awards (placeholder) | TBD (draft) | Page title and an under-construction message, with a section anchor per award category | Return to the homepage; arrive from a card and land on the matching category anchor |
 | Kudos (placeholder) | TBD (draft) | Page title and an under-construction message | Return to the homepage |
 
-Placeholder pages for Profile and Admin Dashboard are also reached from the account menu; their screens are TBD (draft) and are not specified here. This homepage supersedes the starter boilerplate home screen.
+Profile (now the real F008 page) and the Admin Dashboard placeholder are also reached from the account menu; their screens are TBD (draft) and are not specified here. This homepage supersedes the starter boilerplate home screen.
 
 ## User Journey
 

@@ -12,7 +12,7 @@ import type { MentionProvider } from "./editor/kudos-editor-extensions";
 import { KudosComposeModal } from "./kudos-compose-modal";
 import { composeReducer, initialComposeState } from "./kudos-compose-reducer";
 import { buildSendInput, serverFieldErrors, validateCompose } from "./kudos-compose-submit-helpers";
-import type { ComposeFormat, ComposeHashtag, ComposeMessages } from "./kudos-compose-types";
+import type { ComposeFormat, ComposeHashtag, ComposeMessages, ComposeSunner } from "./kudos-compose-types";
 import { useImageUploads } from "./use-compose-image-uploads";
 import { useRecipientSearch } from "./use-compose-recipient-search";
 
@@ -27,12 +27,14 @@ export interface KudosComposeControllerProps {
   onClose: () => void;
   /** Toast sink owned by the launcher (it outlives this controller). */
   onNotify: (text: string) => void;
+  /** Preselected recipient (profile write bar); omitted = empty form. */
+  initialRecipient?: ComposeSunner | null;
 }
 
 /** Owns the compose form state; mount it only while the dialog is open so each open starts empty. */
-export function KudosComposeController({ messages, hashtagNames, onClose, onNotify }: KudosComposeControllerProps) {
+export function KudosComposeController({ messages, hashtagNames, onClose, onNotify, initialRecipient = null }: KudosComposeControllerProps) {
   const router = useRouter();
-  const [state, dispatch] = useReducer(composeReducer, undefined, initialComposeState);
+  const [state, dispatch] = useReducer(composeReducer, initialRecipient, initialComposeState);
   const [activeFormats, setActiveFormats] = useState<ComposeFormat[]>([]);
   const editorRef = useRef<KudosEditorHandle>(null);
   const editorChange = useRef<KudosEditorChange | null>(null);

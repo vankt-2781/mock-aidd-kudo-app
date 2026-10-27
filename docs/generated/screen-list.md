@@ -192,3 +192,17 @@ Authenticated landing page showing the signed-in user's avatar (or initial), nam
 **Route:** /kudos (modal overlay)
 **Description:** "Viết Kudo" compose modal — cream panel over dark overlay: recipient autocomplete, optional danh hiệu, TipTap toolbar editor with @mention, hashtag chips (1-5), image upload (max 5, jpg/png), anonymous checkbox with optional alias, Hủy/Gửi footer with validate-on-click errors.
 **States:** closed, open-empty, recipient-dropdown, hashtag-dropdown, errors (per-field red), uploading, 5-images (add hidden), anonymous (name field shown), submitting (loading), success (closed + toast), vi, en
+
+## SCR009_ProfileSelf
+
+**Feature:** F008 — Profile
+**Route:** /profile
+**Description:** Own profile — keyvisual hero (avatar, gold name, department, tier badge + stars), 6 locked badge circles + "Bộ sưu tập icon của tôi", 5-stat box with disabled "Mở Secret Box", KUDOS section with Đã nhận/Đã gửi dropdown and infinite-scroll board cards.
+**States:** guest-redirect, received (default), sent (incl. revealed anonymous own cards), empty per direction, end-of-feed, sparse profile, vi, en
+
+## SCR010_ProfileOther
+
+**Feature:** F008 — Profile
+**Route:** /profile?id={profileId}
+**Description:** Another Sunner's profile — same hero + badge collection, write-Kudo bar ("Gửi lời cám ơn và ghi nhận đến {name}") opening the compose modal preselected, Received-only KUDOS list with static "Đã nhận" label and no counts.
+**States:** received-only, empty, end-of-feed, 404 (unknown/malformed id), sparse profile, vi, en

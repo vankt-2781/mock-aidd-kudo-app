@@ -54,8 +54,8 @@ describe("home dictionary", () => {
     expect(vi.awards.detailLabel).toBe("Chi tiết");
     expect(vi.kudos.label).toBe("Phong trào ghi nhận");
     expect(vi.kudos.kicker).toBe("ĐIỂM MỚI CỦA SAA 2025");
-    expect(vi.widget.sendKudos).toBe("Gửi Kudos");
-    expect(vi.widget.backToTop).toBe("Về đầu trang");
+    expect(vi.widget.sendKudos).toBe("Viết KUDOS");
+    expect(vi.widget.viewRules).toBe("Thể lệ");
     expect(vi.rootFurther.intro).toHaveLength(3);
     expect(vi.rootFurther.outro).toHaveLength(2);
     expect(vi.rootFurther.quote).toBe("“A tree with deep roots fears no storm”");

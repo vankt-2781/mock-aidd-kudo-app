@@ -1,0 +1,60 @@
+{
+  "commands": [
+    {
+      "command": "npx supabase db reset (phase 01 ×2; once before the double e2e gate)",
+      "exitCode": 0,
+      "status": "pass",
+      "summary": "migration 20261027000001 applied; information_schema column gate: kudos_feed vs own_sent_kudos 0 mismatches both directions (19 columns)",
+      "ts": "1970-01-01T00:00:00.000Z"
+    },
+    {
+      "command": "SQL isolation smoke via docker exec psql (phase 01, rolled-back transaction)",
+      "exitCode": 0,
+      "status": "pass",
+      "summary": "persona caller saw 26 own sent rows (25 seeded + 1 inserted anonymous showing real name 'E2E Persona' + viewer_is_sender=true while kudos_feed masked it as the alias); second caller 7 own rows, 0 of persona's; empty claims 0 rows; anon SELECT permission denied; no INSERT/UPDATE/DELETE privileges",
+      "ts": "1970-01-01T00:00:00.000Z"
+    },
+    {
+      "command": "npx tsc --noEmit",
+      "exitCode": 0,
+      "status": "pass",
+      "summary": "typecheck clean across phases 00-04 and the FAB enhancements sharing the branch",
+      "ts": "1970-01-01T00:00:00.000Z"
+    },
+    {
+      "command": "npx eslint (touched src + e2e files, per phase)",
+      "exitCode": 0,
+      "status": "pass",
+      "summary": "lint clean every phase",
+      "ts": "1970-01-01T00:00:00.000Z"
+    },
+    {
+      "command": "npm test",
+      "exitCode": 0,
+      "status": "pass",
+      "summary": "83 files, 761/761 unit (phase 02 +90, phase 03 +29; compose suites unchanged; forged-sent never reaches the query layer asserted in profile-kudos-actions tests)",
+      "ts": "1970-01-01T00:00:00.000Z"
+    },
+    {
+      "command": "live sanity (phase 03 dev server + curl)",
+      "exitCode": 0,
+      "status": "pass",
+      "summary": "guest /profile and /profile?id= → 307 /login?next=%2Fprofile; persona self 'Đã nhận (25)'/'Đã gửi (25)' with 10 cards (both dirs); other face ...010001: write bar 'Gửi lời cám ơn và ghi nhận đến Huỳnh Dương Xuân', static 'Đã nhận', 6 cards, zero 'Đã gửi (' and zero 'Đã nhận ('; ?id=banana → 'Không tìm thấy hồ sơ'",
+      "ts": "1970-01-01T00:00:00.000Z"
+    },
+    {
+      "command": "npx playwright test (run 1 of 2 on one db reset)",
+      "exitCode": 0,
+      "status": "pass",
+      "summary": "264/264 — chromium 214 (guard/resolution 14, other-face 9 incl. preselect-cancel and payload scans), profile-persona serial 13, kudos-writes 30 incl. the anonymous-sent spec (real name + 'Ẩn danh' + 'Đã gửi (1)' on own Sent; alias for recipient and bystander; cleanup by id re-verifies 388), seed-sanity 7",
+      "ts": "1970-01-01T00:00:00.000Z"
+    },
+    {
+      "command": "npx playwright test (run 2 of 2, same reset) + npx next build",
+      "exitCode": 0,
+      "status": "pass",
+      "summary": "264/264 again back-to-back, zero flakes and zero red runs at the gate (prior-run pitfalls baked into the specs); production build succeeded afterwards",
+      "ts": "1970-01-01T00:00:00.000Z"
+    }
+  ]
+}

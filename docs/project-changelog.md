@@ -2,6 +2,32 @@
 
 > Living document. Every significant change, feature, and fix is recorded here.
 
+## 2026-10-27 — F008: Profile (feature, shipped)
+
+**Summary:** Private `/profile` page. SELF face: hero, 6 locked badge slots, 5 counters with a disabled "Mở Secret Box", KUDOS feed (`?dir=received|sent`, 10 per page, infinite scroll, board card reuse). OTHER face (`?id=<uuid>`): hero + badges, a write-Kudo bar that opens the compose modal with the recipient preselected (`initialRecipient`), Received feed only, no counts (anonymity boundary). Board card sender/receiver links now go to `/profile?id=` (anonymous senders get no link).
+
+**Shipped:**
+
+- Guard: `decideRouteRedirect` sends guests to `/login?next=%2Fprofile`; `/profile` is an exact entry in the return-to allow-list. `?id` is uuid-checked server-side; malformed and unknown ids give the same not-found.
+- Data layer `src/lib/profile/` (id resolution, header + feed queries, `getProfileKudosPage` action), page loaders in `src/app/(site)/profile/`, vi/en `profile-dictionary`.
+- Migration `20261027000001`: `own_sent_kudos` SECURITY DEFINER view, caller-scoped via `auth.uid()`, mirrors the 19 `kudos_feed` columns, granted to `authenticated` only.
+- Tests: new e2e project `profile-persona` (serial) plus profile specs; unit coverage for loaders, id resolution, queries, dictionary.
+- Small branch extras: FAB/widget menu and language dropdown enhancements.
+
+**Security:** own Sent shows the viewer's anonymous kudos with the real name plus an "Ẩn danh" chip, visible only to the sender via `own_sent_kudos`; the OTHER face never exposes sent data or counts, so no public path reveals who sent an anonymous kudo. Spec: [F008](features/F008_Profile/technical-spec.md).
+
+**Docs:** `docs/generated/` inventories `api-map`, `entities`, `route-list` and others are still pre-F006 stale (known gap); run `/tkm:rebuild-spec` to regenerate. `feature-list` and `screen-list` were updated in place.
+
+---
+
+## 2026-10-27 — Fix: stale-session /login <-> /todo redirect loop (fix, commit 8b677e2)
+
+**Cause:** split brain between two auth checks. The proxy verifies with `getClaims()`, which validates the JWT signature locally and never calls GoTrue; a validly signed token can outlive its user row (after `supabase db reset`, or a deleted/banned user within token lifetime). `/login` then saw "authenticated" and redirected to `/todo`, whose server-side `getUser()` found no user and redirected back to `/login`, forever.
+
+**Fix:** in `updateSessionInProxy`, only on `/login`, after `getClaims()` succeeds call `getUser()`; on error clear local session cookies (`signOut({ scope: "local" })`) and treat the request as a guest. Other routes keep the cheap claims-only check. Affects production for deleted/banned users, not only local resets. Tests: `src/lib/supabase/update-session-in-proxy.test.ts`, `e2e/login-stale-session-loop.spec.ts`.
+
+---
+
 ## 2026-10-23 — F007: Kudos Send Dialog / Viết Kudo (feature, shipped)
 
 **Summary:** Signed-in users send Kudos from a compose modal on `/kudos`: recipient search with `@` mentions, TipTap rich-text editor (bold/italic/strike/list/link/blockquote), 1–5 hashtags (reuse or create), up to 5 images (jpg/png ≤ 5 MB) via a public `kudos-images` Storage bucket, optional title and anonymous send with alias. Server-side sanitize + atomic `send_kudos` SECURITY DEFINER RPC; board read side gains the title line, anonymous display, and owner-only viewer stats.
@@ -72,7 +98,7 @@
 
 - Homepage at `/` (route group `src/app/(site)/`): hero with env-driven countdown (`NEXT_PUBLIC_EVENT_START_AT`), awards grid with hash deep-links, footer, widget menu.
 - Auth-aware header: visitor vs signed-in states, account menu with admin entry (`app_metadata.role`), plus server-side `/admin` guard (non-admin → `/`).
-- Placeholder routes: `/awards`, `/kudos`, `/profile`, `/admin`.
+- Placeholder routes: `/awards`, `/kudos`, `/profile`, `/admin` (since replaced: `/awards` by F004, `/kudos` by F006, `/profile` by F008; only `/admin` remains a placeholder).
 - i18n: vi/en home dictionary extension on the F001 locale foundation.
 - Tests: 56 new Playwright E2E + 27 unit tests (countdown, role/viewer logic, dictionary).
 

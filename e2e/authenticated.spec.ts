@@ -79,13 +79,11 @@ test.describe("Authenticated session (email user injected as Supabase cookies)",
     const page = await signedInContext.newPage();
     const response = await page.goto("/todo");
     expect(response?.status()).toBeLessThan(500);
-    // The JWT is still cryptographically valid, so the proxy lets the request through and the
-    // page's own getUser() check fails. That redirect happens inside a streamed Suspense
-    // boundary, so Next emits it as a meta refresh instead of a 307 (see e2e/README.md).
-    await expect(page.locator("meta#__next-page-redirect")).toHaveAttribute(
-      "content",
-      /url=\/login$/,
-    );
+    // The JWT is still cryptographically valid, so the proxy lets /todo through and the page's
+    // own getUser() check fails; the streamed redirect lands on /login, where the proxy's
+    // stale-session check (getUser on the login path) clears the cookie instead of bouncing
+    // back to /todo — the browser settles on /login with no loop.
+    await page.waitForURL(/\/login$/);
     await expect(page.getByRole("button", { name: "Logout" })).toHaveCount(0);
     await expect(page.getByText(testUser.email)).toHaveCount(0);
     await expect(page.locator("p[role=alert]")).toHaveCount(0);

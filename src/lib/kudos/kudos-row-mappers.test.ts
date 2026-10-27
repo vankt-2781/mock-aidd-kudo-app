@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { mapFeedRow, mapGiftRow, mapSpotlightRows, mapViewerStats, type KudosFeedRow } from "./kudos-row-mappers";
+import { mapFeedRow, mapGiftRow, mapOwnSentRow, mapSpotlightRows, mapViewerStats, type KudosFeedRow } from "./kudos-row-mappers";
 
 const row: KudosFeedRow = {
   id: "k1",
@@ -137,5 +137,34 @@ describe("mapViewerStats", () => {
       secretBoxOpened: 0,
       secretBoxUnopened: 0,
     });
+  });
+});
+
+describe("senderRevealedAnonymous / mapOwnSentRow", () => {
+  it("mapFeedRow never sets the reveal flag (even for the sender's own anonymous row)", () => {
+    expect(mapFeedRow(row, new Set()).senderRevealedAnonymous).toBe(false);
+    const anon = mapFeedRow({ ...row, is_anonymous: true, viewer_is_sender: true, sender_id: null }, new Set());
+    expect(anon.senderRevealedAnonymous).toBe(false);
+    expect(anon.senderAnonymous).toBe(true);
+  });
+
+  it("keeps the real sender, is never senderAnonymous, and reveals anonymity from is_anonymous", () => {
+    const post = mapOwnSentRow({ ...row, is_anonymous: true, viewer_is_sender: true }, new Set());
+    expect(post.senderAnonymous).toBe(false);
+    expect(post.senderRevealedAnonymous).toBe(true);
+    expect(post.viewerIsSender).toBe(true);
+    expect(post.sender).toMatchObject({ profileId: "p-sender", name: "Sender", department: "CEVC10", stars: 1 });
+  });
+
+  it("does not flag a non-anonymous own send and still forces viewerIsSender", () => {
+    const post = mapOwnSentRow(row, new Set(["k1"]));
+    expect(post.senderRevealedAnonymous).toBe(false);
+    expect(post.viewerIsSender).toBe(true);
+    expect(post.likedByViewer).toBe(true);
+  });
+
+  it("produces the same card data as mapFeedRow for the shared fields", () => {
+    const strip = <T extends object>(p: T) => ({ ...p, sender: undefined, senderAnonymous: undefined, senderRevealedAnonymous: undefined, viewerIsSender: undefined });
+    expect(strip(mapOwnSentRow(row, new Set()))).toEqual(strip(mapFeedRow(row, new Set())));
   });
 });

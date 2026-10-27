@@ -1,30 +1,32 @@
 // @vitest-environment jsdom
 import { cleanup, fireEvent, render } from "@testing-library/react";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it } from "vitest";
 import { WidgetMenu } from "./widget-menu";
 
-const props = { label: "Thao tác nhanh", sendKudosLabel: "Gửi Kudos", backToTopLabel: "Về đầu trang" };
+const props = { label: "Thao tác nhanh", sendKudosLabel: "Viết KUDOS", viewRulesLabel: "Thể lệ" };
 
-beforeEach(() => {
-  window.scrollTo = vi.fn() as unknown as typeof window.scrollTo;
-});
+const rulesPanel = () => document.querySelector('[data-testid="rules-panel"]');
+
 afterEach(cleanup);
 
 describe("WidgetMenu", () => {
-  it("opens with the two items and links Gửi Kudos to /kudos", () => {
-    const { getByLabelText, getAllByRole, getByText, queryByRole } = render(<WidgetMenu {...props} />);
+  it("opens with the two items and links Viết KUDOS to /kudos", () => {
+    const { getByLabelText, getAllByRole, getByRole, queryByRole } = render(<WidgetMenu {...props} />);
     expect(queryByRole("menu")).toBeNull();
     fireEvent.click(getByLabelText(props.label));
     expect(getAllByRole("menuitem")).toHaveLength(2);
-    expect(getByText("Gửi Kudos").getAttribute("href")).toBe("/kudos");
+    expect(getByRole("menuitem", { name: "Viết KUDOS" }).getAttribute("href")).toBe("/kudos");
   });
 
-  it("scrolls to top and closes on Về đầu trang", () => {
-    const { getByLabelText, getByText, queryByRole } = render(<WidgetMenu {...props} />);
+  it("opens the rules panel and closes the menu on Thể lệ; Đóng closes the panel", () => {
+    const { getByLabelText, getByRole, getByText, queryByRole } = render(<WidgetMenu {...props} />);
     fireEvent.click(getByLabelText(props.label));
-    fireEvent.click(getByText("Về đầu trang"));
-    expect(window.scrollTo).toHaveBeenCalledWith({ top: 0 });
+    expect(rulesPanel()?.hasAttribute("open")).toBe(false);
+    fireEvent.click(getByRole("menuitem", { name: "Thể lệ" }));
     expect(queryByRole("menu")).toBeNull();
+    expect(rulesPanel()?.hasAttribute("open")).toBe(true);
+    fireEvent.click(getByText("Đóng"));
+    expect(rulesPanel()?.hasAttribute("open")).toBe(false);
   });
 
   it("closes on Escape (focus back on the button) and outside click", () => {

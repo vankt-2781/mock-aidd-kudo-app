@@ -200,8 +200,10 @@ Helpers: `kudos-compose-ui.ts` (locators, pick/type/submit, send interception), 
 
 | Project | Specs | Runs |
 |---------|-------|------|
-| `chromium` | everything except the two patterns below (F001-F005 + read-only F007) | parallel |
+| `chromium` | everything except the write and persona patterns below (F001-F005, read-only F007 and F008 other face) | parallel |
 | `kudos-writes` | `kudos-compose-writes-*.spec.ts` | after `chromium`, `workers: 1`, creates kudos rows and uploads |
+| `profile-persona` | `profile-page-persona-*.spec.ts` | after `chromium`, `workers: 1`, claims the E2E Persona profile (F008) |
+| `kudos-writes` | also after `profile-persona` (F008 writes need the persona read first) | see above |
 | `kudos-seed-sanity` | `kudos-compose-seed-sanity.spec.ts` | after `kudos-writes`; asserts the F006 seed invariants |
 
 - Rule: a spec that inserts a kudos row or uploads to Storage lives in `kudos-compose-writes-*`. Read-only
@@ -277,3 +279,31 @@ None. Two defects found by this suite were fixed at the root cause and re-verifi
   validation tests. Not driven in the browser.
 - Sanitizer and reducer edge cases (allow-list, entity decoding, reducer transitions): unit only, by design.
 - jsdom-only editor behaviors are not run here; the editor specs use the real TipTap in Chromium.
+
+# F008 Profile (/profile): E2E coverage
+
+Screens: MoMorph `362:5050` (self) and `w4WUvsJ9KI` (other face). Contract: `docs/features/F008_Profile/technical-spec.md`
+SC-001..011; TC themes: `edge-cases.md`.
+
+| Contract | Spec(s) |
+|----------|---------|
+| SC-001 guest to login with `next=/profile` | `profile-page-guard-and-resolution` (also `homepage-menus-and-guards`) |
+| SC-002 self face: hero, 6 badge slots, 5 counters, disabled Mở Secret Box | `profile-page-persona-self` |
+| SC-003 `?id` / `?dir` resolution, not-found text (HTTP 200 under streaming, text asserted) | `profile-page-guard-and-resolution` |
+| SC-004 other face: write bar, cancel sends nothing, sparse profile | `profile-page-other-face` |
+| SC-005 other face shows received only, `dir=sent` ignored | `profile-page-other-face` |
+| SC-006 own Sent includes anonymous, shows the real name with "Ẩn danh"; recipient and third user see the alias only | `kudos-compose-writes-profile-anonymous-sent` |
+| SC-007 direction dropdown, re-pick no-op, infinite scroll 10/20/25, empty copy | `profile-page-persona-self`, `profile-page-guard-and-resolution` |
+| SC-008 cards reuse the board: heart refused on own sent, hashtag link | `profile-page-persona-self` |
+| SC-009 vi copy, en substitution | `profile-page-persona-self` (en smoke) |
+| SC-010 sparse profile placeholders | `profile-page-other-face` |
+| SC-011 payload: no email, auth id or tokens of the viewed person; no stat keys on the other face | `profile-page-other-face`, `profile-page-persona-self` |
+
+- Helpers: `e2e/helpers/profile-page-ui.ts` (copy, locators, sentinel, payload recorder). Persona specs use the
+  `personaContext` fixture from `helpers/kudos-fixtures.ts`.
+- Infinite scroll: the feed sentinel is the aria-hidden div after the last card. A page-wide `h-px` match is
+  ambiguous (every card has a divider); `window.scrollTo(bottom)` is not used.
+- Write bar recipient is asserted on `#compose-recipient` (value), not dialog text: the dialog shows it as a combobox value.
+- Payload scans look for the viewed person's identifiers and stat field names. The shared dictionary may ship
+  Vietnamese stat labels to the client, which carry no data and are not scanned.
+

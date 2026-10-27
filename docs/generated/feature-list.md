@@ -36,6 +36,7 @@
 | F005_CountdownPrelaunch | Countdown Prelaunch | mixed | TypeScript | . (repo root) | P1 |
 | F006_KudosLiveBoard | Kudos Live Board | mixed | TypeScript | . (repo root) | P1 |
 | F007_KudosSendDialog | Kudos Send Dialog | mixed | TypeScript | . (repo root) | P1 |
+| F008_Profile | Profile | mixed | TypeScript | . (repo root) | P1 |
 
 ## Feature Details
 
@@ -195,3 +196,11 @@ Public /kudos live board: KV banner, compose pill (stub dialog), HIGHLIGHT top-5
 "Viết Kudo" compose modal on /kudos: recipient autocomplete, optional danh hiệu (kudos.title), TipTap rich-text editor (bold/italic/strike/ordered list/link/quote + @mention, sanitized HTML + content_text), 1-5 hashtags (pick or create), up to 5 jpg/png images via the kudos-images Storage bucket, optional anonymous send (masked sender: definer views, sender_id column revoke, public kudos_sent/hearts_received exclude anonymous). Validate-on-click submit; success closes the modal and refreshes the board.
 
 **Related:** screens: SCR008 | routes: /kudos (modal) | models: kudos domain + storage
+
+### F008 — Profile
+
+**Priority:** P1 | **Type:** mixed | **Status:** implemented | **Slug:** F008_Profile
+
+/profile page (private, guest -> /login?next=/profile): SELF face = keyvisual hero (avatar, gold name, department, F006-rule tier badge + stars), 6 locked badge slots ("Bộ sưu tập icon của tôi"), 5 personal counters (board-sidebar wording; "Mở Secret Box" disabled), KUDOS feed with ?dir=received|sent direction dropdown (10/page keyset, board card reuse). OTHER face (?id=<profileId>) = hero + badges, write-Kudo bar opening the compose modal with the Sunner preselected, Received-only list with NO counts (anonymous differential-leak defense). ?id resolved server-side (uuid shape check before query; unknown/malformed/duplicated -> 404; own id renders SELF in place). Own Sent list includes anonymous kudos (self name + "Ẩn danh" chip) via the caller-scoped SECURITY DEFINER view own_sent_kudos. Board card links -> /profile?id=.
+
+**Related:** screens: SCR009, SCR010 | routes: /profile | models: kudos domain (own_sent_kudos view)

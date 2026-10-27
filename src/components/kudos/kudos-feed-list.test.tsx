@@ -102,4 +102,24 @@ describe("KudosFeedList", () => {
     await waitFor(() => expect(getByText("Kudos 2")).toBeTruthy());
     expect(load).toHaveBeenCalledTimes(2);
   });
+
+  it("uses a custom loadPage instead of the board action when provided", async () => {
+    const loadPage = vi.fn().mockResolvedValueOnce({ posts: [post(2)], nextCursor: null });
+    const { getByText } = render(
+      <KudosLikeProvider>
+        <KudosFeedList
+          initialPosts={[post(1)]}
+          initialCursor="c1"
+          filters={filters}
+          env={makeEnv({ filters })}
+          emptyText={viMessages.card.emptyKudos}
+          loadPage={loadPage}
+        />
+      </KudosLikeProvider>,
+    );
+    await intersect();
+    expect(loadPage).toHaveBeenCalledWith("c1");
+    expect(load).not.toHaveBeenCalled();
+    await waitFor(() => expect(getByText("Kudos 2")).toBeTruthy());
+  });
 });

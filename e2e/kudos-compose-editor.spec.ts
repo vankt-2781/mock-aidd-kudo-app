@@ -1,6 +1,5 @@
 import { test, expect } from "./fixtures";
 import {
-  VI,
   blockKudosSends,
   composeDialog,
   editorSurface,
@@ -74,20 +73,23 @@ test.describe("Viết Kudo: rich-text editor in a real browser", () => {
     expect(guard.attempts()).toBe(0);
   });
 
-  test("TC ID-31 link dialog refuses a javascript: URL and inserts no anchor", async ({ signedInContext }) => {
+  test("TC ID-31 Add Link modal refuses a javascript: URL and inserts no anchor", async ({ signedInContext }) => {
     const page = await signedInContext.newPage();
     const guard = await blockKudosSends(page);
     await openComposeFromBoard(page);
     await typeInEditor(page, "Liên kết xấu");
-    await editorSurface(page).press("ControlOrMeta+A");
     await formatButton(page, "link").click();
 
-    const linkGroup = composeDialog(page).getByRole("group", { name: VI.formats.link });
-    await expect(linkGroup).toBeVisible();
-    await linkGroup.getByRole("textbox").fill("javascript:alert(1)");
-    await linkGroup.getByRole("button", { name: "Áp dụng" }).click();
+    const linkDialog = page.getByRole("dialog", { name: "Thêm đường dẫn" });
+    await expect(linkDialog).toBeVisible();
+    await linkDialog.getByLabel("Nội dung").fill("Trang xấu");
+    await linkDialog.getByLabel("URL", { exact: true }).fill("javascript:alert(1)");
+    await linkDialog.getByRole("button", { name: "Lưu" }).click();
 
-    await expect(linkGroup.getByRole("alert")).toBeVisible();
+    // Invalid scheme: the modal stays open with the URL error and nothing reaches the editor.
+    await expect(linkDialog.getByRole("alert")).toHaveText(/URL không hợp lệ/);
+    await linkDialog.getByRole("button", { name: "Hủy" }).click();
+    await expect(linkDialog).toBeHidden();
     await expect(editorSurface(page).locator("a")).toHaveCount(0);
     expect(guard.attempts()).toBe(0);
   });

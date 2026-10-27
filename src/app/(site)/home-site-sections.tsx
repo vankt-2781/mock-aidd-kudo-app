@@ -27,7 +27,7 @@ export async function HomeFooterSection() {
   return (
     <>
       <HomeFooter links={links} copyright={m.footer.copyright} />
-      <WidgetMenu label={m.widget.label} sendKudosLabel={m.widget.sendKudos} backToTopLabel={m.widget.backToTop} />
+      <WidgetMenu label={m.widget.label} sendKudosLabel={m.widget.sendKudos} viewRulesLabel={m.widget.viewRules} />
     </>
   );
 }
