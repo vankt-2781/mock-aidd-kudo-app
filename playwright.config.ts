@@ -8,6 +8,9 @@ const BASE_URL = `http://localhost:${PORT}`;
 // proves the writes cleaned up after themselves (388 kudos, 8 hashtags, top-5 intact).
 const WRITE_SPECS = /kudos-compose-writes-.*\.spec\.ts/;
 const SEED_SANITY_SPEC = /kudos-compose-seed-sanity\.spec\.ts/;
+// Profile persona specs claim the shared E2E Persona profile (like kudos-board-persona), so they run
+// in their own serial project after the parallel read suite. Local debug: `--project=profile-persona --no-deps`.
+const PROFILE_PERSONA_SPECS = /profile-page-persona-.*\.spec\.ts/;
 const CHROME = { ...devices["Desktop Chrome"] };
 
 export default defineConfig({
@@ -30,14 +33,22 @@ export default defineConfig({
     {
       name: "chromium",
       use: CHROME,
-      testIgnore: [WRITE_SPECS, SEED_SANITY_SPEC],
+      testIgnore: [WRITE_SPECS, SEED_SANITY_SPEC, PROFILE_PERSONA_SPECS],
+    },
+    {
+      name: "profile-persona",
+      use: CHROME,
+      testMatch: PROFILE_PERSONA_SPECS,
+      dependencies: ["chromium"],
+      fullyParallel: false,
+      workers: 1,
     },
     {
       // Runs after the read suite. Local single-file debug: `--project=kudos-writes --no-deps`.
       name: "kudos-writes",
       use: CHROME,
       testMatch: WRITE_SPECS,
-      dependencies: ["chromium"],
+      dependencies: ["chromium", "profile-persona"],
       fullyParallel: false,
       workers: 1,
     },

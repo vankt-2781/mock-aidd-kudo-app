@@ -11,6 +11,8 @@ export interface KudosUserInfoProps {
   env: Pick<KudosCardEnv, "signedIn" | "messages">;
   /** Anonymous sender: alias + default avatar only, no link, stars, department or badge. */
   anonymous?: boolean;
+  /** Own-Sent anonymous send: renders the "Ẩn danh" chip under the (real) sender identity. */
+  revealedAnonymousLabel?: string;
 }
 
 const AVATAR_CLASS = "size-16 rounded-full border-[1.869px] border-white bg-[#EEE] object-cover";
@@ -26,9 +28,9 @@ function AnonymousInfo({ user, env }: Pick<KudosUserInfoProps, "user" | "env">) 
 }
 
 /** Sender / receiver block: 64px avatar, name + stars, department · hero badge (mm:256:4830). */
-export function KudosUserInfo({ user, env, anonymous = false }: KudosUserInfoProps) {
+export function KudosUserInfo({ user, env, anonymous = false, revealedAnonymousLabel }: KudosUserInfoProps) {
   if (anonymous) return <AnonymousInfo user={user} env={env} />;
-  const href = profileHref(env.signedIn);
+  const href = profileHref(env.signedIn, user.profileId);
   return (
     // mm:I3127:21871;256:4858
     <div className="flex w-[235px] min-w-0 shrink flex-col items-center gap-[13px]">
@@ -60,6 +62,14 @@ export function KudosUserInfo({ user, env, anonymous = false }: KudosUserInfoPro
           <span className="size-1 rounded-full bg-[#999] opacity-40" aria-hidden />
           <KudosHeroBadge tier={user.heroTier} label={env.messages.heroLabels[user.heroTier]} />
         </div>
+        {revealedAnonymousLabel ? (
+          <span
+            data-kudos-anonymous-chip
+            className="mx-auto rounded-full bg-[#00101A]/10 px-2 py-0.5 text-xs font-bold leading-4 text-[#00101A]"
+          >
+            {revealedAnonymousLabel}
+          </span>
+        ) : null}
       </div>
     </div>
   );

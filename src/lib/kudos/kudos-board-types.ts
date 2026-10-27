@@ -16,6 +16,11 @@ export interface KudosBoardPost extends Omit<KudosPost, "title" | "sender" | "re
   title: string | null;
   /** True when the sender chose to stay anonymous; `sender` then holds the alias only. */
   senderAnonymous: boolean;
+  /**
+   * Own-Sent only: the real sender is shown but the kudos was sent anonymously, so the card carries
+   * the "Ẩn danh" chip. Set solely by `mapOwnSentRow`; the public feed mapper always leaves it false.
+   */
+  senderRevealedAnonymous?: boolean;
   likedByViewer: boolean;
   /** From the view's `viewer_is_sender` (sender_id is null for anonymous rows). */
   viewerIsSender: boolean;

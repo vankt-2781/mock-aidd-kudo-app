@@ -8,7 +8,8 @@ import {
   type KudosFilters,
   type KudosViewer,
 } from "./kudos-board-types";
-import { encodeCursor, type FeedCursor } from "./kudos-feed-cursor";
+import type { FeedCursor } from "./kudos-feed-cursor";
+import { likedIdsFor, toFeedPage } from "./kudos-feed-paging";
 import {
   mapFeedRow,
   mapGiftRow,
@@ -35,20 +36,6 @@ function filteredFeed(client: Client, filters: KudosFilters) {
   if (filters.hashtag) query = query.contains("hashtag_names", [filters.hashtag]);
   if (filters.department) query = query.eq("receiver_department_code", filters.department);
   return query;
-}
-
-async function likedIdsFor(client: Client, rows: KudosFeedRow[], viewer: KudosViewer): Promise<Set<string>> {
-  if (!viewer.profileId || rows.length === 0) return new Set();
-  const { data, error } = await client
-    .from("kudos_likes")
-    .select("kudos_id")
-    .eq("user_id", viewer.profileId)
-    .in("kudos_id", rows.map((r) => r.id));
-  if (error) {
-    console.error("[kudos] liked-by-viewer lookup failed", error);
-    return new Set();
-  }
-  return new Set((data ?? []).map((r: { kudos_id: string }) => r.kudos_id));
 }
 
 export async function getFilterOptions(): Promise<KudosFilterOptions> {
@@ -104,13 +91,8 @@ export async function getFeedPage(
       .limit(FEED_PAGE_SIZE + 1);
     if (error) throw error;
     const all = (data ?? []) as KudosFeedRow[];
-    const rows = all.slice(0, FEED_PAGE_SIZE);
-    const last = rows[rows.length - 1];
-    const liked = await likedIdsFor(client, rows, viewer);
-    return {
-      posts: rows.map((r) => mapFeedRow(r, liked)),
-      nextCursor: all.length > FEED_PAGE_SIZE && last ? encodeCursor({ createdAt: last.created_at, id: last.id }) : null,
-    };
+    const liked = await likedIdsFor(client, all.slice(0, FEED_PAGE_SIZE), viewer);
+    return toFeedPage(all, liked, mapFeedRow);
   } catch (error) {
     console.error("[kudos] getFeedPage failed", error);
     return EMPTY_PAGE;

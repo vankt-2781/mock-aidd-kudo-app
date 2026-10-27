@@ -36,8 +36,9 @@ export type ComposeAction =
   | { type: "submitStart" }
   | { type: "submitEnd" };
 
-export function initialComposeState(): ComposeState {
-  return { values: EMPTY_COMPOSE_VALUES, errors: {}, recipientOpen: false, hashtagOpen: false, submitting: false };
+/** `recipient` seeds the recipient field (profile write bar); it stays removable like a normal pick. */
+export function initialComposeState(recipient: ComposeSunner | null = null): ComposeState {
+  return { values: recipient ? { ...EMPTY_COMPOSE_VALUES, recipient } : EMPTY_COMPOSE_VALUES, errors: {}, recipientOpen: false, hashtagOpen: false, submitting: false };
 }
 
 const toHashtag = (name: string) => ({ id: name, label: `#${name}` });

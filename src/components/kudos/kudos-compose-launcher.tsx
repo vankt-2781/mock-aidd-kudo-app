@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 
-import { KudosComposeController, type ComposeMessages } from "@/components/kudos-compose";
+import { KudosComposeController, type ComposeMessages, type ComposeSunner } from "@/components/kudos-compose";
 import { KUDOS_LOGIN_HREF } from "@/lib/auth/return-to";
 
 const TOAST_MS = 2500;
@@ -13,11 +13,13 @@ export interface KudosComposeLauncherProps {
   className: string;
   messages: ComposeMessages;
   hashtagNames: string[];
+  /** Preselected recipient for the dialog (profile write bar). */
+  initialRecipient?: ComposeSunner | null;
   children: ReactNode;
 }
 
 /** Compose pill: visitors get a login link (FR-019); signed-in users open the "Viết Kudo" dialog. */
-export function KudosComposeLauncher({ signedIn, className, messages, hashtagNames, children }: KudosComposeLauncherProps) {
+export function KudosComposeLauncher({ signedIn, className, messages, hashtagNames, initialRecipient, children }: KudosComposeLauncherProps) {
   const [open, setOpen] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
   const timer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
@@ -46,6 +48,7 @@ export function KudosComposeLauncher({ signedIn, className, messages, hashtagNam
         <KudosComposeController
           messages={messages}
           hashtagNames={hashtagNames}
+          initialRecipient={initialRecipient}
           onClose={() => setOpen(false)}
           onNotify={notify}
         />

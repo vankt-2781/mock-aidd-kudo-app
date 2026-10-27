@@ -41,4 +41,20 @@ describe("decideRouteRedirect (DEC-001)", () => {
     expect(decideRouteRedirect("/todo", true, "/kudos")).toBeNull();
     expect(decideRouteRedirect("/todo", false, "/kudos")).toBe("/login");
   });
+  it("sends guests on the /profile area to login with next=/profile", () => {
+    expect(decideRouteRedirect("/profile", false)).toBe("/login?next=%2Fprofile");
+    expect(decideRouteRedirect("/profile/", false)).toBe("/login?next=%2Fprofile");
+    expect(decideRouteRedirect("/profile/anything", false)).toBe("/login?next=%2Fprofile");
+  });
+  it("lets authenticated users into /profile", () => {
+    expect(decideRouteRedirect("/profile", true)).toBeNull();
+    expect(decideRouteRedirect("/profile/x", true)).toBeNull();
+  });
+  it("does not guard /profilex or /profiles", () => {
+    expect(decideRouteRedirect("/profilex", false)).toBeNull();
+    expect(decideRouteRedirect("/profiles", false)).toBeNull();
+  });
+  it("sends an authenticated user on /login to /profile when it is the allow-listed next", () => {
+    expect(decideRouteRedirect("/login", true, "/profile")).toBe("/profile");
+  });
 });

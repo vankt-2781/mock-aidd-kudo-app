@@ -55,7 +55,7 @@ export interface ProfileStatsRow {
   hearts_received: number;
 }
 
-function clampStars(value: number): KudosStars {
+export function clampStars(value: number): KudosStars {
   return Math.min(3, Math.max(0, Math.trunc(value) || 0)) as KudosStars;
 }
 
@@ -82,20 +82,16 @@ function mapAnonymousSender(alias: string | null): KudosBoardUser {
   return { profileId: "", name: alias ?? "", department: "", stars: 0, heroTier: "new", avatarSrc: AVATAR_FALLBACK };
 }
 
-export function mapFeedRow(row: KudosFeedRow, likedIds: ReadonlySet<string>): KudosBoardPost {
-  const sender = row.is_anonymous
-    ? mapAnonymousSender(row.sender_display_name)
-    : mapUser(
-        row.sender_id ?? "",
-        row.sender_display_name ?? "",
-        row.sender_avatar_url,
-        row.sender_department_code,
-        row.sender_stars ?? 0,
-      );
+function mapPost(
+  row: KudosFeedRow,
+  likedIds: ReadonlySet<string>,
+  sender: KudosBoardUser,
+  flags: { senderAnonymous: boolean; senderRevealedAnonymous: boolean; viewerIsSender: boolean },
+): KudosBoardPost {
   return {
     id: row.id,
     sender,
-    senderAnonymous: row.is_anonymous,
+    ...flags,
     receiver: mapUser(
       row.receiver_id,
       row.receiver_display_name,
@@ -112,8 +108,35 @@ export function mapFeedRow(row: KudosFeedRow, likedIds: ReadonlySet<string>): Ku
     likeCount: row.like_count,
     detailHref: `/kudos/${row.id}`,
     likedByViewer: likedIds.has(row.id),
-    viewerIsSender: row.viewer_is_sender,
   };
+}
+
+function mapRealSender(row: KudosFeedRow): KudosBoardUser {
+  return mapUser(
+    row.sender_id ?? "",
+    row.sender_display_name ?? "",
+    row.sender_avatar_url,
+    row.sender_department_code,
+    row.sender_stars ?? 0,
+  );
+}
+
+/** Public feed row (masked by the view): anonymous senders are never revealed, the reveal flag is never set. */
+export function mapFeedRow(row: KudosFeedRow, likedIds: ReadonlySet<string>): KudosBoardPost {
+  return mapPost(row, likedIds, row.is_anonymous ? mapAnonymousSender(row.sender_display_name) : mapRealSender(row), {
+    senderAnonymous: row.is_anonymous,
+    senderRevealedAnonymous: false,
+    viewerIsSender: row.viewer_is_sender,
+  });
+}
+
+/** `own_sent_kudos` row (caller's own sends, unmasked): real sender kept; anonymity surfaces as the chip flag. */
+export function mapOwnSentRow(row: KudosFeedRow, likedIds: ReadonlySet<string>): KudosBoardPost {
+  return mapPost(row, likedIds, mapRealSender(row), {
+    senderAnonymous: false,
+    senderRevealedAnonymous: row.is_anonymous,
+    viewerIsSender: true,
+  });
 }
 
 export function mapGiftRow(row: GiftEventRow): SunnerRef {

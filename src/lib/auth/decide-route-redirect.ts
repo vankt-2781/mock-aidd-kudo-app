@@ -1,8 +1,9 @@
-import { resolveReturnTo } from "./return-to";
+import { PROFILE_LOGIN_HREF, resolveReturnTo } from "./return-to";
 
 /** DEC-001: route guard decision. Returns the redirect target or null to pass through. */
 export const LOGIN_PATH = "/login";
 export const TODO_PATH = "/todo";
+export const PROFILE_PATH = "/profile";
 
 export function decideRouteRedirect(
   pathname: string,
@@ -14,5 +15,7 @@ export function decideRouteRedirect(
   }
   const isTodoArea = pathname === TODO_PATH || pathname.startsWith(`${TODO_PATH}/`);
   if (isTodoArea && !isAuthenticated) return LOGIN_PATH;
+  const isProfileArea = pathname === PROFILE_PATH || pathname.startsWith(`${PROFILE_PATH}/`);
+  if (isProfileArea && !isAuthenticated) return PROFILE_LOGIN_HREF;
   return null;
 }
