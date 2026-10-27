@@ -12,6 +12,26 @@ export interface WidgetButtonProps {
 }
 
 export function WidgetButton({ onClick, label, expanded, ref }: WidgetButtonProps) {
+  // mm:I313:9140;214:3827 — open state swaps the pill for the 56px round red cancel button.
+  if (expanded) {
+    return (
+      <button
+        ref={ref}
+        type="button"
+        aria-label={label}
+        aria-haspopup="menu"
+        aria-expanded
+        onClick={onClick}
+        className="fixed bottom-6 right-5 z-40 flex size-14 cursor-pointer items-center justify-center rounded-full bg-[#D4271D] text-white shadow-[0_4px_4px_rgba(0,0,0,0.25)] transition duration-200 hover:scale-105 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#FFEA9E] motion-reduce:transition-none motion-reduce:hover:scale-100"
+      >
+        {/* mm:I313:9140;214:3827;186:1766 — MM_MEDIA_Close */}
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden>
+          <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
+        </svg>
+      </button>
+    );
+  }
+
   return (
     // mm:5022:15169
     <button
@@ -19,7 +39,7 @@ export function WidgetButton({ onClick, label, expanded, ref }: WidgetButtonProp
       type="button"
       aria-label={label}
       aria-haspopup="menu"
-      aria-expanded={expanded}
+      aria-expanded={false}
       onClick={onClick}
       className="fixed bottom-6 right-5 z-40 flex h-16 w-[106px] cursor-pointer items-center gap-2 rounded-full bg-[#FFEA9E] p-4 text-[#00101A] shadow-[0_4px_4px_rgba(0,0,0,0.25),0_0_6px_#FAE287] transition duration-200 hover:scale-105 hover:shadow-[0_4px_4px_rgba(0,0,0,0.25),0_0_16px_#FAE287] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#FFEA9E] motion-reduce:transition-none motion-reduce:hover:scale-100"
     >

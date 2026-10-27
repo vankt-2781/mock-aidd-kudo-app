@@ -34,7 +34,7 @@ export type HomeMessages = {
   };
   kudos: { label: string; title: string; kicker: string; description: string; detailLabel: string };
   footer: { standardsLabel: string; copyright: string };
-  widget: { label: string; sendKudos: string; backToTop: string };
+  widget: { label: string; sendKudos: string; viewRules: string };
   placeholder: {
     kudosTitle: string;
     profileTitle: string;

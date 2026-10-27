@@ -7,7 +7,7 @@ vi.mock("@/app/todo/sign-out-action", () => ({ signOutAction: vi.fn() }));
 
 const BASE = [
   { key: "profile", label: "Profile" },
-  { key: "signOut", label: "Sign out" },
+  { key: "signOut", label: "Logout" },
 ] as const;
 const ADMIN = [...BASE, { key: "adminDashboard", label: "Admin Dashboard" }] as const;
 
@@ -30,17 +30,17 @@ describe("HomeAccountMenu", () => {
     fireEvent.click(admin.getByLabelText("Account"));
     expect(admin.getAllByRole("menuitem").map((e) => e.textContent)).toEqual([
       "Profile",
-      "Sign out",
+      "Logout",
       "Admin Dashboard",
     ]);
   });
 
-  it("links Profile and Admin Dashboard and posts Sign out via a form", () => {
+  it("links Profile and Admin Dashboard and posts Logout via a form", () => {
     const { getByLabelText, getByText } = render(<HomeAccountMenu accountLabel="Account" items={[...ADMIN]} />);
     fireEvent.click(getByLabelText("Account"));
     expect(getByText("Profile").getAttribute("href")).toBe("/profile");
     expect(getByText("Admin Dashboard").getAttribute("href")).toBe("/admin");
-    const signOut = getByText("Sign out");
+    const signOut = getByText("Logout");
     expect(signOut.getAttribute("role")).toBe("menuitem");
     expect(signOut.closest("form")).not.toBeNull();
   });

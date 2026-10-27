@@ -10,7 +10,7 @@ export const homeMessagesEn: HomeMessages = {
     loginLabel: "Login",
     notificationsEmpty: "No notifications yet",
   },
-  accountMenu: { profile: "Profile", signOut: "Sign out", adminDashboard: "Admin Dashboard" },
+  accountMenu: { profile: "Profile", signOut: "Logout", adminDashboard: "Admin Dashboard" },
   hero: {
     comingSoon: "Coming soon",
     countdownLabels: { days: "DAYS", hours: "HOURS", minutes: "MINUTES" },
@@ -57,7 +57,11 @@ export const homeMessagesEn: HomeMessages = {
     detailLabel: "Details",
   },
   footer: { standardsLabel: "General standards", copyright: "Copyright belongs to Sun* © 2025" },
-  widget: { label: "Quick actions", sendKudos: "Send Kudos", backToTop: "Back to top" },
+  widget: {
+    label: "Quick actions",
+    sendKudos: "Write KUDOS",
+    viewRules: "Rules",
+  },
   placeholder: {
     kudosTitle: "Sun* Kudos",
     profileTitle: "Profile",

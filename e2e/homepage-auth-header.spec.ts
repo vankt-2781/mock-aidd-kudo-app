@@ -35,13 +35,13 @@ test.describe("Homepage header for visitors and signed-in users", () => {
     await expect(page.locator("header").getByRole("button", { name: "Chọn ngôn ngữ" })).toContainText("VN");
   });
 
-  test("ID-6 / ID-36 / ID-37 regular user's account menu has Profile and Sign out only", async ({
+  test("ID-6 / ID-36 / ID-37 regular user's account menu has Profile and Logout only", async ({
     signedInContext,
   }) => {
     const page = await signedInContext.newPage();
     await page.goto("/");
     await page.getByRole("button", { name: "Tài khoản" }).click();
-    await expect(page.getByRole("menuitem")).toHaveText(["Profile", "Sign out"]);
+    await expect(page.getByRole("menuitem")).toHaveText(["Profile", "Logout"]);
     await expect(page.getByRole("menuitem", { name: "Admin Dashboard" })).toHaveCount(0);
     await expect(page.getByRole("menuitem", { name: "Profile" })).toHaveAttribute("href", "/profile");
   });
@@ -50,7 +50,7 @@ test.describe("Homepage header for visitors and signed-in users", () => {
     const page = await adminContext.newPage();
     await page.goto("/");
     await page.getByRole("button", { name: "Tài khoản" }).click();
-    await expect(page.getByRole("menuitem")).toHaveText(["Profile", "Sign out", "Admin Dashboard"]);
+    await expect(page.getByRole("menuitem")).toHaveText(["Profile", "Logout", "Admin Dashboard"]);
     await page.getByRole("menuitem", { name: "Admin Dashboard" }).click();
     await expect(page).toHaveURL(/\/admin$/);
     await expect(page.getByRole("heading", { name: "Quản trị" })).toBeVisible();
@@ -70,7 +70,7 @@ test.describe("Homepage header for visitors and signed-in users", () => {
     const page = await signedInContext.newPage();
     await page.goto("/");
     await page.getByRole("button", { name: "Tài khoản" }).click();
-    await page.getByRole("menuitem", { name: "Sign out" }).click();
+    await page.getByRole("menuitem", { name: "Logout" }).click();
     await expect(page).toHaveURL(/\/login$/);
     expect((await signedInContext.cookies()).filter((c) => c.name.startsWith("sb-"))).toHaveLength(0);
 

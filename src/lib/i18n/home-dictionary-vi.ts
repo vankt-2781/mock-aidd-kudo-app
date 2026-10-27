@@ -9,7 +9,7 @@ export const homeMessagesVi: HomeMessages = {
     loginLabel: "Đăng nhập",
     notificationsEmpty: "Chưa có thông báo",
   },
-  accountMenu: { profile: "Profile", signOut: "Sign out", adminDashboard: "Admin Dashboard" },
+  accountMenu: { profile: "Profile", signOut: "Logout", adminDashboard: "Admin Dashboard" },
   hero: {
     comingSoon: "Coming soon",
     countdownLabels: { days: "DAYS", hours: "HOURS", minutes: "MINUTES" },
@@ -56,7 +56,11 @@ export const homeMessagesVi: HomeMessages = {
     detailLabel: "Chi tiết",
   },
   footer: { standardsLabel: "Tiêu chuẩn chung", copyright: "Bản quyền thuộc về Sun* © 2025" },
-  widget: { label: "Thao tác nhanh", sendKudos: "Gửi Kudos", backToTop: "Về đầu trang" },
+  widget: {
+    label: "Thao tác nhanh",
+    sendKudos: "Viết KUDOS", // mm:313:9139 B_Button viết kudos
+    viewRules: "Thể lệ", // mm:313:9139 A_Button thể lệ — opens the RulesPanel (mm:3204:6051)
+  },
   placeholder: {
     kudosTitle: "Sun* Kudos",
     profileTitle: "Hồ sơ cá nhân",

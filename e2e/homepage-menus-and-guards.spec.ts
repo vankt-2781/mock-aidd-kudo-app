@@ -65,28 +65,36 @@ test.describe("Dropdown behaviors (bell, account, widget, language)", () => {
     await expect(page.getByRole("listbox")).toHaveCount(0);
   });
 
-  test("ID-54 widget button opens the quick-action menu: Gửi Kudos -> /kudos", async ({ page }) => {
+  test("ID-54 widget button opens the quick-action pills: Viết KUDOS -> /kudos", async ({ page }) => {
     await page.goto("/");
     const widget = page.getByRole("button", { name: "Thao tác nhanh" });
     await widget.click();
     const menu = page.getByRole("menu");
-    await expect(menu.getByRole("menuitem")).toHaveText(["Gửi Kudos", "Về đầu trang"]);
-    await menu.getByRole("menuitem", { name: "Gửi Kudos" }).click();
+    await expect(menu.getByRole("menuitem")).toHaveText(["Thể lệ", "Viết KUDOS"]);
+    await menu.getByRole("menuitem", { name: "Viết KUDOS" }).click();
     await expect(page).toHaveURL(/\/kudos$/);
   });
 
-  test("ID-54 widget Về đầu trang scrolls to the top and closes the menu; Esc/outside also close", async ({
-    page,
-  }) => {
+  test("TC_THELE widget Thể lệ opens the rules panel; Đóng closes it; Esc closes the menu", async ({ page }) => {
     await page.goto("/");
-    // Wait for the streamed content so the document is tall enough to scroll.
-    await expect(page.getByRole("heading", { name: "Hệ thống giải thưởng" })).toBeVisible();
-    await page.evaluate(() => window.scrollTo({ top: 1500 }));
-    await expect.poll(() => page.evaluate(() => window.scrollY)).toBeGreaterThan(1000);
     await page.getByRole("button", { name: "Thao tác nhanh" }).click();
-    await page.getByRole("menuitem", { name: "Về đầu trang" }).click();
-    await expect.poll(() => page.evaluate(() => window.scrollY)).toBe(0);
+    await page.getByRole("menuitem", { name: "Thể lệ" }).click();
     await expect(page.getByRole("menu")).toHaveCount(0);
+    // TC_THELE_GUI_001: title, hero tiers, icon collection, national section, footer buttons
+    const panel = page.getByTestId("rules-panel");
+    await expect(panel).toBeVisible();
+    await expect(panel.getByRole("heading", { name: "Thể lệ", exact: true })).toBeVisible();
+    await expect(panel.getByText("Có hơn 20 người gửi Kudos cho bạn")).toBeVisible();
+    await expect(panel.getByRole("heading", { name: "KUDOS QUỐC DÂN" })).toBeVisible();
+    // TC_THELE_FUN_004: Viết KUDOS is the compose entry point
+    await expect(panel.getByRole("link", { name: "Viết KUDOS" })).toHaveAttribute("href", "/kudos");
+    // TC_THELE_FUN_001: content overflows and scrolls inside the panel
+    const scroll = panel.getByTestId("rules-panel-scroll");
+    await scroll.evaluate((el) => el.scrollTo({ top: el.scrollHeight }));
+    await expect.poll(() => scroll.evaluate((el) => el.scrollTop)).toBeGreaterThan(0);
+    // TC_THELE_FUN_003: Đóng closes the panel
+    await panel.getByRole("button", { name: "Đóng" }).click();
+    await expect(panel).toBeHidden();
 
     await page.getByRole("button", { name: "Thao tác nhanh" }).click();
     await page.keyboard.press("Escape");
@@ -116,9 +124,9 @@ test.describe("Route guards", () => {
     await expect(page.getByRole("heading", { name: "Quản trị" })).toBeVisible();
   });
 
-  test("/profile: visitor is redirected to /login", async ({ page }) => {
+  test("/profile: visitor is redirected to /login with a return-to back to /profile", async ({ page }) => {
     await page.goto("/profile");
-    await expect(page).toHaveURL(/\/login$/);
+    await expect(page).toHaveURL(/\/login\?next=%2Fprofile$/);
   });
 
   test("/profile: signed-in user sees the page", async ({ signedInContext }) => {
