@@ -6,7 +6,8 @@ import { useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState,
 import type { ComposeFormat } from "../kudos-compose-types";
 import { buildEditorExtensions, EDITOR_CHAR_LIMIT, type MentionBridge, type MentionProvider } from "./kudos-editor-extensions";
 import { collectActiveFormats } from "./kudos-editor-format-commands";
-import { KudosLinkDialog, type KudosLinkLabels } from "./kudos-link-dialog";
+import { AddLinkModal } from "./add-link-modal";
+import type { KudosLinkLabels } from "./kudos-link-dialog";
 import { nextMentionIndex } from "./kudos-mention-keys";
 import { KudosMentionSuggestionList, type MentionItem } from "./kudos-mention-suggestion-list";
 
@@ -23,6 +24,8 @@ export interface KudosEditorHandle {
   toggle: (format: ComposeFormat) => void;
   reset: () => void;
   focus: () => void;
+  /** Whether a mark/node is active at the current selection (toolbar active states, tests). */
+  isActive: (format: ComposeFormat) => boolean;
 }
 
 export interface KudosEditorMessages {
@@ -131,7 +134,11 @@ export function KudosEditor({ messages, mentionProvider, onChange, onActiveForma
     () => ({
       toggle: (format) => {
         if (!editor) return;
-        if (format === "link") return setLinkOpen((o) => !o);
+        if (format === "link") {
+          // Toggle semantics: inside an existing link the button removes it; otherwise it opens the Add Link modal.
+          if (editor.isActive("link")) return void editor.chain().focus().extendMarkRange("link").unsetLink().run();
+          return setLinkOpen(true);
+        }
         const chain = editor.chain().focus();
         const run = { bold: chain.toggleBold, italic: chain.toggleItalic, strike: chain.toggleStrike, list: chain.toggleOrderedList, quote: chain.toggleBlockquote }[format];
         run.call(chain).run();
@@ -141,6 +148,7 @@ export function KudosEditor({ messages, mentionProvider, onChange, onActiveForma
         setLinkOpen(false);
       },
       focus: () => editor?.commands.focus(),
+      isActive: (format) => editor?.isActive(format === "list" ? "orderedList" : format === "quote" ? "blockquote" : format) ?? false,
     }),
     [editor],
   );
@@ -153,15 +161,14 @@ export function KudosEditor({ messages, mentionProvider, onChange, onActiveForma
   return (
     <div className="relative flex h-full flex-col" aria-invalid={invalid}>
       {linkOpen && editor && (
-        <KudosLinkDialog
-          labels={messages.link}
-          initialUrl={(editor.getAttributes("link").href as string | undefined) ?? ""}
-          onApply={(url) => {
-            editor.chain().focus().extendMarkRange("link").setLink({ href: url }).run();
-            setLinkOpen(false);
-          }}
-          onRemove={() => {
-            editor.chain().focus().extendMarkRange("link").unsetLink().run();
+        <AddLinkModal
+          onSave={({ text, url }) => {
+            // Replaces any selection with the typed text, carrying the link mark.
+            editor
+              .chain()
+              .focus()
+              .insertContent({ type: "text", text, marks: [{ type: "link", attrs: { href: url } }] })
+              .run();
             setLinkOpen(false);
           }}
           onClose={closeLink}
