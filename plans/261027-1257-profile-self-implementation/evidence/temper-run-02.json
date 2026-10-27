@@ -1,0 +1,5 @@
+{
+  "command": "SQL isolation smoke via docker exec psql (phase 01, rolled-back transaction)",
+  "exitCode": 0,
+  "summary": "persona caller saw 26 own sent rows (25 seeded + 1 inserted anonymous showing real name 'E2E Persona' + viewer_is_sender=true while kudos_feed masked it as the alias); second caller 7 own rows, 0 of persona's; empty claims 0 rows; anon SELECT permission denied; no INSERT/UPDATE/DELETE privileges"
+}

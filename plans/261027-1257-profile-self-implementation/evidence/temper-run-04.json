@@ -1,0 +1,5 @@
+{
+  "command": "npx eslint (touched src + e2e files, per phase)",
+  "exitCode": 0,
+  "summary": "lint clean every phase"
+}

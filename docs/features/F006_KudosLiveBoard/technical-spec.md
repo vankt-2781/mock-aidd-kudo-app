@@ -46,7 +46,7 @@ Behavior varies by viewer state (visitor, signed-in non-sender, signed-in sender
 | FR-016 | A user has at most one like per kudos | DB constraint | yes |
 | FR-017 | A like stores `hearts_awarded` = 2 when the like happens on a special day, else 1; unlike deletes the like so exactly the stored amount is revoked | ACTION `toggleKudosLike`, DB function | yes |
 | FR-018 | Copy Link (all card variants) copies the absolute `/kudos/[id]` URL to the clipboard and shows the toast "Link copied — ready to share!"; available to visitors | PAGE `/kudos` | yes |
-| FR-019 | "Xem chi tiết" and a spotlight node click open `/kudos/[id]` (placeholder page); avatar or name click opens the person's profile (placeholder); all require sign-in, else `/login` | PAGE `/kudos`, PAGE `/kudos/[id]` | yes |
+| FR-019 | "Xem chi tiết" and a spotlight node click open `/kudos/[id]` (placeholder page); avatar or name click opens the person's profile (`/profile?id=`, F008); all require sign-in, else `/login` | PAGE `/kudos`, PAGE `/kudos/[id]` | yes |
 | FR-020 | SPOTLIGHT shows the total kudos count from the database (unfiltered) and an SVG word cloud of recipient names sized by kudos received, with loading, empty and interactive states | PAGE `/kudos` | yes |
 | FR-021 | A Pan/Zoom toggle icon button with tooltip switches the cloud interaction mode; pan and zoom are implemented by transforming the SVG viewBox | PAGE `/kudos` | yes |
 | FR-022 | Hovering a node shows a tooltip with the person's name and the time they last received a kudos; clicking a node opens the detail stub (FR-019) | PAGE `/kudos` | yes |

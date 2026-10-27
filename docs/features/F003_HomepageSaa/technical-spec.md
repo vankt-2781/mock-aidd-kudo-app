@@ -328,11 +328,11 @@ showBadge = showBell AND unreadCount > 0   # unreadCount = 0 (no source)
 1. **Given** a regular signed-in user, **When** they open the account menu, **Then** it lists Profile and Sign out only.
 2. **Given** a user whose Supabase app_metadata role is admin, **When** they open it, **Then** Admin Dashboard also appears.
 3. **Given** the menu, **When** the user picks Sign out, **Then** the existing sign-out action runs and the user is signed out.
-4. **Given** Profile or Admin Dashboard, **When** picked, **Then** a placeholder page opens.
+4. **Given** Profile or Admin Dashboard, **When** picked, **Then** a placeholder page opens (Profile has since become a real page, F008).
 
 **Requirements fulfilled:**
 - **FR-023** Account icon (40x40) opens a menu with Profile and Sign out for any signed-in user, plus Admin Dashboard only for admins
-- **FR-024** Sign out reuses the existing signOutAction; Profile and Admin Dashboard open placeholder routes (paths TBD)
+- **FR-024** Sign out reuses the existing signOutAction; Profile and Admin Dashboard open placeholder routes (paths TBD; Profile became the real `/profile` page in F008)
 
 **Rules enforced:**
 
@@ -422,7 +422,7 @@ Implemented on branch `feature/homepage`: routes in `src/app/(site)/`, component
 ## Unresolved Questions
 
 1. **Visitor header slot**: with bell and account menu signed-in only, what does a visitor see in that slot (nothing or a Login link)?
-2. **Placeholder routes** (built: `/profile` redirects visitors to `/login`; `/admin` is server-guarded, non-admins redirect to `/`): exact paths for Profile and Admin Dashboard, and whether the admin route is server-guarded.
+2. **Placeholder routes** (built: `/profile` redirects visitors to `/login`, now the real F008 page; `/admin` is server-guarded, non-admins redirect to `/`): exact paths for Profile and Admin Dashboard, and whether the admin route is server-guarded.
 3. **Header/footer on placeholder pages** (built: shared `(site)` layout renders them on all site pages): do `/awards` and `/kudos` reuse the homepage header and footer (selected-state follows the page)?
 4. **Event config**: production value of the event start vs displayed date 26/12/2025, and whether the time (18h30 in CSV) should show.
 5. **Slugs** (built in `src/lib/site/award-categories.ts`): confirm the six category slugs used for `/awards#<slug>`.

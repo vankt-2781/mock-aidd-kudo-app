@@ -1,0 +1,57 @@
+{
+  "score": 9,
+  "criticalCount": 0,
+  "decision": "SEALED",
+  "acceptanceCovered": [
+    "guest /profile (with or without ?id) redirects to /login?next=%2Fprofile; '/profile' joins the exact-match return-to allow-list; the page re-checks the session (defense in depth); no conflict with the 8b677e2 stale-session login check (guard unit tests + 14 guard/resolution e2e; reviewer traced proxy.ts + decide-route-redirect vs the stale-session fix — no conflict, exact-match resolveReturnTo has no parsing)",
+    "SELF face renders hero (avatar, gold name, department CODE, F006-rule tier badge + stars), 6 locked badge slots with 'Bộ sưu tập icon của tôi', and 5 personal counters with board-sidebar wording plus a DISABLED 'Mở Secret Box' button — counters and dropdown counts come from ONE viewer-stats fetch (persona-self serial e2e: hero/dept-code/tier+stars, 6 locked slots, 5 counters = 25, disabled box button; one getViewerStats fetch in the loader)",
+    "KUDOS section on self offers 'Đã nhận (N)' / 'Đã gửi (M)' via ?dir= links (active entry close-only, other a Link keeping ?id), Received default, 10/page keyset infinite scroll reusing the board card components (?dir deep link, dropdown switch + active re-pick no-op, sentinel-based infinite scroll to 25 both directions)",
+    "own Sent is served ONLY by the caller-scoped SECURITY DEFINER view own_sent_kudos (19 columns mirroring kudos_feed, authenticated-only SELECT, omits anonymous_name) and INCLUDES anonymous kudos shown with the real self name + 'Ẩn danh' chip; hearts stay disabled on own kudos (view scoping reviewer-verified at the WHERE clause + live ACL/empty-claims checks; writes e2e shows real name + chip on own Sent)",
+    "OTHER face (?id=<profileId>) shows hero + badges + a write-Kudo bar ('Gửi lời cám ơn và ghi nhận đến {name}') opening the compose dialog with the Sunner preselected (initialRecipient, default null leaves board/homepage unchanged), and a Received-ONLY list with NO sent label, sent count, received count or stats anywhere in the payload (type-level: discriminated union carries no stats fields) (other-face e2e: write bar preselects — cancel path sends nothing; no dropdown/stats; payload scans on field names and identifiers; type union makes stats unrepresentable)",
+    "anonymous kudos stay masked on every Received list including the recipient's own; a sent-direction request for anyone but the signed-in caller returns an empty page WITHOUT reaching the query layer (unit-asserted) and the view scopes regardless (two independent layers) (recipient and bystander see the alias in the writes e2e; forged-sent unit assertions; mapFeedRow hard-codes the reveal flag false)",
+    "?id is resolved server-side with the shared strict uuid check BEFORE any query: malformed, SQLi, numeric, truncated, unknown, repeated or whitespace ids all render the same not-found text 'Không tìm thấy hồ sơ' (HTTP 200 under streaming); empty or own id (case-insensitive) renders SELF in place; a signed-in viewer with no profile row gets notFound (14-case guard/resolution e2e incl. the 7-row not-found matrix and dir=banana; anchored shared regex rejects trailing-newline forms; no-profile viewer → notFound)",
+    "board card sender/receiver links navigate to /profile?id={profileId} (anonymous cards keep no link); action bar and sidebar keep /profile; sparse profiles render placeholder avatar, no dept line, no badge/stars at zero (board card link e2e → other face; href unit assertion updated; sparse …020001 e2e per GUI_009)",
+    "all suites green: tsc 0, eslint 0, unit 761/761, db reset exit 0, FULL playwright 264/264 TWICE back-to-back on one reset with ZERO flakes (37 new profile tests incl. the anonymous-sent writes spec with by-id cleanup re-verifying 388 kudos), npx next build succeeded (temper-results: tsc 0, eslint 0, 761/761, reset 0, 264/264 twice zero flakes, next build OK; reviewer accepted coordinator evidence without re-running)"
+  ],
+  "regressionChecked": [
+    "KudosFeedList default loadMoreKudos path unchanged; board infinite scroll green",
+    "compose controller/reducer default null initialRecipient — prior suites pass unchanged; compose e2e green twice",
+    "mapFeedRow never sets senderRevealedAnonymous (reviewer-traced + unit)",
+    "profileHref anonymous no-link preserved; action bar + sidebar keep /profile",
+    "8b677e2 stale-session login fix untouched and its unit/e2e green in the full runs",
+    "seed invariants held across the double run (seed-sanity 7/7; writes cleanup re-verified 388 kudos)",
+    "own_sent_kudos grants + empty-claims scoping verified live by the reviewer"
+  ],
+  "contractStatus": "CHANGED",
+  "refuted": [],
+  "unproven": [],
+  "reachableRegressions": [],
+  "findings": [
+    {
+      "severity": "Medium",
+      "category": "Security",
+      "location": "supabase/migrations/20261027000001_profile_own_sent_kudos_view.sql:42",
+      "summary": "M1: definer view's caller scoping rests on one WHERE clause — add a permanent cross-caller DB/e2e assertion (phase-01 smoke proved it but is not a persistent suite)",
+      "disposition": "Defer"
+    },
+    {
+      "severity": "Medium",
+      "category": "Testing",
+      "location": "src/lib/profile/profile-kudos-actions.ts:30",
+      "summary": "M2: assert forged sent requests never reach the query layer — ALREADY covered by the phase-02 unit tests (getProfileFeedPage/from never called on forged paths); no change needed",
+      "disposition": "Reject"
+    },
+    {
+      "severity": "Low",
+      "category": "Maintainability",
+      "location": "src/components/kudos/kudos-card-env.ts:22",
+      "summary": "L1: profileHref silently falls back to the viewer's own /profile on an empty id — unreachable from mappers today; tighten later",
+      "disposition": "Defer"
+    }
+  ],
+  "riskGate": {
+    "touchesSensitiveArea": true,
+    "signoffRequired": true,
+    "humanSignedOff": true
+  }
+}

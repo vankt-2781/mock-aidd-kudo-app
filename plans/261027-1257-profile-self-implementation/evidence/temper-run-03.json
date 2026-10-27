@@ -1,0 +1,5 @@
+{
+  "command": "npx tsc --noEmit",
+  "exitCode": 0,
+  "summary": "typecheck clean across phases 00-04 and the FAB enhancements sharing the branch"
+}

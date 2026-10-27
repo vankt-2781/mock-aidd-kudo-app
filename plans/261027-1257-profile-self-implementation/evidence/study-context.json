@@ -1,0 +1,43 @@
+{
+  "task": "Implement the Profile feature (MoMorph screens 3FoIx6ALVb 'Profile bản thân' + w4WUvsJ9KI 'Profile người khác') as F008 on a clean-restart run: private /profile with SELF and OTHER faces over the kudos domain, a caller-scoped own-sent definer view, and an anonymity boundary on other people's profiles (branch feature/profile-self = main + 8b677e2).",
+  "mode": "interactive",
+  "acceptanceCriteria": [
+    "guest /profile (with or without ?id) redirects to /login?next=%2Fprofile; '/profile' joins the exact-match return-to allow-list; the page re-checks the session (defense in depth); no conflict with the 8b677e2 stale-session login check",
+    "SELF face renders hero (avatar, gold name, department CODE, F006-rule tier badge + stars), 6 locked badge slots with 'Bộ sưu tập icon của tôi', and 5 personal counters with board-sidebar wording plus a DISABLED 'Mở Secret Box' button — counters and dropdown counts come from ONE viewer-stats fetch",
+    "KUDOS section on self offers 'Đã nhận (N)' / 'Đã gửi (M)' via ?dir= links (active entry close-only, other a Link keeping ?id), Received default, 10/page keyset infinite scroll reusing the board card components",
+    "own Sent is served ONLY by the caller-scoped SECURITY DEFINER view own_sent_kudos (19 columns mirroring kudos_feed, authenticated-only SELECT, omits anonymous_name) and INCLUDES anonymous kudos shown with the real self name + 'Ẩn danh' chip; hearts stay disabled on own kudos",
+    "OTHER face (?id=<profileId>) shows hero + badges + a write-Kudo bar ('Gửi lời cám ơn và ghi nhận đến {name}') opening the compose dialog with the Sunner preselected (initialRecipient, default null leaves board/homepage unchanged), and a Received-ONLY list with NO sent label, sent count, received count or stats anywhere in the payload (type-level: discriminated union carries no stats fields)",
+    "anonymous kudos stay masked on every Received list including the recipient's own; a sent-direction request for anyone but the signed-in caller returns an empty page WITHOUT reaching the query layer (unit-asserted) and the view scopes regardless (two independent layers)",
+    "?id is resolved server-side with the shared strict uuid check BEFORE any query: malformed, SQLi, numeric, truncated, unknown, repeated or whitespace ids all render the same not-found text 'Không tìm thấy hồ sơ' (HTTP 200 under streaming); empty or own id (case-insensitive) renders SELF in place; a signed-in viewer with no profile row gets notFound",
+    "board card sender/receiver links navigate to /profile?id={profileId} (anonymous cards keep no link); action bar and sidebar keep /profile; sparse profiles render placeholder avatar, no dept line, no badge/stars at zero",
+    "all suites green: tsc 0, eslint 0, unit 761/761, db reset exit 0, FULL playwright 264/264 TWICE back-to-back on one reset with ZERO flakes (37 new profile tests incl. the anonymous-sent writes spec with by-id cleanup re-verifying 388 kudos), npx next build succeeded"
+  ],
+  "touchpoints": [
+    "supabase/migrations/20261027000001_profile_own_sent_kudos_view.sql",
+    "src/lib/auth/{decide-route-redirect,return-to}.ts (+tests, PROFILE_LOGIN_HREF)",
+    "src/lib/profile/** (types, id-resolution, queries, kudos-actions, +tests)",
+    "src/lib/kudos/{kudos-uuid,kudos-feed-paging}.ts (new), {kudos-board-types,kudos-row-mappers,kudos-board-queries,kudos-feed-cursor,kudos-actions}.ts",
+    "src/lib/i18n/profile-dictionary*.ts (+test)",
+    "src/app/(site)/profile/{page,not-found}.tsx + profile-page-loaders.ts (+test)",
+    "src/components/profile/** (Track A 11 files + integration: direction-hrefs, kudos-feed, write-kudos-bar, stats-error)",
+    "src/components/kudos/{kudos-feed-list,kudos-card-env,kudos-card-parts,kudos-user-info,kudos-compose-launcher}.tsx (+2 new tests); src/components/kudos-compose/{controller,reducer} (+test)",
+    "e2e/profile-page-{guard-and-resolution,other-face,persona-self}.spec.ts (14+9+13), kudos-compose-writes-profile-anonymous-sent.spec.ts, helpers/profile-page-ui.ts, playwright.config.ts (profile-persona serial project), e2e/README.md",
+    "docs/features/F008_Profile/** (promoted), docs/system/permissions.md (Profile section), docs/generated/{feature-list,screen-list}.md, docs/_canonical-fcodes.json"
+  ],
+  "blastRadius": [
+    "decide-route-redirect gains the /profile area; return-to allow-list stays exact-match (/profile?id dropped by design; no open redirect); verified compatible with the 8b677e2 login-path getUser check",
+    "KudosBoardPost gains optional senderRevealedAnonymous; mapFeedRow hard-codes it false (received rows can never reveal)",
+    "KudosFeedList gains optional loadPage + composite key — board default path unchanged, board tests untouched",
+    "compose controller/reducer gain initialRecipient (ComposeSunner, default null) — board/homepage call sites unchanged, compose suites pass unchanged",
+    "board card profileHref → /profile?id= (one href assertion updated); uuid regex centralized in kudos-uuid.ts; paging helpers extracted to kudos-feed-paging.ts (pure moves, board query tests unchanged)",
+    "new profile-persona serial Playwright project; kudos-writes now depends on it (read projects serialized — full-run slightly slower)",
+    "deferred: Spam chip; badge unlock source (all locked); disabled Mở Secret Box; hero avatar bitmap stand-in; end-of-list message dropped (board parity); seed-sanity fixture pins; reviewer-deferred M1 permanent cross-caller DB test, L1 profileHref empty-id fallback tightening; profile-copy.ts kept while the phase-02 dictionary test imports it"
+  ],
+  "contracts": [
+    "own_sent_kudos: SECURITY DEFINER (security_invoker=false), rows WHERE sender = profile of auth.uid() (empty claims → 0 rows, live-verified), 19 columns mirroring kudos_feed exactly, viewer_is_sender always true, SELECT granted to authenticated only (ACL live-verified)",
+    "getProfileKudosPage(profileId, direction, cursor): validate (shared uuid + direction + double-validated cursor) → viewer → authorize (sent only when ids match case-insensitively) → query; every failure returns the same empty page; forged sent requests never reach the query layer (unit-asserted)",
+    "resolveProfileTarget/parseProfileDirection: array/malformed/whitespace/%20/SQLi/42/truncated → not-found; absent/empty/own-id-any-case → self; sent only on self",
+    "ProfilePageContent discriminated union: the other-face variant cannot carry stats/sent fields by type",
+    "recorded deviations (clarifications.md, 24 entries): F006 tier rule; department shows CODE (frame-wins); feed errors stop silently (board parity); no end-of-list message; static vi not-found copy + PM-review strings; hero avatar stand-in; badges all locked"
+  ]
+}

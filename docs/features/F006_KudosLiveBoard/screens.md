@@ -22,7 +22,7 @@ Adjacent screens are **stubs in this task** (each has its own Figma frame and it
 |------|--------------|-------------|---------------|
 | Send kudos dialog ("Viết Kudo") | Input pill | ihQ26W78P2 | Placeholder dialog/route; content TBD (draft) |
 | Kudo detail | "Xem chi tiết", spotlight node click | TBD (draft) | Placeholder route `/kudos/[id]` |
-| Profile (person) | Avatar or name click on cards, gift-list rows | TBD (draft) | Placeholder profile route; exact route TBD (draft) |
+| Profile (person) | Avatar or name click on cards, gift-list rows | F008 | Built: `/profile?id=<uuid>` (anonymous senders have no link) |
 | Profile hover preview | Hover on avatar or name | TBD (draft) | Not built |
 | Secret Box dialog | "Mở quà" | TBD (draft) | Placeholder dialog |
 
@@ -32,7 +32,7 @@ Adjacent screens are **stubs in this task** (each has its own Figma frame and it
 2. The visitor narrows it with the hashtag and department filters, browses the highlight carousel, explores the spotlight, scrolls the feed.
 3. The visitor tries an action that needs identity (heart, input pill, "Mở quà", avatar, "Xem chi tiết", spotlight node) and is sent to `/login?next=/kudos`.
 4. After signing in the Sunner returns to `/kudos` (allow-listed return-to), sees personal stats, and hearts other people's kudos with instant feedback.
-5. From a card the Sunner copies the link, or opens the (placeholder) detail or profile.
+5. From a card the Sunner copies the link, or opens the (placeholder) detail or the profile page (F008).
 
 ```mermaid
 journey

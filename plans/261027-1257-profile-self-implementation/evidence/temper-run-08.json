@@ -1,0 +1,5 @@
+{
+  "command": "npx playwright test (run 2 of 2, same reset) + npx next build",
+  "exitCode": 0,
+  "summary": "264/264 again back-to-back, zero flakes and zero red runs at the gate (prior-run pitfalls baked into the specs); production build succeeded afterwards"
+}

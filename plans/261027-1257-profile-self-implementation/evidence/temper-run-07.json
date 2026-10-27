@@ -1,0 +1,5 @@
+{
+  "command": "npx playwright test (run 1 of 2 on one db reset)",
+  "exitCode": 0,
+  "summary": "264/264 — chromium 214 (guard/resolution 14, other-face 9 incl. preselect-cancel and payload scans), profile-persona serial 13, kudos-writes 30 incl. the anonymous-sent spec (real name + 'Ẩn danh' + 'Đã gửi (1)' on own Sent; alias for recipient and bystander; cleanup by id re-verifies 388), seed-sanity 7"
+}

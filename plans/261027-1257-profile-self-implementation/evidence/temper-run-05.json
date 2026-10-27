@@ -1,0 +1,5 @@
+{
+  "command": "npm test",
+  "exitCode": 0,
+  "summary": "83 files, 761/761 unit (phase 02 +90, phase 03 +29; compose suites unchanged; forged-sent never reaches the query layer asserted in profile-kudos-actions tests)"
+}
