@@ -52,7 +52,7 @@ Behavior varies by viewer state (visitor, signed-in non-sender, signed-in sender
 | FR-022 | Hovering a node shows a tooltip with the person's name and the time they last received a kudos; clicking a node opens the detail stub (FR-019) | PAGE `/kudos` | yes |
 | FR-023 | The spotlight search (placeholder "Tìm kiếm", max 100 chars) highlights matching nodes and dims the rest; empty input is a no-op | PAGE `/kudos` | yes |
 | FR-024 | Sidebar personal stats (kudos received, kudos sent, hearts received, Secret Boxes opened, unopened) render only for a signed-in viewer and only for that viewer's own data | PAGE `/kudos` | yes |
-| FR-025 | "Mở quà" opens the Secret Box dialog stub for signed-in users, `/login` for visitors; may be disabled when the viewer is not eligible (rule TBD (draft)) | PAGE `/kudos` | yes |
+| FR-025 | "Mở quà" opens the Secret Box modal (F009; was a stub) for signed-in users, `/login` for visitors; may be disabled when the viewer is not eligible (rule TBD (draft)) | PAGE `/kudos` | yes |
 | FR-026 | Sidebar shows ONE list of 10 from seeded gift events: "10 SUNNER NHẬN QUÀ MỚI NHẤT", newest first, each row with avatar, gold name and a description; public to visitors; empty list shows "Chưa có dữ liệu"; the sidebar scrolls independently. **Spec-CSV deviation (for PM):** the spec rows list a second list "10 SUNNER CÓ SỰ THĂNG HẠNG MỚI NHẤT"; the Figma frame draws only the gift list, so the frame wins (precedent F004) and the promotion list and its table are dropped | PAGE `/kudos` | yes |
 | FR-027 | The schema, RLS and seed data for the kudos domain ship as Supabase migrations and seed; public reads, authenticated own-like writes only | DB migrations | yes |
 | FR-028 | Interface copy comes from a kudos dictionary keyed by the locale cookie (vi default); `vi` carries the exact design copy, `en` is a developer draft | PAGE `/kudos` | yes |
@@ -254,7 +254,7 @@ select ... where filters and (created_at, id) < cursor order by created_at desc,
 - **SC-009** — Spotlight: loading, empty and interactive states; hover tooltip; node click goes to detail stub; pan/zoom toggle; search of 100 chars accepted, 101st rejected, empty input no-op (covers FR-020 to FR-023; **deviation TC-9e689933**)
 - **SC-010** — Copy Link writes the URL and shows "Link copied — ready to share!" (covers FR-018)
 - **SC-011** — Sidebar stats equal the signed-in user's seeded counts; the gift list shows seeded rows or "Chưa có dữ liệu" (covers FR-024, FR-026)
-- **SC-012** — "Mở quà" opens the stub (**deviation TC 43b54c29**); send-dialog TCs (**deferred f183a3e4, ca8f60b3**) are not run here (covers FR-003, FR-025)
+- **SC-012** — "Mở quà" opens the F009 Secret Box modal (TC 43b54c29 deviation resolved by F009); send-dialog TCs (**deferred f183a3e4, ca8f60b3**) are not run here (covers FR-003, FR-025)
 - **SC-013** — Row-level security: anonymous can read public tables, cannot write; authenticated can write only own non-sender like (covers FR-027)
 - **SC-014** — Locale `vi` shows exact design copy; `en` shows the draft dictionary (covers FR-028)
 
@@ -420,7 +420,7 @@ select ... where filters and (created_at, id) < cursor order by created_at desc,
 3. **Given** seeded gift events, **Then** the list shows the 10 newest rows.
 4. **Given** no events, **Then** the list shows "Chưa có dữ liệu".
 5. **Given** a visitor, **Then** the gift list is shown and "Mở quà" is visible (click goes to `/login`).
-6. **Given** "Mở quà" is pressed, **Then** a signed-in user sees the Secret Box stub and a visitor goes to `/login?next=/kudos`.
+6. **Given** "Mở quà" is pressed, **Then** a signed-in user sees the F009 Secret Box modal and a visitor goes to `/login?next=/kudos`.
 
 **Requirements fulfilled:**
 - **FR-024** Owner-only stats — PAGE `/kudos`
@@ -508,7 +508,7 @@ No source code is written yet for the schema, queries, actions, spotlight logic 
 
 Resolved (recorded in clarifications):
 
-1. **Scope**: live board only; send dialog, detail, profile, Secret Box dialog and hover preview are stubs.
+1. **Scope**: live board only; send dialog, detail, profile and hover preview are stubs (the Secret Box modal was delivered by F009).
 2. **Data layer**: real Supabase migrations, RLS and seed; server queries.
 3. **Live updates**: optimistic like plus revalidate; no Realtime.
 4. **Access**: public viewing; interactions gated to `/login`; personal stats only when signed in.

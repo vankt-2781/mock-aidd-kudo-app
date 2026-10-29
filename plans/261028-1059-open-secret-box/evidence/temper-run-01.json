@@ -1,0 +1,44 @@
+[
+  {
+    "command": "npx vitest run",
+    "exitCode": 0,
+    "status": "pass",
+    "summary": "92 files, 826/826 tests passed, 0 failed (4.92s; run twice, both exit 0)"
+  },
+  {
+    "command": "npx tsc --noEmit",
+    "exitCode": 0,
+    "status": "pass",
+    "summary": "typecheck clean, no diagnostics"
+  },
+  {
+    "command": "npx eslint .",
+    "exitCode": 0,
+    "status": "pass",
+    "summary": "lint clean across the repo, no errors or warnings reported"
+  },
+  {
+    "command": "npx supabase db reset",
+    "exitCode": 0,
+    "status": "pass",
+    "summary": "single reset before both playwright runs; migrations through 20261028000001_secret_box_badge_and_open_function.sql applied"
+  },
+  {
+    "command": "npx playwright test (run 1, full suite, after db reset)",
+    "exitCode": 0,
+    "status": "pass",
+    "summary": "281 passed, 0 failed, 0 flaky, 0 skipped (~117s wall)"
+  },
+  {
+    "command": "npx playwright test (run 2, full suite, same db, no reset)",
+    "exitCode": 0,
+    "status": "pass",
+    "summary": "281 passed, 0 failed, 0 flaky, 0 skipped (~116s wall); box-opening specs isolated and restored across back-to-back runs"
+  },
+  {
+    "command": "npm run build",
+    "exitCode": 0,
+    "status": "pass",
+    "summary": "next build compiled successfully, 14/14 static pages generated, no build warnings or deprecation notices"
+  }
+]

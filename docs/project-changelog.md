@@ -2,6 +2,21 @@
 
 > Living document. Every significant change, feature, and fix is recorded here.
 
+## 2026-10-28 — F009: Open Secret Box (feature)
+
+**Summary:** "Mở Secret Box" is live from both entries (Kudos board sidebar "Mở quà" and own Profile): a modal reveals one badge per open and unlocks the matching slot in the owner's Profile badge collection (self face only).
+
+**Shipped:**
+
+- Migration `20261028000001`: `secret_boxes.badge` (nullable, check on six keys: `stay_gold`, `flow_to_horizon`, `beyond_the_boundary`, `root_further`, `touch_of_light`, `revival`) and SECURITY DEFINER `open_secret_box()` doing a server-side weighted draw (30/25/10/5/20/10), granted to `authenticated` only. Legacy opened boxes keep `badge` null.
+- `src/lib/secret-box/` (action, queries, badge catalog), `src/components/secret-box/` (modal, opener, copy); sidebar and Profile buttons replace the placeholder dialog / disabled state; Profile badge collection reads opened boxes.
+- Assets in `public/images/secret-box/badges/`: 2 design crops plus 4 fallback SVGs pending final art.
+- Tests: unit 826, e2e 281 (two consecutive runs); new e2e specs for entry gating, open flow and DB rules.
+
+**Security:** only the owner reads `badge`; no client insert/update/delete on `secret_boxes`; guests are sent to login; other-face and guest boundary unchanged.
+
+**Docs impact:** major. `docs/features/F009_OpenSecretBox/` promoted; `docs/system/permissions.md`, `architecture.md` (DEC-005), roadmap, codebase summary and F006/F008 specs updated.
+
 ## 2026-10-27 — F008: Profile (feature, shipped)
 
 **Summary:** Private `/profile` page. SELF face: hero, 6 locked badge slots, 5 counters with a disabled "Mở Secret Box", KUDOS feed (`?dir=received|sent`, 10 per page, infinite scroll, board card reuse). OTHER face (`?id=<uuid>`): hero + badges, a write-Kudo bar that opens the compose modal with the recipient preselected (`initialRecipient`), Received feed only, no counts (anonymity boundary). Board card sender/receiver links now go to `/profile?id=` (anonymous senders get no link).

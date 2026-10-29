@@ -12,7 +12,7 @@ lang: en
 
 | Screen Name | SCR### | What User Sees | What User Can Do |
 |-------------|--------|----------------|------------------|
-| Profile — self face | TBD (draft) | Keyvisual hero with avatar, gold name, department, tier badge plus stars; "Bộ sưu tập icon của tôi" with 6 locked badges; 5 personal counters and a disabled "Mở Secret Box"; KUDOS section with direction dropdown and a 10-per-page feed | Switch Đã nhận / Đã gửi, scroll for more, heart, click hashtag, copy link, open a colleague's profile, retry failed stats |
+| Profile — self face | TBD (draft) | Keyvisual hero with avatar, gold name, department, tier badge plus stars; "Bộ sưu tập icon của tôi" with 6 badge slots (unlocked via F009 opened boxes); 5 personal counters and "Mở Secret Box" (opens the F009 modal); KUDOS section with direction dropdown and a 10-per-page feed | Switch Đã nhận / Đã gửi, scroll for more, heart, click hashtag, copy link, open a colleague's profile, retry failed stats |
 | Profile — other face | TBD (draft) | Same hero; "Bộ sưu tập icon" with 6 locked badges; write-Kudo bar "Gửi lời cám ơn và ghi nhận đến {name}"; static label "Đã nhận" and received feed, no counts | Open compose with the Sunner preselected, scroll, heart, click hashtag, copy link |
 | Profile — not found | part of both specs | "Không tìm thấy hồ sơ" and link "Về trang chủ" | Go home |
 

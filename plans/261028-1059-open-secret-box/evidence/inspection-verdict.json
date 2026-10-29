@@ -1,0 +1,81 @@
+{
+  "score": 9,
+  "criticalCount": 0,
+  "decision": "SEALED",
+  "acceptanceCovered": [
+    "Modal idle phase: closed box, instruction, unopened counter; success phase: badge image + MỞ SECRET BOX THÀNH CÔNG; instruction hidden and box disabled at 0 unopened — proven by 9 modal unit tests and the entry-gating + open-flow e2e (counter 03→02→01→00, instruction gone, box disabled, success title with badge img whose alt is one of the 6 names)",
+    "Both entries open the modal; guests keep the login gate; buttons disabled at 0 — proven by opener unit tests + entry-gating e2e on /kudos and /profile (guest sees the login link, fresh user with 0 boxes has both buttons disabled, with boxes the idle modal opens) and the read-only persona specs",
+    "open_secret_box(): authenticated-only, atomic single-box claim, server-side weighted draw, controlled no_unopened_box error; client manipulation ineffective — proven by the reviewer's SQL trace (SECURITY DEFINER, search_path='', auth.uid(), FOR UPDATE SKIP LOCKED, bounds 30/55/65/70/90/100, grant to authenticated only), the 10k-roll distribution matching 30/25/20/10/10/5, and the db-rules e2e (9 tests: direct insert/update/delete denied 42501, guest rpc denied, extra-arg rejected, CHECK rejects bad keys, parallel calls on 1 box give exactly 1 ok + 1 no_unopened_box, a stranger's call leaves the owner's rows untouched)",
+    "Opened badges unlock matching Profile badge slots on the self face only; other-face payload unchanged — proven by the open-flow e2e (the real badge key read from the DB unlocks only its slot; another user sees 6 locked slots and the key is absent from HTML/RSC payloads) and loader unit tests (other face never calls getOwnBadgeKeys)",
+    "Legacy opened boxes keep badge null; db reset green; full e2e suite passes twice on one reset — proven by the seed invariant + seed-sanity guard (zero non-null badges at reset, persona stays 25 opened / 25 unopened after both runs), db reset exit 0, and playwright 281/281 twice back-to-back on one reset with zero flakes",
+    "unit + e2e green; lint + tsc + next build green — proven by temper-results.json: vitest 826/826, playwright 281/281 ×2, npx tsc --noEmit 0, npx eslint . 0, npm run build exit 0 (7 commands, all pass)"
+  ],
+  "regressionChecked": [
+    "F008 other-face boundary intact: loadProfilePage returns badges: [] and never fetches stats or badge keys for the other face (unit-asserted); guest kudos sidebar unchanged (login link)",
+    "Persona and Sunner 1 seed boxes never opened by the suite; box-opening specs use fresh cascade-deleted test users — full suite passed twice on one reset",
+    "KudosStatsBox messages Pick widened without breaking callers (repo tsc clean); KudosGatedDialogButton remains for other gated entries",
+    "profile-badge-collection SVG rendering guarded with unoptimized for .svg (no dangerouslyAllowSVG in next.config)",
+    "Existing F006/F007/F008 suites green in both full runs (281/281 includes all prior specs)",
+    "RLS reads unchanged: secret_boxes_owner_read still owner-scoped; getOwnBadgeKeys fails closed to []"
+  ],
+  "contractStatus": "CHANGED",
+  "refuted": [],
+  "unproven": [],
+  "reachableRegressions": [],
+  "findings": [
+    {
+      "severity": "Low",
+      "category": "Maintainability",
+      "location": "src/components/secret-box/secret-box-modal.tsx:7",
+      "summary": "SecretBoxBadge interface declared in both the modal and the catalog (DRY) — export from the catalog",
+      "disposition": "Defer"
+    },
+    {
+      "severity": "Low",
+      "category": "Architecture",
+      "location": "src/lib/i18n/kudos-dictionary.ts:1",
+      "summary": "lib module imports SecretBoxCopy type from components/secret-box (layering inversion) — move the type to src/lib/secret-box/",
+      "disposition": "Defer"
+    },
+    {
+      "severity": "Low",
+      "category": "Correctness",
+      "location": "src/lib/secret-box/secret-box-actions.ts:21",
+      "summary": "no_profile (P0002) mapped to unauthenticated hides a data-integrity case — map to error or log distinctly",
+      "disposition": "Defer"
+    },
+    {
+      "severity": "Low",
+      "category": "UX",
+      "location": "src/components/secret-box/secret-box-opener.tsx:33",
+      "summary": "reopening before router.refresh resolves can briefly show the stale pre-open count (server self-corrects) — cosmetic",
+      "disposition": "Defer"
+    },
+    {
+      "severity": "Low",
+      "category": "Accessibility",
+      "location": "src/components/secret-box/secret-box-modal.tsx",
+      "summary": "in the opened phase the box button is named after the badge while it opens the next box — add an explicit aria-label",
+      "disposition": "Defer"
+    },
+    {
+      "severity": "Low",
+      "category": "Maintainability",
+      "location": "supabase/migrations/20261028000001_secret_box_badge_and_open_function.sql:24",
+      "summary": "create function without or-replace — fine for a one-shot migration; future weight changes need create or replace",
+      "disposition": "Reject"
+    },
+    {
+      "severity": "Low",
+      "category": "Testing",
+      "location": "e2e/helpers/secret-box-db.ts",
+      "summary": "leak detection keys off the 'E2E Tester%' naming convention — acceptable today, guarded by seed-sanity",
+      "disposition": "Reject"
+    }
+  ],
+  "riskGate": {
+    "touchesSensitiveArea": true,
+    "signoffRequired": true,
+    "humanSignedOff": true
+  }
+}

@@ -1,6 +1,6 @@
 # Codebase Summary
 
-Small Next.js 16 App Router app (F001 Login with Google, F003 Homepage SAA, F004 Awards Information, F005 Countdown Prelaunch, F006 Kudos live board, F007 Kudos send dialog, F008 Profile). Auth is Supabase cookie sessions via `@supabase/ssr`.
+Small Next.js 16 App Router app (F001 Login with Google, F003 Homepage SAA, F004 Awards Information, F005 Countdown Prelaunch, F006 Kudos live board, F007 Kudos send dialog, F008 Profile, F009 Open Secret Box). Auth is Supabase cookie sessions via `@supabase/ssr`.
 
 ## Layout
 | Path | Role |
@@ -16,6 +16,8 @@ Small Next.js 16 App Router app (F001 Login with Google, F003 Homepage SAA, F004
 | `src/components/kudos-compose/` | F007 "Viết Kudo" modal: reducer-driven controller, fields (recipient, title, hashtags, images, anonymous), `use-compose-image-uploads`, TipTap `editor/` (link dialog, @mention list) |
 | `src/lib/kudos/` | Board queries, row mappers, `kudos-viewer.ts` (own profile via `viewer_profile`) |
 | `src/lib/profile/` | F008: `profile-id-resolution` (`?id` uuid check, `?dir`), `profile-queries` (header, feed page; Sent reads `own_sent_kudos`), `profile-kudos-actions` (infinite-scroll page action), `profile-types` |
+| `src/lib/secret-box/` | F009: `secret-box-actions` (`openSecretBoxAction` calls the `open_secret_box` RPC), `secret-box-queries` (owner's opened badges), `secret-box-badge-catalog` (six badge keys, labels, art paths) |
+| `src/components/secret-box/` | F009: `secret-box-modal`, `secret-box-opener` (open flow and reveal), `secret-box-copy` (vi/en copy); used by the board sidebar and own Profile |
 | `src/lib/kudos-compose/` | `sendKudos` / `searchSunners` server actions, validation and limits, hashtag normalize, server-only `sanitize-html`, image URL check, `reserve_kudos_image_path` + upload (identity-free paths) |
 | `supabase/migrations/` | Kudos domain schema, RLS, masked definer views (`viewer_profile`, `viewer_kudos_stats`), `send_kudos`, `kudos-images` bucket, `own_sent_kudos` (F008); see [F007 spec](features/F007_KudosSendDialog/technical-spec.md) |
 | `src/lib/countdown/` | `compute-countdown` pure helper (target from `EVENT_START_AT`), shared by hero and `/countdown` |

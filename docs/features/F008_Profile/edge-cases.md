@@ -40,7 +40,7 @@ lang: en
 | Pick the active direction again | No-op, no request | None |
 | Stats query fails on self | Inline error plus retry in the stats block; rest renders | developer-draft vi |
 | Secret Box counters with no rows | Zeros | None |
-| "Mở Secret Box" clicked | Disabled; nothing happens | None |
+| "Mở Secret Box" clicked | Opens the F009 modal (see F009 edge cases) | `open_secret_box` |
 | Sparse profile (null avatar, null department, 0 kudos) | Placeholder avatar, no department line, no badge and no stars, empty feed | empty copy |
 | Hero tier at 0 stars | No badge, no stars | None |
 | Other face write bar, then Hủy in compose | Modal closes; page unchanged | None |
@@ -70,7 +70,7 @@ lang: en
 | GUI_002 | 6 badge slots fixed order locked | FR-006, SC-002 | none |
 | GUI_003 | Badge heading self/other | FR-006, SC-002, SC-004 | none |
 | GUI_004 | 5 counters, board wording | FR-007, SC-002 | Secret Box counts real from `secret_boxes` |
-| GUI_005 | "Mở Secret Box" disabled | FR-008, SC-002 | none |
+| GUI_005 | "Mở Secret Box" opens F009 modal (was disabled pre-F009) | FR-008, SC-002 | `open_secret_box` |
 | FUN_006 | Other-face write bar copy | FR-010, SC-004 | none |
 | FUN_007 | Bar opens compose with recipient | FR-010, FR-011, SC-004 | `initialRecipient` optional prop |
 | FUN_008 | No bar on self | FR-010, SC-004 | none |

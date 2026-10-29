@@ -109,7 +109,15 @@ Plan: `plans/261027-1257-profile-self-implementation/plan.md`. Spec promoted as 
 
 **Anonymity boundary:** OTHER face has no counts and no Sent feed; own Sent uses caller-scoped `own_sent_kudos`. See [changelog](project-changelog.md).
 
-**Deferred / open:** Secret Box opening stays disabled; badge slots are locked placeholders; `docs/generated/` inventories need `/tkm:rebuild-spec` (pre-F006 stale); `/admin` is still a placeholder.
+**Deferred / open:** Secret Box opening was delivered by F009 (below); `docs/generated/` inventories need `/tkm:rebuild-spec` (pre-F006 stale); `/admin` is still a placeholder.
+
+## F009 — Open Secret Box (complete 2026-10-28)
+
+Plan: `plans/261028-1059-open-secret-box/plan.md`. Spec promoted as `docs/features/F009_OpenSecretBox/` (SCR011 in `docs/generated/screen-list.md`).
+
+Modal opens from the Kudos sidebar and own Profile; `open_secret_box()` draws the badge server-side; self-face badge collection unlocks from opened boxes. Quality gates: unit 826, e2e 281 (x2 runs).
+
+**Deferred / open:** final badge art (2 design crops + 4 fallback SVGs in `public/images/secret-box/badges/`); legacy opened boxes keep no badge; other-face badge visibility stays off.
 
 ## Next Milestones
 

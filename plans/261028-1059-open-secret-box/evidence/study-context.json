@@ -1,0 +1,32 @@
+{
+  "task": "F009 Open Secret Box — modal from /kudos sidebar + own profile; badge column + open_secret_box() definer RPC with weighted draw (30/25/10/5/20/10); opened badges unlock the Profile badge collection (self face only)",
+  "mode": "takumi-interactive-momorph",
+  "acceptanceCriteria": [
+    "Modal idle phase: closed box, instruction, unopened counter; success phase: badge image + MỞ SECRET BOX THÀNH CÔNG; instruction hidden and box disabled at 0 unopened",
+    "Both entries open the modal; guests keep the login gate; buttons disabled at 0",
+    "open_secret_box(): authenticated-only, atomic single-box claim, server-side weighted draw, controlled no_unopened_box error; client manipulation ineffective",
+    "Opened badges unlock matching Profile badge slots on the self face only; other-face payload unchanged",
+    "Legacy opened boxes keep badge null; db reset green; full e2e suite passes twice on one reset",
+    "unit + e2e green; lint + tsc + next build green"
+  ],
+  "touchpoints": [
+    "supabase/migrations/20261028000001_secret_box_badge_and_open_function.sql",
+    "supabase/seed.sql",
+    "src/lib/secret-box/",
+    "src/components/secret-box/",
+    "src/components/kudos/kudos-stats-box.tsx",
+    "src/components/profile/profile-stats.tsx",
+    "src/components/profile/profile-badge-collection.tsx",
+    "src/app/(site)/profile/profile-page-loaders.ts",
+    "src/lib/i18n/kudos-dictionary*.ts",
+    "e2e/secret-box-*.spec.ts",
+    "public/images/secret-box/badges/"
+  ],
+  "blastRadius": "kudos board sidebar, own profile stats + badge collection, kudos dictionaries, playwright serial projects, seed invariants",
+  "contracts": [
+    "openSecretBoxAction(): {status:'ok',badgeKey,remaining}|{status:'empty'}|{status:'unauthenticated'}|{status:'error'}",
+    "open_secret_box() returns jsonb {badge, remaining_unopened}; raises no_unopened_box/unauthenticated/no_profile",
+    "ProfileBadgeSlot {id,label,unlocked,imageSrc} — toBadgeSlots always 6 slots in catalog order",
+    "F008 other-face payload boundary unchanged (no secret box data)"
+  ]
+}
