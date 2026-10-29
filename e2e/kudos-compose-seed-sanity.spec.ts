@@ -1,5 +1,6 @@
 import { expect, test } from "./fixtures";
 import { E2E_TAG_LIKE, SEED_PERSONA_PROFILE_ID, serviceDb } from "./helpers/kudos-compose-cleanup";
+import { badgeRowCount, testUserBoxCount } from "./helpers/secret-box-db";
 
 // Runs last (project kudos-seed-sanity, after kudos-writes). If a write test leaked rows, the
 // F006 read suite would see a different feed, so this file is the compatibility bar:
@@ -42,6 +43,19 @@ test.describe("F006 seed invariants after the Viết Kudo write suite", () => {
       .single();
     expect(error).toBeNull();
     expect(data).toEqual({ kudos_received: 25, kudos_sent: 25, hearts_received: 25 });
+  });
+
+  test("F009: the persona keeps 25 opened / 25 unopened boxes, no seed box has a badge and no test user left boxes behind", async () => {
+    expect(await badgeRowCount()).toBe(0);
+    expect(await testUserBoxCount()).toBe(0);
+    const { data, error } = await serviceDb()
+      .from("secret_boxes")
+      .select("opened_at")
+      .eq("profile_id", SEED_PERSONA_PROFILE_ID);
+    expect(error).toBeNull();
+    const rows = data ?? [];
+    expect(rows.filter((row) => row.opened_at === null)).toHaveLength(25);
+    expect(rows.filter((row) => row.opened_at !== null)).toHaveLength(25);
   });
 
   test("no kudos row points at a claimed (auth-linked) profile", async () => {

@@ -51,7 +51,7 @@ lang: en
 | Hover on a node on touch devices | No hover; tap opens the (gated) detail; tooltip behavior on touch TBD (draft) | None |
 | Spotlight node name very long | Name truncated within the node; tooltip shows the full name | None |
 | Many recipients | Node count capped (cap TBD (draft)) so the cloud stays readable | None |
-| "Mở quà" pressed | Opens the Secret Box placeholder (signed-in) or goes to `/login` (signed-out). **Known TC deviation (TC 43b54c29 expects the real dialog; deferred to the Secret Box task)** | None |
+| "Mở quà" pressed | Opens the F009 Secret Box modal (signed-in) or goes to `/login` (signed-out). TC 43b54c29 deviation resolved by F009 | None |
 | "Mở quà" when user has no unopened box | May be disabled (design: "may be disabled when not eligible"); exact rule TBD (draft) | None |
 | Input pill clicked (signed-in) | Opens the send-dialog placeholder. **Send-dialog TCs f183a3e4 and ca8f60b3 are deferred to the Viết Kudo task** | None |
 | Gift list has no rows | Empty message in the list | "Chưa có dữ liệu" |

@@ -307,3 +307,31 @@ SC-001..011; TC themes: `edge-cases.md`.
 - Payload scans look for the viewed person's identifiers and stat field names. The shared dictionary may ship
   Vietnamese stat labels to the client, which carry no data and are not scanned.
 
+
+# F009 Open Secret Box: E2E coverage
+
+Screen: MoMorph `J3-4YFIpMM`. Contract: `docs/features/F009_OpenSecretBox/` (SC-001..SC-010; TC themes in `edge-cases.md`).
+All box-opening specs run in the serial `kudos-writes` project (`WRITE_SPECS` matches `secret-box-writes-*`).
+
+| Contract | Spec(s) |
+|----------|---------|
+| Guest: Mở Secret Box is a login link, no dialog | `secret-box-writes-entry-gating`, `kudos-board-guest-gating` |
+| 0 unopened boxes: button disabled on /kudos and /profile | `secret-box-writes-entry-gating` |
+| Boxes present: modal opens idle (title, counter "03", instruction), closing opens nothing | `secret-box-writes-entry-gating` |
+| Open N boxes: success title, badge image (alt in the 6 names), counter decrements, at 0 instruction hidden + box disabled, close refreshes sidebar 3/0 | `secret-box-writes-open-flow` |
+| /profile: exactly the slot of the DB-recorded badge unlocks; other face stays 6 locked and its HTML/RSC carries no badge key | `secret-box-writes-open-flow` |
+| RPC: guest denied, extra arg rejected, direct update/insert/delete denied, RLS owner-only read, other user cannot open, 0 boxes = `no_unopened_box`, 1 box + 2 parallel calls = 1 ok + 1 error, badge CHECK | `secret-box-writes-db-rules` |
+| Persona (25 unopened) modal open/close only, never opens | `kudos-board-persona` SC-012, `profile-page-persona-self` |
+| Final guard: no non-null badge on any row, no `E2E Tester%` boxes left, persona still 25 opened / 25 unopened | `kudos-compose-seed-sanity` |
+
+- Isolation: the outcome is random, so tests that OPEN boxes use a fresh test user and insert unopened boxes for its trigger
+  profile through the service client (`helpers/secret-box-db.ts`); deleting the profile cascades the boxes. Persona and
+  Sunner 1 boxes are never opened, so the suite passes repeatedly on one `npx supabase db reset`.
+- UI assertions compare against the badge the DB recorded (`ownedBadgeKeys`), never a fixed badge.
+- Local debug with `--no-deps` starts every selected project at once: run `kudos-compose-seed-sanity` on its own afterwards,
+  or it will see live test users.
+- Empty state: at 0 the modal hides the instruction and disables the box; the "no boxes left" copy only appears if the
+  server reports `empty` (a race), which is covered by unit tests.
+- MANUAL (SC-005 distribution, 30/25/10/5/20/10 within about 2pp): in `psql`, inside a transaction that is rolled back, insert
+  10000 unopened boxes for a temp profile, call `open_secret_box()` as that user in a loop (or replay the CASE on
+  `floor(random()*100)`), `select badge, count(*) from secret_boxes group by badge`, then `rollback`.

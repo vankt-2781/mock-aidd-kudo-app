@@ -1,7 +1,10 @@
+import Link from "next/link";
 import type { ReactNode } from "react";
 
+import { SecretBoxOpener } from "@/components/secret-box/secret-box-opener";
+import { KUDOS_LOGIN_HREF } from "@/lib/auth/return-to";
+
 import type { KudosMessages } from "@/lib/i18n/kudos-dictionary";
-import { KudosGatedDialogButton } from "./kudos-gated-dialog-button";
 import { FlameX2Badge, IconOpenGift } from "./kudos-icons";
 import type { KudosStats } from "./kudos-types";
 
@@ -24,23 +27,27 @@ export interface KudosStatsBoxProps {
   /** null for visitors: the numbers are hidden, only the Secret Box button remains */
   stats: KudosStats | null;
   signedIn: boolean;
-  messages: Pick<KudosMessages, "stats" | "placeholder">;
+  messages: Pick<KudosMessages, "stats" | "secretBox">;
 }
 
 /** D.1 statistics box + "Mở Secret Box" button (mm:2940:13489). */
 export function KudosStatsBox({ stats, signedIn, messages }: KudosStatsBoxProps) {
   const copy = messages.stats;
-  const { placeholder } = messages;
-  const openBox = (
-    // mm:2940:13497
-    <KudosGatedDialogButton
-      signedIn={signedIn}
-      className={OPEN_BOX_CLASS}
-      dialog={{ title: placeholder.secretBoxTitle, body: placeholder.underConstruction, close: placeholder.close }}
-    >
+  const label = (
+    <>
       <span>{copy.openBox}</span>
       <IconOpenGift />
-    </KudosGatedDialogButton>
+    </>
+  );
+  const openBox = signedIn ? (
+    // mm:2940:13497
+    <SecretBoxOpener unopenedCount={stats?.secretBoxUnopened ?? 0} className={OPEN_BOX_CLASS} copy={messages.secretBox}>
+      {label}
+    </SecretBoxOpener>
+  ) : (
+    <Link href={KUDOS_LOGIN_HREF} className={OPEN_BOX_CLASS}>
+      {label}
+    </Link>
   );
   if (!stats) return openBox;
   return (

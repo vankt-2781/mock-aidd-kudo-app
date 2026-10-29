@@ -23,7 +23,7 @@ The Kudos board shows thanks, but a Sunner has no place to see their own standin
 ## What They Do
 
 1. A signed-in Sunner opens "Profile" from the menu or sidebar and sees their own page.
-2. They read their tier badge and stars, the six locked badges, and five counters (received, sent, hearts, boxes opened, boxes unopened). "Mở Secret Box" is visible but disabled for now.
+2. They read their tier badge and stars, their six badge slots (unlocked by Secret Boxes they have opened, F009), and five counters (received, sent, hearts, boxes opened, boxes unopened). "Mở Secret Box" opens the F009 modal.
 3. In the KUDOS section they switch between "Đã nhận (N)" and "Đã gửi (M)"; the page can be shared or reloaded on a direction by URL.
 4. They scroll; ten more Kudos load each time; the list simply stops at the end.
 5. In Sent, an anonymous Kudos shows their real name plus an "Ẩn danh" chip, so they know it went out anonymously.
@@ -39,6 +39,6 @@ The Kudos board shows thanks, but a Sunner has no place to see their own standin
 - **Tier rule:** test cases count distinct senders; we keep the F006 star rule. PM to confirm.
 - **End-of-feed message:** dropped to match the board.
 - **Spam chip:** deferred; no moderation exists.
-- **Secret Box:** counters are real, opening is not built; button stays disabled.
+- **Secret Box:** counters are real; the button opens the F009 modal and opened boxes unlock self-face badges (legacy opened boxes unlock nothing).
 - **Department label:** name vs code on the hero (assumed name).
 - **Out of scope:** editing a profile, badge unlocking, notifications, follow or social graph.

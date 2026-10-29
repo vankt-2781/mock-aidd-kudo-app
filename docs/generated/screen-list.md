@@ -206,3 +206,10 @@ Authenticated landing page showing the signed-in user's avatar (or initial), nam
 **Route:** /profile?id={profileId}
 **Description:** Another Sunner's profile — same hero + badge collection, write-Kudo bar ("Gửi lời cám ơn và ghi nhận đến {name}") opening the compose modal preselected, Received-only KUDOS list with static "Đã nhận" label and no counts.
 **States:** received-only, empty, end-of-feed, 404 (unknown/malformed id), sparse profile, vi, en
+
+## SCR011_SecretBoxModal
+
+**Feature:** F009 — Open Secret Box
+**Route:** modal over /kudos and /profile (own)
+**Description:** Secret Box modal — idle phase with closed box, instruction and unopened counter; success phase showing the drawn badge with "MỞ SECRET BOX THÀNH CÔNG"; box click disabled and instruction hidden at 0 unopened; X / Escape / backdrop close.
+**States:** idle, opening (busy), success per badge (6), out-of-boxes, error, vi, en

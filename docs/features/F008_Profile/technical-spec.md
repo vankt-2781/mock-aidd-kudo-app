@@ -15,7 +15,7 @@ lang: en
 
 ## Overview
 
-`/profile` (MoMorph 3FoIx6ALVb self, w4WUvsJ9KI other) is the private Sunner profile page. One route, two faces chosen by `?id`. SELF face (`id` absent, empty, or own profile id, compared case-insensitively; no redirect): keyvisual hero (avatar, gold name, department, tier badge plus stars by the F006 rule), "Bộ sưu tập icon của tôi" with 6 locked badge slots, 5 personal counters (board-sidebar wording, viewer stats incl. anonymous; Secret Box counts real from owner-only `secret_boxes`; "Mở Secret Box" shown, disabled), and a KUDOS section with a direction dropdown ("Đã nhận (N)" / "Đã gửi (M)") over a 10-per-page keyset infinite-scroll feed built from board components. OTHER face (`id` = another Sunner): same hero and badges (heading "Bộ sưu tập icon"), stats slot replaced by the write-Kudo bar "Gửi lời cám ơn và ghi nhận đến {name}" which opens the existing compose modal with the viewed Sunner preselected, and a Received-only list under the static label "Đã nhận" with NO count of any kind (anonymous differential-leak defense). Own Sent includes anonymous kudos (real self name plus an "Ẩn danh" chip) through a NEW caller-scoped SECURITY DEFINER view `own_sent_kudos`. `?id` is shape-checked before any query; unknown, malformed, repeated or whitespace ids all render the same not-found UI. Guests go to `/login?next=%2Fprofile` via the route guard (page re-check kept). Copy lives in a NEW `profile-dictionary` (vi exact, en draft). Spam chip deferred; end-of-feed message dropped (board parity). Build status: Track A builds presentational `src/components/profile/**`; migration, actions, queries, guard change and dictionary are planned.
+`/profile` (MoMorph 3FoIx6ALVb self, w4WUvsJ9KI other) is the private Sunner profile page. One route, two faces chosen by `?id`. SELF face (`id` absent, empty, or own profile id, compared case-insensitively; no redirect): keyvisual hero (avatar, gold name, department, tier badge plus stars by the F006 rule), "Bộ sưu tập icon của tôi" with 6 locked badge slots, 5 personal counters (board-sidebar wording, viewer stats incl. anonymous; Secret Box counts real from owner-only `secret_boxes`; "Mở Secret Box" shown, opens F009 modal), and a KUDOS section with a direction dropdown ("Đã nhận (N)" / "Đã gửi (M)") over a 10-per-page keyset infinite-scroll feed built from board components. OTHER face (`id` = another Sunner): same hero and badges (heading "Bộ sưu tập icon"), stats slot replaced by the write-Kudo bar "Gửi lời cám ơn và ghi nhận đến {name}" which opens the existing compose modal with the viewed Sunner preselected, and a Received-only list under the static label "Đã nhận" with NO count of any kind (anonymous differential-leak defense). Own Sent includes anonymous kudos (real self name plus an "Ẩn danh" chip) through a NEW caller-scoped SECURITY DEFINER view `own_sent_kudos`. `?id` is shape-checked before any query; unknown, malformed, repeated or whitespace ids all render the same not-found UI. Guests go to `/login?next=%2Fprofile` via the route guard (page re-check kept). Copy lives in a NEW `profile-dictionary` (vi exact, en draft). Spam chip deferred; end-of-feed message dropped (board parity). Build status: Track A builds presentational `src/components/profile/**`; migration, actions, queries, guard change and dictionary are planned.
 
 ## Polymorphic Behavior
 
@@ -23,7 +23,7 @@ Discriminator: face, derived on the server from `?id` and the session.
 
 | Face | Condition | Stats slot | KUDOS label | Directions | Counts shown |
 |------|-----------|------------|-------------|------------|--------------|
-| self | `id` absent, empty, or equals session profile id (case-insensitive) | 5 counters + disabled "Mở Secret Box" | dropdown "Đã nhận (N)" / "Đã gửi (M)" | received, sent | yes (viewer stats) |
+| self | `id` absent, empty, or equals session profile id (case-insensitive) | 5 counters + "Mở Secret Box" (opens F009 modal) | dropdown "Đã nhận (N)" / "Đã gửi (M)" | received, sent | yes (viewer stats) |
 | other | `id` is a valid uuid of another existing profile | write-Kudo bar | static "Đã nhận" | received only | none |
 | not-found | `id` malformed, repeated, whitespace, unknown, or profile load error | none (not-found UI) | none | none | none |
 
@@ -38,9 +38,9 @@ Discriminator: face, derived on the server from `?id` and the session.
 | FR-003 | Not-found UI is identical for unknown, malformed, repeated, whitespace and load-error: "Không tìm thấy hồ sơ" plus link "Về trang chủ"; no detail of the cause; HTTP status is 200 under cacheComponents streaming, the TEXT is the contract | PAGE `/profile` | yes |
 | FR-004 | Profile lookup reads public `profiles` columns (id, display_name, avatar_url, department_id) plus department label plus `profile_kudos_stats.stars` ONLY; the other face NEVER selects `kudos_sent`, `kudos_received` or `hearts_received`; payload carries no email and no auth ids | PAGE `/profile` | yes |
 | FR-005 | Hero: keyvisual artwork (no ghost nav/avatar), avatar, gold name, department, tier badge plus stars on one row. Tier and stars follow the F006 rule from stars (kudos_received thresholds 10/20/50); at 0 stars no badge and no stars. Sparse profile: null avatar gives placeholder avatar, null department gives no department line | PAGE `/profile` | yes |
-| FR-006 | Badge collection: exactly 6 slots, fixed order, real artwork desaturated, all locked (no unlock source exists yet); heading "Bộ sưu tập icon của tôi" (self) / "Bộ sưu tập icon" (other); an optional unlocked list prop is the future hook | PAGE `/profile` | yes |
+| FR-006 | Badge collection: exactly 6 slots, fixed order, real artwork desaturated; on the self face a slot unlocks when the owner has opened a box that drew that badge (F009), other face always locked; heading "Bộ sưu tập icon của tôi" (self) / "Bộ sưu tập icon" (other); unlocked list prop fed from F009 opened boxes | PAGE `/profile` | yes |
 | FR-007 | SELF stats: 5 counters from the viewer stats source used by the board sidebar (kudos received, kudos sent incl. anonymous, hearts received, Secret Boxes opened, unopened), same second-person labels as the sidebar; Secret Box counts are real rows from owner-only `secret_boxes` | PAGE `/profile` | yes |
-| FR-008 | "Mở Secret Box" renders with the Figma label, disabled; no dialog, no request | PAGE `/profile` | yes |
+| FR-008 | "Mở Secret Box" renders with the Figma label and opens the F009 Secret Box modal (superseded: was disabled before F009) | PAGE `/profile` | yes |
 | FR-009 | Stats load failure on SELF: inline error plus retry inside the stats block only (vi copy developer draft, PM review); hero, badges and feed stay | PAGE `/profile` | yes |
 | FR-010 | OTHER face shows the write-Kudo bar "Gửi lời cám ơn và ghi nhận đến {name}" in the stats slot; click opens the existing compose modal with the viewed Sunner preselected via optional `initialRecipient` prop (default null: board and homepage flows unchanged); SELF shows no bar | PAGE `/profile`, `KudosComposeController` | yes |
 | FR-011 | Preselected recipient is a normal picked recipient (removable, same validation); a self-id preselect never occurs (self face has no bar) | PAGE `/profile` | yes |
@@ -200,7 +200,7 @@ None new. Reuses Supabase Postgres (views, `secret_boxes` owner policy) and the 
 - **FR-005** Hero
 - **FR-006** Badges
 - **FR-007** Stats
-- **FR-008** Disabled Secret Box button
+- **FR-008** Secret Box button (opens F009 modal)
 - **FR-009** Stats error
 - **FR-012** Direction dropdown
 - **FR-013** Dir normalization
@@ -299,7 +299,7 @@ System-doc forward-draft: `plans/261027-1257-profile-self-implementation/spec/sy
 - Sources: MoMorph 3FoIx6ALVb (28 spec rows, 30 test cases), frame w4WUvsJ9KI, plus `clarifications.md` (16 decisions, authoritative).
 - Test cases were written against another implementation; behavior adopted, mechanics adapted to this codebase (see edge-cases.md deviations).
 - Tier uses the F006 stars rule, not the TC distinct-senders denominator (recorded deviation).
-- Badge unlock source is the future Secret Box feature; all 6 locked now.
+- Badge unlock source is F009 (opened Secret Boxes, self face only); legacy opened boxes keep no badge.
 - Department line shows `departments.name` (draft; PM may prefer code).
 - Compose modal gains optional `initialRecipient` (default null); existing callers untouched.
 - Track A builds `src/components/profile/**` presentational only (props-driven); Track B wires queries, action, guard, migration, dictionary and the compose prop.

@@ -11,6 +11,7 @@ import type { ProfileOtherProps, ProfileSelfProps } from "./profile-types";
 const refresh = vi.fn();
 vi.mock("@/lib/kudos/kudos-actions", () => ({ loadMoreKudos: vi.fn(), toggleKudosLike: vi.fn() }));
 vi.mock("@/lib/profile/profile-kudos-actions", () => ({ getProfileKudosPage: vi.fn() }));
+vi.mock("@/lib/secret-box/secret-box-actions", () => ({ openSecretBoxAction: vi.fn() }));
 vi.mock("next/navigation", () => ({ useRouter: () => ({ push: vi.fn(), refresh }) }));
 vi.mock("@/components/kudos-compose", () => ({
   KudosComposeController: ({ initialRecipient }: { initialRecipient?: { name: string } | null }) => (
@@ -70,9 +71,14 @@ describe("ProfilePageContent (self)", () => {
     expect(within(list).getAllByRole("listitem")).toHaveLength(6);
   });
 
-  it("renders five stat counters and a disabled Secret Box button", () => {
+  it("renders five stat counters and an enabled Secret Box button (25 unopened)", () => {
     render(<ProfilePageContent {...selfProps} />);
     expect(screen.getAllByRole("term")).toHaveLength(5);
+    expect((screen.getByRole("button", { name: /Mở Secret Box/ }) as HTMLButtonElement).disabled).toBe(false);
+  });
+
+  it("disables the Secret Box button when nothing is unopened", () => {
+    render(<ProfilePageContent {...selfProps} stats={{ ...MOCK_PROFILE_STATS, secretBoxUnopened: 0 }} />);
     expect((screen.getByRole("button", { name: /Mở Secret Box/ }) as HTMLButtonElement).disabled).toBe(true);
   });
 

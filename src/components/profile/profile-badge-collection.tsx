@@ -16,7 +16,15 @@ function BadgeCircle({ slot, lockedSuffix }: { slot: ProfileBadgeSlot | undefine
       {/* mm:I362:5066;3053:10046 */}
       <span className="relative size-16 overflow-hidden rounded-full border-2 border-white bg-[#323231]">
         {unlocked && slot?.imageSrc ? (
-          <Image src={slot.imageSrc} alt="" width={64} height={64} className="size-full object-cover" />
+          // unoptimized for .svg: the image optimizer refuses SVG without dangerouslyAllowSVG.
+          <Image
+            src={slot.imageSrc}
+            alt=""
+            width={64}
+            height={64}
+            unoptimized={slot.imageSrc.endsWith(".svg")}
+            className="size-full object-cover"
+          />
         ) : null}
       </span>
     </li>

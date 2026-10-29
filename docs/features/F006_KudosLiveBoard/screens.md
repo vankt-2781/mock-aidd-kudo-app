@@ -24,7 +24,7 @@ Adjacent screens are **stubs in this task** (each has its own Figma frame and it
 | Kudo detail | "Xem chi tiết", spotlight node click | TBD (draft) | Placeholder route `/kudos/[id]` |
 | Profile (person) | Avatar or name click on cards, gift-list rows | F008 | Built: `/profile?id=<uuid>` (anonymous senders have no link) |
 | Profile hover preview | Hover on avatar or name | TBD (draft) | Not built |
-| Secret Box dialog | "Mở quà" | TBD (draft) | Placeholder dialog |
+| Secret Box dialog | "Mở quà" | see F009 / SCR011 | Real modal (F009); was a placeholder |
 
 ## User Journey
 

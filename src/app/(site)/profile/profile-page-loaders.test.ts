@@ -4,6 +4,7 @@ import { getKudosMessages } from "@/lib/i18n/kudos-dictionary";
 import { getProfileMessages } from "@/lib/i18n/profile-dictionary";
 import { getFilterOptions, getViewerStats } from "@/lib/kudos/kudos-board-queries";
 import { getProfileFeedPage, getProfileHeader } from "@/lib/profile/profile-queries";
+import { getOwnBadgeKeys } from "@/lib/secret-box/secret-box-queries";
 import { loadProfilePage } from "./profile-page-loaders";
 
 vi.mock("next/navigation", () => ({
@@ -13,6 +14,7 @@ vi.mock("next/navigation", () => ({
 }));
 vi.mock("@/lib/kudos/kudos-board-queries", () => ({ getFilterOptions: vi.fn(), getViewerStats: vi.fn() }));
 vi.mock("@/lib/profile/profile-queries", () => ({ getProfileFeedPage: vi.fn(), getProfileHeader: vi.fn() }));
+vi.mock("@/lib/secret-box/secret-box-queries", () => ({ getOwnBadgeKeys: vi.fn() }));
 
 const ME = "00000000-0000-4000-8000-000000010100";
 const OTHER = "00000000-0000-4000-8000-000000010001";
@@ -26,6 +28,7 @@ beforeEach(() => {
   vi.mocked(getProfileHeader).mockImplementation(async (id) => header(id));
   vi.mocked(getProfileFeedPage).mockResolvedValue({ posts: [], nextCursor: "c1" });
   vi.mocked(getViewerStats).mockResolvedValue(stats);
+  vi.mocked(getOwnBadgeKeys).mockResolvedValue(["stay_gold"]);
   vi.mocked(getFilterOptions).mockResolvedValue({ hashtags: ["GO FAST"], departments: [] });
 });
 
@@ -42,6 +45,14 @@ describe("loadProfilePage", () => {
     expect(getProfileFeedPage).toHaveBeenCalledWith(ME, "sent", null, viewer);
   });
 
+  it("self face: six badge slots with owned keys unlocked", async () => {
+    const props = await loadProfilePage(viewer, undefined, undefined, copy);
+    if (props.face !== "self") throw new Error("expected self");
+    expect(getOwnBadgeKeys).toHaveBeenCalledWith(viewer);
+    expect(props.badges).toHaveLength(6);
+    expect(props.badges.filter((b) => b.unlocked).map((b) => b.id)).toEqual(["stay_gold"]);
+  });
+
   it("self face via own id keeps ?id= in the links and tolerates failed stats", async () => {
     vi.mocked(getViewerStats).mockResolvedValue(null);
     const props = await loadProfilePage(viewer, ME.toUpperCase(), undefined, copy);
@@ -56,6 +67,8 @@ describe("loadProfilePage", () => {
     expect(props.face).toBe("other");
     if (props.face !== "other") return;
     expect(getViewerStats).not.toHaveBeenCalled();
+    expect(getOwnBadgeKeys).not.toHaveBeenCalled();
+    expect(props.badges).toEqual([]);
     expect(getProfileFeedPage).toHaveBeenCalledWith(OTHER, "received", null, viewer);
     expect(props.kudos.activeDirection).toBe("received");
     expect(props.writeBar).toEqual({ recipient: { id: OTHER, name: "Lan Anh", avatarUrl: "/a.png" }, hashtagNames: ["GO FAST"] });

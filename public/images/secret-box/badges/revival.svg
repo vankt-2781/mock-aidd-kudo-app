@@ -1,0 +1,7 @@
+<svg width="320" height="320" viewBox="0 0 320 320" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="160" cy="160" r="150" fill="#00101A"/>
+  <circle cx="160" cy="160" r="150" fill="none" stroke="#FFEA9E" stroke-width="6"/>
+  <circle cx="160" cy="160" r="132" fill="none" stroke="#998C5F" stroke-width="2"/>
+  <text x="160" y="170" text-anchor="middle" fill="#FFEA9E" font-family="Montserrat, sans-serif" font-size="28" font-weight="700">REVIVAL</text>
+  <text x="160" y="236" text-anchor="middle" fill="#998C5F" font-family="Montserrat, sans-serif" font-size="14" font-weight="700">SAA 2025</text>
+</svg>

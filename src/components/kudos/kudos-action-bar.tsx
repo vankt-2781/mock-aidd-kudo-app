@@ -4,6 +4,7 @@ import type { ReactNode } from "react";
 import type { KudosMessages } from "@/lib/i18n/kudos-dictionary";
 import { profileHref } from "./kudos-card-env";
 import { KudosComposeLauncher } from "./kudos-compose-launcher";
+import { KudosSunnerSearch } from "./kudos-sunner-search";
 import { IconPen, IconSearch } from "./kudos-icons";
 
 const PILL_CLASS =
@@ -40,10 +41,18 @@ export function KudosActionBar({ signedIn, messages, hashtagNames }: KudosAction
       >
         <PillContent icon={<IconPen className="shrink-0" />} label={actionBar.composePlaceholder} />
       </KudosComposeLauncher>
-      {/* mm:2940:13450 */}
-      <Link href={profileHref(signedIn)} className={`${PILL_CLASS} md:w-[381px] md:shrink-0`}>
-        <PillContent icon={<IconSearch className="shrink-0" />} label={actionBar.searchSunnerLabel} />
-      </Link>
+      {/* mm:2940:13450 — signed in: name search (Enter opens the first match's profile); guest: login gate. */}
+      {signedIn ? (
+        <KudosSunnerSearch
+          pillClass={PILL_CLASS}
+          icon={<IconSearch className="shrink-0" />}
+          messages={{ label: actionBar.searchSunnerLabel, notFound: actionBar.searchNotFound }}
+        />
+      ) : (
+        <Link href={profileHref(false)} className={`${PILL_CLASS} md:w-[381px] md:shrink-0`}>
+          <PillContent icon={<IconSearch className="shrink-0" />} label={actionBar.searchSunnerLabel} />
+        </Link>
+      )}
     </div>
   );
 }

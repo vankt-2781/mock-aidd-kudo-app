@@ -179,3 +179,28 @@ test.describe("Other face: sparse profile (GUI_009) and payload hygiene", () => 
     expectNoStatKeys(text);
   });
 });
+
+test.describe("Board search pill: name search opens the profile", () => {
+  const SEARCHBOX = { name: "Tìm kiếm profile Sunner", exact: true };
+
+  test("typing a seeded name and pressing Enter lands on that Sunner's profile", async ({ signedInContext }) => {
+    const page = await signedInContext.newPage();
+    await gotoBoard(page);
+    const input = page.getByRole("searchbox", SEARCHBOX);
+    await input.fill(OTHER_NAME);
+    await input.press("Enter");
+    await expect(page).toHaveURL(`/profile?id=${OTHER}`);
+    await expectOtherFace(page, OTHER_NAME);
+  });
+
+  test("a name with no match shows the notice and stays on the board", async ({ signedInContext }) => {
+    const page = await signedInContext.newPage();
+    await gotoBoard(page);
+    const input = page.getByRole("searchbox", SEARCHBOX);
+    await input.fill("Không Ai Tên Này Cả 9999");
+    await input.press("Enter");
+    // Next's route announcer is also role=alert, so target the notice by its text.
+    await expect(page.getByText("Không tìm thấy Sunner nào", { exact: true })).toBeVisible();
+    await expect(page).toHaveURL(/\/kudos/);
+  });
+});

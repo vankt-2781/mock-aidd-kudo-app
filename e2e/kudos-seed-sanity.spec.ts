@@ -70,11 +70,10 @@ test.describe("F006 seed contract", () => {
       .like("display_name", "Sunner Liker %");
     expect(likers.count).toBe(SEED.likerPool);
 
-    const named = await db
-      .from("profiles")
-      .select("id", { count: "exact", head: true })
-      .not("display_name", "like", "Sunner Liker %")
-      .not("display_name", "like", "E2E%");
+    // Count by seeded ids (profileId 1..60): manual local signups get random UUIDs
+    // and must not break the seed contract.
+    const namedIds = Array.from({ length: SEED.namedSunners }, (_, i) => profileId(i + 1));
+    const named = await db.from("profiles").select("id", { count: "exact", head: true }).in("id", namedIds);
     expect(named.count).toBe(SEED.namedSunners);
 
     const gifts = await db.from("gift_events").select("id", { count: "exact", head: true });
