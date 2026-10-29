@@ -49,7 +49,8 @@ export function ComposeEditorShell({ messages, children, activeFormats = [], err
           <a
             href="#"
             onClick={(e) => e.preventDefault()}
-            className={`flex h-10 min-w-0 basis-full items-center justify-end border px-4 sm:flex-1 sm:basis-0 sm:rounded-tr-lg text-right text-base leading-6 font-bold tracking-[0.15px] text-[#E46060] underline transition-opacity duration-200 hover:opacity-70 ${border}`}
+            // mm:ihQ26W78P2 — the guidelines cell centers its label.
+            className={`flex h-10 min-w-0 basis-full items-center justify-center border px-4 sm:flex-1 sm:basis-0 sm:rounded-tr-lg text-center text-base leading-6 font-bold tracking-[0.15px] text-[#E46060] underline transition-opacity duration-200 hover:opacity-70 ${border}`}
           >
             <span className="truncate">{messages.guidelines}</span>
           </a>
