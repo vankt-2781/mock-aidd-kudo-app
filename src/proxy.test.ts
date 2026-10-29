@@ -79,14 +79,14 @@ describe("proxy launch gate wiring", () => {
     expect(location(await run("/login?next=%2Fkudos", PAST))).toBe("/kudos");
   });
 
-  it("post-launch signed-in /login with external next falls back to /todo", async () => {
+  it("post-launch signed-in /login with external next falls back to the home page", async () => {
     session.isAuthenticated = true;
-    expect(location(await run("/login?next=https%3A%2F%2Fevil.com", PAST))).toBe("/todo");
+    expect(location(await run("/login?next=https%3A%2F%2Fevil.com", PAST))).toBe("/");
   });
 
-  it("post-launch signed-in plain /login still goes to /todo", async () => {
+  it("post-launch signed-in plain /login goes to the home page", async () => {
     session.isAuthenticated = true;
-    expect(location(await run("/login", PAST))).toBe("/todo");
+    expect(location(await run("/login", PAST))).toBe("/");
   });
 
   it("fails open when EVENT_START_AT is empty: no gate, /countdown goes to /", async () => {
@@ -96,7 +96,7 @@ describe("proxy launch gate wiring", () => {
 
   it("known 2-hop: signed-in non-admin on /login pre-launch hits route guard first hop", async () => {
     session.isAuthenticated = true;
-    expect(location(await run("/login", FUTURE))).toBe("/todo");
-    expect(location(await run("/todo", FUTURE))).toBe("/countdown");
+    expect(location(await run("/login", FUTURE))).toBe("/");
+    expect(location(await run("/", FUTURE))).toBe("/countdown");
   });
 });

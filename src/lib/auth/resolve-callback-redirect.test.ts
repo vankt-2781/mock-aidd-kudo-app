@@ -25,10 +25,10 @@ describe("resolveCallbackRedirect (DEC-002)", () => {
       resolveCallbackRedirect({ code: "abc", providerError: null, exchangeFailed: true }),
     ).toBe(FAILURE);
   });
-  it("redirects to /todo on success", () => {
+  it("redirects to the home page on success", () => {
     expect(
       resolveCallbackRedirect({ code: "abc", providerError: null, exchangeFailed: false }),
-    ).toBe("/todo");
+    ).toBe("/");
   });
   it("redirects to the allow-listed next on success", () => {
     expect(
@@ -36,9 +36,9 @@ describe("resolveCallbackRedirect (DEC-002)", () => {
     ).toBe("/kudos");
   });
   it.each(["/todo", "https://evil.com", "//evil.com", "/kudos?x=1", "", null, undefined])(
-    "falls back to /todo for invalid next %j",
+    "falls back to the home page for invalid next %j",
     (next) => {
-      expect(resolveCallbackRedirect({ code: "abc", providerError: null, next })).toBe("/todo");
+      expect(resolveCallbackRedirect({ code: "abc", providerError: null, next })).toBe("/");
     },
   );
   it("drops a valid next on every error path", () => {

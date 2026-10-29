@@ -43,18 +43,18 @@ test.describe("Login return-to /kudos", () => {
     await expect(page).toHaveURL(/\/kudos$/);
   });
 
-  test("SC-015 an external next and a non-allow-listed path fall back to /todo", async ({ signedInContext }) => {
+  test("SC-015 an external next and a non-allow-listed path fall back to the home page", async ({ signedInContext }) => {
     const page = await signedInContext.newPage();
     await page.goto("/login?next=https%3A%2F%2Fevil.example");
-    await expect(page).toHaveURL(/\/todo$/);
+    await expect(page).toHaveURL("/");
 
     await page.goto("/login?next=%2Fadmin");
-    await expect(page).toHaveURL(/\/todo$/);
+    await expect(page).toHaveURL("/");
   });
 
-  test("SC-015 no next keeps the default /todo", async ({ signedInContext }) => {
+  test("SC-015 no next keeps the home-page default", async ({ signedInContext }) => {
     const page = await signedInContext.newPage();
     await page.goto("/login");
-    await expect(page).toHaveURL(/\/todo$/);
+    await expect(page).toHaveURL("/");
   });
 });

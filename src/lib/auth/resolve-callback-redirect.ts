@@ -1,4 +1,4 @@
-import { LOGIN_PATH, TODO_PATH } from "./decide-route-redirect";
+import { HOME_PATH, LOGIN_PATH } from "./decide-route-redirect";
 import { resolveReturnTo } from "./return-to";
 
 export const LOGIN_ERROR_PARAM = "error";
@@ -18,5 +18,5 @@ export function resolveCallbackRedirect(outcome: CallbackOutcome): string {
   if (outcome.providerError || !outcome.code || outcome.exchangeFailed) {
     return `${LOGIN_PATH}?${LOGIN_ERROR_PARAM}=${LOGIN_ERROR_VALUE}`;
   }
-  return resolveReturnTo(outcome.next) ?? TODO_PATH;
+  return resolveReturnTo(outcome.next) ?? HOME_PATH;
 }

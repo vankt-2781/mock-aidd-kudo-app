@@ -2,12 +2,12 @@ import { expect, test } from "./fixtures";
 import { buildGarbageCookie, deleteTestUser } from "./helpers/test-user";
 
 test.describe("Authenticated session (email user injected as Supabase cookies)", () => {
-  test("TC022 / TC001 / TC039 signed-in user opening /login is redirected to /todo", async ({
+  test("TC022 / TC001 / TC039 signed-in user opening /login is redirected to the home page", async ({
     signedInContext,
   }) => {
     const page = await signedInContext.newPage();
     await page.goto("/login");
-    await expect(page).toHaveURL(/\/todo$/);
+    await expect(page).toHaveURL("/");
   });
 
   test("TC033 / TC004 / TC037 /todo shows the signed-in user's name, email and a logout control", async ({

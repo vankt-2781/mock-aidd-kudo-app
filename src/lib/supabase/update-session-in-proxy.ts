@@ -36,7 +36,7 @@ export async function updateSessionInProxy(request: NextRequest): Promise<ProxyS
     const { data, error } = await supabase.auth.getClaims();
     const claims = !error ? data?.claims : undefined;
     // A validly signed JWT can outlive its user row (db reset, deleted/banned user). getClaims never
-    // hits GoTrue, so on /login that stale session would bounce to /todo and back forever. Only on
+    // hits GoTrue, so on /login that stale session would bounce to the home page and back forever. Only on
     // /login, confirm the user exists; if not, drop the stale cookies and treat as a guest.
     if (claims && request.nextUrl.pathname === LOGIN_PATH) {
       const { error: userError } = await supabase.auth.getUser();

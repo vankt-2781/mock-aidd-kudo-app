@@ -2,8 +2,8 @@ import { describe, expect, it } from "vitest";
 import { decideRouteRedirect } from "./decide-route-redirect";
 
 describe("decideRouteRedirect (DEC-001)", () => {
-  it("sends authenticated user on /login to /todo", () => {
-    expect(decideRouteRedirect("/login", true)).toBe("/todo");
+  it("sends authenticated user on /login to the home page", () => {
+    expect(decideRouteRedirect("/login", true)).toBe("/");
   });
   it("sends unauthenticated user on /todo to /login", () => {
     expect(decideRouteRedirect("/todo", false)).toBe("/login");
@@ -29,9 +29,9 @@ describe("decideRouteRedirect (DEC-001)", () => {
     expect(decideRouteRedirect("/login", true, "/kudos")).toBe("/kudos");
   });
   it.each(["https://evil.com", "//evil.com", "/kudos?x=1", "/todo/1", "", null, undefined])(
-    "sends authenticated user on /login to /todo for invalid next %j",
+    "sends authenticated user on /login to the home page for invalid next %j",
     (next) => {
-      expect(decideRouteRedirect("/login", true, next)).toBe("/todo");
+      expect(decideRouteRedirect("/login", true, next)).toBe("/");
     },
   );
   it("lets unauthenticated user view /login even with next", () => {
