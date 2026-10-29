@@ -6,6 +6,8 @@ import type { ProfileMessages } from "@/lib/i18n/profile-dictionary";
 import type { KudosViewer } from "@/lib/kudos/kudos-board-types";
 import { getFilterOptions, getViewerStats } from "@/lib/kudos/kudos-board-queries";
 import { getProfileFeedPage, getProfileHeader } from "@/lib/profile/profile-queries";
+import { getOwnBadgeKeys } from "@/lib/secret-box/secret-box-queries";
+import { toBadgeSlots } from "@/lib/secret-box/secret-box-badge-catalog";
 import { parseProfileDirection, resolveProfileTarget } from "@/lib/profile/profile-id-resolution";
 import type { ProfileHeader } from "@/lib/profile/profile-types";
 
@@ -45,21 +47,23 @@ export async function loadProfilePage(
     filters: { hashtag: null, department: null },
     messages: { card: messages.card, stars: messages.stars, heroLabels: messages.heroLabels },
   };
-  const common = { badges: [], messages, profileMessages };
+  const common = { messages, profileMessages };
 
   if (target.kind === "self") {
     const direction = parseProfileDirection(rawDir, "self");
     const selfId = rawId ? viewer.profileId.toLowerCase() : null;
     // ONE stats fetch feeds both the five counters and the dropdown counts.
-    const [header, stats, feed] = await Promise.all([
+    const [header, stats, feed, badgeKeys] = await Promise.all([
       getProfileHeader(viewer.profileId),
       getViewerStats(viewer),
       getProfileFeedPage(viewer.profileId, direction, null, viewer),
+      getOwnBadgeKeys(viewer),
     ]);
     if (!header) notFound();
     return {
       ...common,
       face: "self",
+      badges: toBadgeSlots(badgeKeys),
       hero: heroOf(header),
       stats,
       directionHrefs: {
@@ -80,6 +84,7 @@ export async function loadProfilePage(
   return {
     ...common,
     face: "other",
+    badges: [],
     hero: heroOf(header),
     kudos: { profileId: header.profileId, activeDirection: "received", posts: feed.posts, cursor: feed.nextCursor },
     cardEnv,

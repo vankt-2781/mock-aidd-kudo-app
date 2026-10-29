@@ -1,3 +1,4 @@
+import { SECRET_BOX_COPY_VI } from "@/components/secret-box/secret-box-copy";
 import type { KudosMessages } from "./kudos-dictionary";
 
 // vi = exact frame copy (frame wins over spec prose: banner "Hệ thống ghi nhận và cảm ơn"
@@ -10,6 +11,7 @@ export const kudosMessagesVi: KudosMessages = {
   actionBar: {
     composePlaceholder: "Hôm nay, bạn muốn gửi lời cảm ơn và ghi nhận đến ai?",
     searchSunnerLabel: "Tìm kiếm profile Sunner",
+    searchNotFound: "Không tìm thấy Sunner nào", // PM-review
   },
   section: {
     caption: "Sun* Annual Awards 2025",
@@ -107,6 +109,7 @@ export const kudosMessagesVi: KudosMessages = {
     },
     toast: { success: "Đã gửi lời cám ơn thành công!" }, // PM-review
   },
+  secretBox: SECRET_BOX_COPY_VI,
   placeholder: {
     sendDialogTitle: "Gửi lời cảm ơn", // PM-review
     secretBoxTitle: "Secret Box", // PM-review

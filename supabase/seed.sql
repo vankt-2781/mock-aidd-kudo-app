@@ -160,6 +160,8 @@ begin
   if (select count(*) from public.secret_boxes where profile_id = v_persona and opened_at is not null) <> 25
      or (select count(*) from public.secret_boxes where profile_id = v_persona and opened_at is null) <> 25 then
     raise exception 'seed: persona secret boxes <> 25/25'; end if;
+  if exists (select 1 from public.secret_boxes where badge is not null) then
+    raise exception 'seed: secret box badges must start empty'; end if;
   if (select auth_user_id from public.profiles where id = v_persona) is not null then
     raise exception 'seed: persona must be unclaimed'; end if;
 

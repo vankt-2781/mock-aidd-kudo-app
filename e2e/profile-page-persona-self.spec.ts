@@ -50,7 +50,7 @@ test.describe("Profile self face: the persona", () => {
     await expect(page.getByText(PROFILE_VI.badgeHeadingSelf, { exact: true })).toBeVisible();
   });
 
-  test("the five counters equal the board sidebar (25 each) and Mở Secret Box is disabled", async ({ personaContext }) => {
+  test("the five counters equal the board sidebar (25 each) and Mở Secret Box opens the modal (25) and closes without opening", async ({ personaContext }) => {
     const page = await personaContext.newPage();
     await gotoBoard(page);
     const board: string[] = [];
@@ -61,7 +61,12 @@ test.describe("Profile self face: the persona", () => {
     for (let i = 0; i < PROFILE_VI.statLabels.length; i++) {
       await expect(statValue(page, PROFILE_VI.statLabels[i])).toHaveText(board[i]);
     }
-    await expect(page.getByRole("button", { name: PROFILE_VI.openBox, exact: true })).toBeDisabled();
+    // 25 unopened: the button is enabled. Open and close the modal only; never click the box (persona stays 25/25).
+    await page.getByRole("button", { name: PROFILE_VI.openBox, exact: true }).click();
+    const dialog = page.getByRole("dialog");
+    await expect(dialog.getByTestId("secret-box-count")).toHaveText("25");
+    await dialog.getByRole("button", { name: "Đóng", exact: true }).click();
+    await expect(page.getByRole("dialog")).toHaveCount(0);
   });
 
   test("the default direction is received: trigger shows Đã nhận (25), first page holds 10 cards", async ({

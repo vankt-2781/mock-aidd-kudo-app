@@ -1,3 +1,4 @@
+import type { SecretBoxCopy } from "@/components/secret-box/secret-box-copy";
 import type { Locale } from "./locale";
 import { kudosMessagesEn } from "./kudos-dictionary-en";
 import { kudosMessagesVi } from "./kudos-dictionary-vi";
@@ -8,7 +9,7 @@ export type KudosHeroTierKey = "new" | "rising" | "super" | "legend";
 export type KudosMessages = {
   meta: { title: string };
   banner: { title: string; logoAlt: string };
-  actionBar: { composePlaceholder: string; searchSunnerLabel: string };
+  actionBar: { composePlaceholder: string; searchSunnerLabel: string; searchNotFound: string };
   section: { caption: string; highlightTitle: string; spotlightTitle: string; allKudosTitle: string };
   filters: { hashtag: string; department: string; all: string };
   carousel: { prev: string; next: string };
@@ -75,6 +76,7 @@ export type KudosMessages = {
     errors: { imageFormat: string; imageSize: string; uploadFailed: string; imageUploading: string; submit: string };
     toast: { success: string };
   };
+  secretBox: SecretBoxCopy;
   placeholder: {
     sendDialogTitle: string;
     secretBoxTitle: string;

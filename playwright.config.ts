@@ -6,7 +6,7 @@ const BASE_URL = `http://localhost:${PORT}`;
 // Write-isolation (F007): specs that create kudos rows or upload Storage objects run only in
 // `kudos-writes` (serial, after the parallel read suite). The seed-sanity spec runs last so it
 // proves the writes cleaned up after themselves (388 kudos, 8 hashtags, top-5 intact).
-const WRITE_SPECS = /kudos-compose-writes-.*\.spec\.ts/;
+const WRITE_SPECS = /(kudos-compose-writes-|secret-box-writes-).*\.spec\.ts/;
 const SEED_SANITY_SPEC = /kudos-compose-seed-sanity\.spec\.ts/;
 // Profile persona specs claim the shared E2E Persona profile (like kudos-board-persona), so they run
 // in their own serial project after the parallel read suite. Local debug: `--project=profile-persona --no-deps`.

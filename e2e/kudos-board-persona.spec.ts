@@ -48,17 +48,18 @@ test.describe("Persona viewer: own sent kudos and personal sidebar", () => {
     await expect(page.getByRole("button", { name: "Mở Secret Box" })).toBeVisible();
   });
 
-  test("SC-012 Mở Secret Box opens its placeholder; the compose pill opens the real Viết Kudo dialog (F007)", async ({
+  test("SC-012 Mở Secret Box opens the real modal (persona: 25 unopened, never opened here); the compose pill opens the real Viết Kudo dialog (F007)", async ({
     personaContext,
   }) => {
     const page = await personaContext.newPage();
     await gotoBoard(page);
 
+    // Read-only: open and close WITHOUT clicking the box, so the persona's 25/25 stats stay intact.
     await page.getByRole("button", { name: "Mở Secret Box" }).click();
     const secretBox = page.getByRole("dialog");
-    await expect(secretBox).toBeVisible();
-    await expect(secretBox).toContainText("Tính năng đang được xây dựng.");
-    await secretBox.getByRole("button", { name: "Đóng" }).click();
+    await expect(secretBox.getByRole("heading", { name: "KHÁM PHÁ SECRET BOX CỦA BẠN", exact: true })).toBeVisible();
+    await expect(secretBox.getByTestId("secret-box-count")).toHaveText("25");
+    await secretBox.getByRole("button", { name: "Đóng", exact: true }).click();
     await expect(page.getByRole("dialog")).toHaveCount(0);
 
     // Since F007 the pill opens the real send dialog, not a placeholder.

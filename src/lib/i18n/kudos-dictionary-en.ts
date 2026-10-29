@@ -1,3 +1,4 @@
+import { SECRET_BOX_COPY_EN } from "@/components/secret-box/secret-box-copy";
 import type { KudosMessages } from "./kudos-dictionary";
 
 // EN is a developer draft pending PM review (the design is vi only). The copied
@@ -9,6 +10,7 @@ export const kudosMessagesEn: KudosMessages = {
   actionBar: {
     composePlaceholder: "Today, who would you like to thank and recognize?",
     searchSunnerLabel: "Search Sunner profile",
+    searchNotFound: "No Sunner found",
   },
   section: {
     caption: "Sun* Annual Awards 2025",
@@ -107,6 +109,7 @@ export const kudosMessagesEn: KudosMessages = {
     },
     toast: { success: "Your thanks were sent successfully!" },
   },
+  secretBox: SECRET_BOX_COPY_EN,
   placeholder: {
     sendDialogTitle: "Send a thank-you",
     secretBoxTitle: "Secret Box",

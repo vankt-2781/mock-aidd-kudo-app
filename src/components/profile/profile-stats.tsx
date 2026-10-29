@@ -1,3 +1,4 @@
+import { SecretBoxOpener } from "@/components/secret-box/secret-box-opener";
 import { IconOpenGift } from "@/components/kudos/kudos-icons";
 import type { KudosStats } from "@/components/kudos/kudos-types";
 import type { KudosMessages } from "@/lib/i18n/kudos-dictionary";
@@ -17,11 +18,11 @@ function StatRow({ label, value }: { label: string; value: number }) {
 export interface ProfileStatsProps {
   /** null = the viewer-stats fetch failed: inline error + retry instead of the counters. */
   stats: KudosStats | null;
-  messages: Pick<KudosMessages, "stats">;
+  messages: Pick<KudosMessages, "stats" | "secretBox">;
   profileMessages: Pick<ProfileMessages, "statsError" | "statsRetry">;
 }
 
-/** B Thống kê: 680px box, 5 counters + disabled "Mở Secret Box" (opening boxes does not exist yet). */
+/** B Thống kê: 680px box, 5 counters + "Mở Secret Box" (disabled while no unopened box). */
 export function ProfileStats({ stats, messages, profileMessages }: ProfileStatsProps) {
   if (!stats) return <ProfileStatsError message={profileMessages.statsError} retryLabel={profileMessages.statsRetry} />;
   const copy = messages.stats;
@@ -40,14 +41,14 @@ export function ProfileStats({ stats, messages, profileMessages }: ProfileStatsP
           <StatRow label={copy.boxUnopened} value={stats.secretBoxUnopened} />
         </dl>
         {/* mm:362:5082 */}
-        <button
-          type="button"
-          disabled
-          className="flex h-[60px] w-full cursor-not-allowed items-center justify-center gap-1 rounded-lg bg-[#FFEA9E] p-4 text-[22px] font-bold leading-7 text-[#00101A] opacity-60"
+        <SecretBoxOpener
+          unopenedCount={stats.secretBoxUnopened}
+          copy={messages.secretBox}
+          className="flex h-[60px] w-full cursor-pointer items-center justify-center gap-1 rounded-lg bg-[#FFEA9E] p-4 text-[22px] font-bold leading-7 text-[#00101A] disabled:cursor-not-allowed disabled:opacity-60"
         >
           <span>{copy.openBox}</span>
           <IconOpenGift />
-        </button>
+        </SecretBoxOpener>
       </div>
     </section>
   );
