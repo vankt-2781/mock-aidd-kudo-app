@@ -49,7 +49,9 @@ export function LoginPageClient({ initialLocale, initialHasError, returnTo = nul
     try {
       const { error } = await createSupabaseBrowserClient().auth.signInWithOAuth({
         provider: "google",
-        options: { redirectTo },
+        // select_account: always show Google's account chooser instead of silently
+        // reusing the single signed-in Google session.
+        options: { redirectTo, queryParams: { prompt: "select_account" } },
       });
       if (error) throw error;
       // Success: browser is navigating to Google; keep loading on.

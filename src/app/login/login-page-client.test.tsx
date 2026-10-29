@@ -54,7 +54,7 @@ describe("LoginPageClient", () => {
     expect(loginButton()).toHaveAttribute("aria-busy", "true");
     expect(signInWithOAuth).toHaveBeenCalledWith({
       provider: "google",
-      options: { redirectTo: `${window.location.origin}/auth/callback` },
+      options: { redirectTo: `${window.location.origin}/auth/callback`, queryParams: { prompt: "select_account" } },
     });
   });
 
@@ -64,7 +64,7 @@ describe("LoginPageClient", () => {
     await userEvent.click(loginButton());
     expect(signInWithOAuth).toHaveBeenCalledWith({
       provider: "google",
-      options: { redirectTo: `${window.location.origin}/auth/callback?next=%2Fkudos` },
+      options: { redirectTo: `${window.location.origin}/auth/callback?next=%2Fkudos`, queryParams: { prompt: "select_account" } },
     });
   });
 
@@ -74,7 +74,7 @@ describe("LoginPageClient", () => {
     await userEvent.click(loginButton());
     expect(signInWithOAuth).toHaveBeenCalledWith({
       provider: "google",
-      options: { redirectTo: `${window.location.origin}/auth/callback` },
+      options: { redirectTo: `${window.location.origin}/auth/callback`, queryParams: { prompt: "select_account" } },
     });
   });
 
